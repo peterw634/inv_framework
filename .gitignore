@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Training artefacts
+*.pt
+*.pth
+*.ckpt
+trained_*/
+trained_*.pt
+
+# Demo outputs
+examples/*_out.png
+examples/*.png
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Optional virtualenv
+.venv/
+venv/
