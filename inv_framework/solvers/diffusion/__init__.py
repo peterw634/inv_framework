@@ -1,6 +1,14 @@
 from .scheduler import NoiseSchedule, VPSchedule
 from .conditioning import ConditioningMethod, PosteriorSampling
 from .dps import DPSSolver
+from .budget_dps import (
+    BudgetedDPSSolver,
+    BudgetedPosteriorSampling,
+    equispaced_subset,
+    grad_cost,
+    make_equispaced_schedule,
+    reformulated_gradient,
+)
 
 __all__ = [
     "NoiseSchedule",
@@ -8,6 +16,12 @@ __all__ = [
     "ConditioningMethod",
     "PosteriorSampling",
     "DPSSolver",
+    "BudgetedDPSSolver",
+    "BudgetedPosteriorSampling",
+    "equispaced_subset",
+    "grad_cost",
+    "make_equispaced_schedule",
+    "reformulated_gradient",
 ]
 
 try:

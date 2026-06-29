@@ -81,7 +81,9 @@ class DPSSolver(InverseProblemSolver):
             eps = self.model(x_t, t_batch)
             x_t_next, x_0_hat = self.schedule.step(eps, t, x_t, eta=self.eta)
             x_t_next, residual = cond.apply(
-                x_t_next, x_0_hat, measurement, x_prev=x_t)
+                x_t_next, x_0_hat, measurement, x_prev=x_t,
+                step_index=i, num_steps=self.num_inference_steps,
+                timestep=t)
             x_t = x_t_next.detach()
 
             if self.log_every and (i % self.log_every == 0
