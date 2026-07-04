@@ -6,7 +6,7 @@ guidance), MCG (gradient + projection), PiGDM (pseudo-inverse guidance), etc.
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, Tuple
+from typing import Callable, Optional, Tuple
 import torch
 
 from ...operators.base import ForwardOperator
@@ -57,3 +57,48 @@ class PosteriorSampling(ConditioningMethod):
         residual = torch.linalg.norm(diff)
         grad, = torch.autograd.grad(residual, x_prev, retain_graph=False)
         return x_t - self.scale * grad, residual.detach()
+
+
+class CGDataConsistency(ConditioningMethod):
+    """Data consistency by CG projection of the anchor (DDS-style).
+
+    Instead of the DPS gradient step, replace the Tweedie/mean-flow estimate
+    ``x_0_hat`` with the solution of the Tikhonov-regularised normal equation
+    ``(A^T A + lam I) u = A^T y + lam x_0_hat`` (see `solvers/cg.py`). This is
+    the per-step correction used by the DDS sampler for sparse-view and
+    truncated (interior-tomography) industrial CT.
+
+    Requires a `LinearOperator` (needs an explicit adjoint). The returned
+    ``x_t`` IS the corrected anchor — the DDS solver re-encodes it into the
+    next iterate — and the residual is ``||A(x_dc) - y||`` for logging.
+    """
+
+    def __init__(self,
+                 operator,
+                 noiser=None,
+                 lam: float = 0.05,
+                 cg_iter: int = 5,
+                 back_op: Optional[Callable] = None,
+                 weight: Optional[torch.Tensor] = None):
+        from ...operators.base import LinearOperator
+        if not isinstance(operator, LinearOperator):
+            raise TypeError(
+                "CGDataConsistency requires a LinearOperator (needs an "
+                f"explicit adjoint); got {type(operator).__name__}."
+            )
+        super().__init__(operator, noiser=noiser, scale=1.0)
+        self.lam = lam
+        self.cg_iter = cg_iter
+        self.back_op = back_op
+        self.weight = weight
+
+    def apply(self, x_t, x_0_hat, measurement, x_prev, **kwargs):
+        from ..cg import cg_data_consistency
+        x_dc = cg_data_consistency(
+            x_0_hat.detach(), measurement, self.operator,
+            lam=self.lam, max_iter=self.cg_iter,
+            back_op=self.back_op, weight=self.weight,
+        )
+        with torch.no_grad():
+            residual = torch.linalg.norm(self.operator.forward(x_dc) - measurement)
+        return x_dc, residual.detach()

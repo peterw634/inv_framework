@@ -12,6 +12,9 @@ Solvers shipping in this version:
     - Classical (linear only):  FBPSolver, SIRTSolver, LandweberSolver
     - Model-based (general):    DIPSolver, INRSolver
     - Diffusion (general):      DPSSolver
+    - Industrial CT:            DDSSolver, LoRAAdaptiveDDSSolver
+                                (interior-tomography TruncatedRadon2D +
+                                 CG data consistency + in-the-loop LoRA)
 
 CT is provided as a worked example under operators/ct/. Adding a new domain
 means subclassing ForwardOperator or LinearOperator; the solvers do not need

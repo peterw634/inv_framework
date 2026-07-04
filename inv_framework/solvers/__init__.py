@@ -2,7 +2,8 @@ from .base import InverseProblemSolver
 from .classical import FBPSolver, SIRTSolver, LandweberSolver, fbp, sirt, landweber
 from .dip import DIPSolver
 from .inr import INRSolver
-from .diffusion import DPSSolver, BudgetedDPSSolver
+from .cg import cg_data_consistency, cg_data_consistency_grad
+from .diffusion import DPSSolver, BudgetedDPSSolver, DDSSolver, LoRAAdaptiveDDSSolver
 
 __all__ = [
     "InverseProblemSolver",
@@ -14,6 +15,10 @@ __all__ = [
     "landweber",
     "DIPSolver",
     "INRSolver",
+    "cg_data_consistency",
+    "cg_data_consistency_grad",
     "DPSSolver",
     "BudgetedDPSSolver",
+    "DDSSolver",
+    "LoRAAdaptiveDDSSolver",
 ]

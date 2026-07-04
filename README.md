@@ -266,6 +266,8 @@ x_dip  = DIPSolver(num_iterations=1000, lr=1e-3).solve(y, A)
 | `DIPSolver` | `solvers/dip.py` | `num_iterations`, `lr`, `input_channels`, `model_factory` | 默认用 `SkipUNet`,可注入自定义网络 |
 | `INRSolver` | `solvers/inr.py` | `num_iterations`, `lr`, `hidden_features`, `hidden_layers` | 默认用 `SIREN` |
 | `DPSSolver` | `solvers/diffusion/dps.py` | `model`, `schedule`, `num_inference_steps`, `scale`, `eta` | 需要训练好的 ε-预测器 |
+| `DDSSolver` | `solvers/diffusion/dds.py` | `prior`, `num_steps`, `dc_lam`, `dc_iter`, `dc_eta_stoch` | mean-flow 先验 + 每步 CG 数据一致性(工业 CT) |
+| `LoRAAdaptiveDDSSolver` | `solvers/diffusion/dds_lora.py` | 上 + `adapt_params`, `adapt_optim_factory`, `adapt_K`, `reg_gamma` | DDS + 在环 LoRA 自适应(OOD,DDIP3D 风格)|
 
 ### DIP / INR 自定义网络
 
@@ -348,7 +350,92 @@ python examples/ct_demo.py --dps-checkpoint trained_tiny_unet.pt
 
 ---
 
+## 工业 CT:内部断层 + DDS 数据一致性 + 在环 LoRA
+
+工业/实验室 micro-CT 常见两个区别于教学 CT 的特征,本框架以"加算子/加 conditioning
+不改核心"的方式补齐:
+
+### 1. 内部断层(interior tomography / 截断视场)
+
+物体大于探测器:每个角度只测到中心一条 band,视场外必须由先验外推。前向模型
+`A = T ∘ R`(`T` 是探测器截断掩膜)。**无需 tomopy/CUDA**——`TruncatedRadon2D`
+直接复用现有的 autograd 精确 `ParallelBeamRadon2D`,再叠一个自伴掩膜 `T`,
+`backward == adjoint` 自动成立(纯 torch)。
+
+```python
+from inv_framework.operators.ct import TruncatedRadon2D
+
+# 1024 帧,只测中心 205 列(≈20% FOV),900 角平行束
+A = TruncatedRadon2D(image_size=1024, num_angles=900, inner=205, device='cuda')
+y = A(x_true)                       # (B,1,900,1024),band 外为 0
+x_fbp = A.pseudo_inverse(y)         # 截断 FBP(有预期的 cupping,仅作 warm-start)
+```
+
+`inner == image_size` 时 `TruncatedRadon2D` 退化为普通 Radon。
+
+### 2. DDS:mean-flow 先验 + 每步 CG 数据一致性
+
+mean-flow(如 pMF)不是 ε-预测器,是 velocity 预测器(`x̂₀ = z − t·u`)。`DDSSolver`
+反向采样,每步对 anchor `x̂₀` 解一次 Tikhonov 正则法方程
+`(AᵀA + λI)u = Aᵀy + λx̂₀`(`solvers/cg.py:cg_data_consistency`,纯 torch CG),
+而非 DPS 的单步梯度。CG 校正**全帧无掩膜**,同时适配稀疏视角(全帧重建)与截断
+(band 内受数据约束,外围交给先验)。
+
+```python
+from inv_framework.solvers.diffusion import DDSSolver, TinyVelocityPrior, CGDataConsistency
+
+prior = TinyVelocityPrior(img_channels=1, img_size=1024)   # 或真实 pMF,见下
+x_rec = DDSSolver(prior, num_steps=16, dc_lam=0.05, dc_iter=5).solve(y, A)
+```
+
+`CGDataConsistency` 与 DPS 的 `PosteriorSampling` 一样是可插拔 `ConditioningMethod`。
+`TinyVelocityPrior` 让整条链路**无需任何权重即可端到端跑通**(见 `examples/truncated_ct_demo.py`)。
+
+### 3. 在环 LoRA 自适应(OOD)
+
+先验分布外(材料/分辨率不同)时,`LoRAAdaptiveDDSSolver` 在采样过程中对先验做在线
+LoRA 微调(DDIP3D 风格):每步内层若干 Adam 步用 measurement loss `‖A(x̂₀_dc)−y‖²`
+(可选 in-distribution 正则)更新 LoRA 参数,梯度穿过 CG 校正回流到适配参数。
+
+```python
+from inv_framework.solvers.diffusion import (
+    LoRAAdaptiveDDSSolver, inject_lora_linear,   # 通用注入
+)
+groups = inject_lora_linear(prior.net, r=8)      # 冻结主干,注入 LoRA
+adapt_params = [p for g in groups for p in g]
+
+x_rec = LoRAAdaptiveDDSSolver(
+    prior, adapt_params=adapt_params,
+    adapt_optim_factory=lambda p: torch.optim.AdamW(p, lr=1e-4, weight_decay=1e-2),
+    adapt_at_steps=None,            # None = 每步都适配(DDIP3D 稠密)
+    adapt_K=4, num_steps=16, dc_lam=0.05, dc_iter=10,
+).solve(y, A)
+```
+
+### 4. 接入真实 pMF 先验(惰性适配)
+
+`PMFVelocityPrior` 把真实 `pixelMeanFlow` 包成 `VelocityPrior`,**镜像 diffusers_compat
+的惰性做法**:`import` 本身不触发 pMF DiT / `lpips` / `pytorch_msssim` 等重依赖,
+仅在实例化时需要模型。pmfDiT 专用的 LoRA 配方用 `adapt_pmfdit`(注入每个
+TransformerBlock 的 7 个 Linear + `x_embedder.proj2` + 解冻 gates)。
+
+```python
+import sys; sys.path.insert(0, '/path/to/indus_CT/NaSn')
+from pmf import pixelMeanFlow
+from inv_framework.solvers.diffusion import PMFVelocityPrior, adapt_pmfdit
+
+pmf = pixelMeanFlow('pmfDiT_B_64', img_size=1024, img_channels=1,
+                    num_classes=1, eval=True).to('cuda')
+pmf.net.load_state_dict(torch.load('ckpt_epoch_999.pt'))
+
+groups = adapt_pmfdit(pmf.net, r=8)                  # OOD 才需要
+prior  = PMFVelocityPrior(pmf, omega=1.0)
+```
+
+---
+
 ## 扩展:添加新的反问题
+
 
 ### 情形 A:新的线性算子
 
@@ -422,6 +509,9 @@ class SaltPepperNoise(NoiseModel):
 ```bash
 python tests/test_radon_adjoint.py
 python tests/test_nonlinear_operator.py
+python tests/test_truncated_operator.py
+python tests/test_cg_dds.py
+python tests/test_lora.py
 ```
 
 测试内容:
@@ -434,6 +524,19 @@ python tests/test_nonlinear_operator.py
   - 非线性 `ForwardOperator` 子类可正常实例化与前传
   - `fbp` / `sirt` / `landweber` 对非线性算子均抛出 `TypeError` 并附说明
   - `DIPSolver` 在非线性算子上能将测量残差降低 10× 以上
+
+- **`test_truncated_operator.py`**(工业 CT)
+  - `TruncatedRadon2D` 的 `backward(forward) == adjoint`(相对误差应为 0)
+  - 截断掩膜确实把 band 外探测器列置零;`inner == image_size` 退化为普通 Radon
+  - `DetectorTruncation` 自伴且幂等
+
+- **`test_cg_dds.py`**(工业 CT)
+  - `cg_data_consistency` 把测量残差降 >100×;`cg_data_consistency_grad` 梯度可回流
+  - `DDSSolver` / `LoRAAdaptiveDDSSolver` 在 `TinyVelocityPrior` 上端到端跑通
+  - LoRA-DDS 内层确实训练了适配参数;对非线性算子正确报错
+
+- **`test_lora.py`**(工业 CT)
+  - LoRA 注入 5 不变量:scale=0 恒等、up=0 恒等、踢一脚发散、存取往返精确、只训练 LoRA 参数
 
 ---
 
