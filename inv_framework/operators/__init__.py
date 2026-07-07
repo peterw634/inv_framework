@@ -1,6 +1,7 @@
 from .base import ForwardOperator, LinearOperator
 from .budget import CallableSubsetForwardOperator, SubsettableForwardOperator
 from .noise import NoiseModel, NoNoise, GaussianNoise, PoissonLogDomainNoise
+from .usct import USCTStraightRayOperator
 
 __all__ = [
     "ForwardOperator",
@@ -11,4 +12,5 @@ __all__ = [
     "NoNoise",
     "GaussianNoise",
     "PoissonLogDomainNoise",
+    "USCTStraightRayOperator",
 ]
