@@ -11,6 +11,7 @@
 - [文件结构](#文件结构)
 - [核心抽象](#核心抽象)
 - [快速开始](#快速开始)
+- [USCT 源码迁移](#usct-源码迁移)
 - [求解器一览](#求解器一览)
 - [与 diffusers 集成](#与-diffusers-集成)
 - [扩展:添加新的反问题](#扩展添加新的反问题)
@@ -31,7 +32,8 @@
 ForwardOperator (ABC)          ← 通用基类(线性 + 非线性)
   └── LinearOperator (ABC)     ← 线性算子,附带 adjoint / pseudo_inverse
         ├── ParallelBeamRadon2D
-        └── ASTRAOperator3D
+        ├── ASTRAOperator3D
+        └── USCTStraightRayOperator
 ```
 
 求解器据其需求选取算子类型:
@@ -41,7 +43,10 @@ ForwardOperator (ABC)          ← 通用基类(线性 + 非线性)
 | FBP / SIRT / Landweber | `LinearOperator` | 显式需要 `A^T` |
 | DIP / INR / DPS | 任意 `ForwardOperator` | 只用 `forward` + autograd 求梯度 |
 
-新增反问题只需写一个 `ForwardOperator` 子类,**求解器代码不需要改动**。
+新增反问题只需写一个 `ForwardOperator` 子类,**求解器代码不需要改动**。本分支新增的
+USCT 模块沿用同一套接口:straight-ray 声速反演暴露为带显式 `adjoint` 的
+`LinearOperator`,FWI 暴露为 nonlinear data-consistency wrapper,方便后续接入
+DDS/DPS/AI prior。
 
 ---
 
@@ -72,14 +77,21 @@ inv_framework/
 │   ├── operators/                               # 前向算子层
 │   │   ├── base.py                              # ForwardOperator + LinearOperator (ABCs)
 │   │   ├── noise.py                             # NoiseModel + GaussianNoise / PoissonLogDomainNoise / NoNoise
-│   │   └── ct/                                  # CT 域算子
-│   │       ├── radon_torch.py                   # ParallelBeamRadon2D (纯 torch,默认)
-│   │       └── astra_adapter.py                 # ASTRAOperator3D (可选,需 astra-toolbox)
+│   │   ├── ct/                                  # CT 域算子
+│   │   │   ├── radon_torch.py                   # ParallelBeamRadon2D (纯 torch,默认)
+│   │   │   └── astra_adapter.py                 # ASTRAOperator3D (可选,需 astra-toolbox)
+│   │   └── usct/                                # USCT 域算子
+│   │       ├── straight_ray.py                  # straight-ray ToF projector + explicit adjoint
+│   │       └── sound_speed.py                   # sound speed / slowness conversion utilities
 │   ├── solvers/                                 # 求解器层
 │   │   ├── base.py                              # InverseProblemSolver (ABC)
 │   │   ├── classical.py                         # fbp / sirt / landweber 函数 + 同名 Solver 类
 │   │   ├── dip.py                               # DIPSolver
 │   │   ├── inr.py                               # INRSolver
+│   │   ├── usct/                                # USCT solver kernels and data consistency
+│   │   │   ├── ray.py                           # CGLS / SIRT / SART / bent-ray-style baseline
+│   │   │   ├── data_consistency.py              # sound-speed-domain local CG data consistency
+│   │   │   └── fwi.py                           # nonlinear k-Wave/FWI data-consistency wrapper
 │   │   └── diffusion/                           # 扩散类方法(diffusers 风格 API)
 │   │       ├── scheduler.py                     # NoiseSchedule (ABC) + VPSchedule
 │   │       ├── conditioning.py                  # ConditioningMethod (ABC) + PosteriorSampling (DPS)
@@ -95,8 +107,15 @@ inv_framework/
 │   ├── ct_demo.py                               # 线性 CT:FBP / SIRT / DIP / INR / DPS (支持 --dps-use-diffusers)
 │   ├── train_diffusion_for_dps.py               # 训练 DPS 用的 ε-预测器 (支持 --use-diffusers)
 │   └── nonlinear_demo.py                        # 非线性 CT 演示(饱和探测器,tanh)
+├── assets/
+│   ├── nbpslice2d_usct_methods.png              # USCT 方法展示图
+│   └── openbreastus_usct_methods.png            # USCT 方法展示图
 └── tests/
     ├── test_radon_adjoint.py                    # backward(forward) == adjoint;FBP 重建圆盘
+    ├── test_usct_straight_ray_operator.py       # USCT straight-ray forward/adjoint/autograd
+    ├── test_usct_ray_solvers.py                 # USCT CGLS/SIRT/SART/bent smoke tests
+    ├── test_usct_data_consistency.py            # sound-speed local CG data consistency
+    ├── test_usct_fwi_wrapper.py                 # nonlinear FWI wrapper contract
     └── test_nonlinear_operator.py               # 非线性算子端到端 + 经典求解器正确拒绝
 ```
 
@@ -256,6 +275,111 @@ x_dip  = DIPSolver(num_iterations=1000, lr=1e-3).solve(y, A)
 
 ---
 
+## USCT 源码迁移
+
+本分支新增了 USCT(Ultrasound Computed Tomography) 的 torch-native 物理核和
+solver 核,用于把 `usct-benchlab` 中已经整理好的传统 USCT 方法迁入
+`inv_framework`。迁移目标不是通过 CLI 外部调用另一个仓库,而是把后续 AI prior
+需要直接访问的 **forward / adjoint / data-consistency** 源码放进本框架。
+
+### 1. 数学变量和实现边界
+
+当前 straight-ray 模块使用声速图 `c(x)` 作为医学图像域变量,内部数据一致性使用
+slowness perturbation:
+
+```text
+delta_s(x) = 1 / c(x) - 1 / c0
+delta_tof  = A delta_s
+```
+
+这里 `A` 是 straight-ray line-integral projector。`USCTStraightRayOperator`
+显式实现 `forward(delta_s)` 和 `adjoint(ray_values)`,并通过测试验证
+`<Ax, y> = <x, A^T y>` 以及 autograd backward 与显式 adjoint 一致。
+
+后续 AI prior 应该作用在 sound-speed image space,即 `c(x)`。因此本分支额外提供
+`USCTSoundSpeedForwardModel` 和 `usct_sound_speed_local_cg_data_consistency`,
+在声速域做局部线性化 CG 数据一致性:
+
+```text
+F(c) = A(1 / c - 1 / c0)
+J dc = A(-dc / c^2)
+```
+
+### 2. 新增 USCT 模块
+
+| 模块 | 文件 | 作用 |
+|---|---|---|
+| straight-ray operator | `inv_framework/operators/usct/straight_ray.py` | 构造 sparse COO ray matrix,支持 `forward` / `adjoint` / ring geometry |
+| sound-speed conversion | `inv_framework/operators/usct/sound_speed.py` | `sound_speed <-> normalized tensor <-> delta slowness` |
+| ray solvers | `inv_framework/solvers/usct/ray.py` | CGLS / SIRT / SART / bent-ray-style baseline |
+| sound-speed DC | `inv_framework/solvers/usct/data_consistency.py` | 面向 AI prior 的 local CG data consistency |
+| FWI wrapper | `inv_framework/solvers/usct/fwi.py` | k-Wave/MATLAB FWI 后端的 nonlinear data-consistency contract |
+
+### 3. 已接入的 USCT 算法
+
+| 类 | 类型 | 输入 | 输出 | 说明 |
+|---|---|---|---|---|
+| `USCTCGLSSolver` | straight-ray CGLS | `USCTRayMeasurement`, `USCTStraightRayOperator` | `delta_slowness` 或 sound speed | 线性 least-squares baseline |
+| `USCTSIRTSolver` | straight-ray SIRT | 同上 | 同上 | 同时更新所有 ray 的代数迭代法 |
+| `USCTSARTSolver` | straight-ray SART | 同上 | 同上 | subset / ordered algebraic update |
+| `USCTBentRayStyleSolver` | regularized travel-time baseline | 同上 | 同上 | 当前迁移版 bent-ray-style baseline,不是完整 eikonal solver |
+| `USCTSoundSpeedForwardModel` | nonlinear sound-speed model | sound speed `c(x)` | `delta_tof` | 给 DDS/DPS/AI prior 使用的声速域 forward model |
+| `KWaveFWIDataConsistency` | nonlinear FWI wrapper | external k-Wave/FWI backend | gradient 或 updated sound speed | 保留已有 k-Wave/MATLAB FWI 主线,不在本框架重写 FWI |
+
+### 4. 最小代码示例
+
+```python
+import torch
+from inv_framework.operators.usct import (
+    USCTStraightRayOperator,
+    make_ring_geometry,
+    sound_speed_to_delta_slowness,
+)
+from inv_framework.solvers.usct import USCTCGLSSolver, USCTRayMeasurement
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+positions = make_ring_geometry(n_transducers=64, radius_m=0.06)
+
+A = USCTStraightRayOperator(
+    grid_shape=(256, 256),
+    spacing_m=(0.3e-3, 0.3e-3),
+    tx_positions_yx=positions,
+    device=device,
+    dtype=torch.float32,
+)
+
+sound_speed = torch.full((1, 1, 256, 256), 1500.0, device=device)
+delta_s = sound_speed_to_delta_slowness(sound_speed, reference_sound_speed_mps=1500.0)
+delta_tof = A.forward(delta_s)
+
+measurement = USCTRayMeasurement(
+    delta_tof=delta_tof,
+    valid_mask=torch.ones_like(delta_tof, dtype=torch.bool),
+    ray_weights=torch.ones_like(delta_tof),
+    reference_sound_speed_mps=1500.0,
+    sound_speed_bounds_mps=(1300.0, 1700.0),
+)
+
+rec_delta_s = USCTCGLSSolver(iterations=30).solve(measurement, A)
+```
+
+### 5. 展示图
+
+下面两张图来自 `usct-benchlab` 中已经整理过的 OpenBreastUS 与 NBPslice2D
+四类样本横向比较,用于说明 USCT 算法族在数据集上的输出形态。当前
+`inv_framework` 分支迁移的是这些算法后续接 AI prior 所需的物理核、solver 核和
+data-consistency 核;完整数据准备和 benchmark CLI 仍保留在 `usct-benchlab`。
+
+**OpenBreastUS: CGLS / SIRT / SART / Bent / FWI 横向展示**
+
+![OpenBreastUS USCT methods](assets/openbreastus_usct_methods.png)
+
+**NBPslice2D: 2D Acoustic Numerical Breast Phantoms for USCT 横向展示**
+
+![NBPslice2D USCT methods](assets/nbpslice2d_usct_methods.png)
+
+---
+
 ## 求解器一览
 
 | 类 | 文件 | 关键超参 | 备注 |
@@ -268,6 +392,11 @@ x_dip  = DIPSolver(num_iterations=1000, lr=1e-3).solve(y, A)
 | `DPSSolver` | `solvers/diffusion/dps.py` | `model`, `schedule`, `num_inference_steps`, `scale`, `eta` | 需要训练好的 ε-预测器 |
 | `DDSSolver` | `solvers/diffusion/dds.py` | `prior`, `num_steps`, `dc_lam`, `dc_iter`, `dc_eta_stoch` | mean-flow 先验 + 每步 CG 数据一致性(工业 CT) |
 | `LoRAAdaptiveDDSSolver` | `solvers/diffusion/dds_lora.py` | 上 + `adapt_params`, `adapt_optim_factory`, `adapt_K`, `reg_gamma` | DDS + 在环 LoRA 自适应(OOD,DDIP3D 风格)|
+| `USCTCGLSSolver` | `solvers/usct/ray.py` | `iterations`, `damping`, `regularization` | USCT straight-ray CGLS |
+| `USCTSIRTSolver` | `solvers/usct/ray.py` | `iterations`, `relaxation`, `smooth_sigma` | USCT straight-ray SIRT |
+| `USCTSARTSolver` | `solvers/usct/ray.py` | `iterations`, `relaxation`, `subsets` | USCT straight-ray SART |
+| `USCTBentRayStyleSolver` | `solvers/usct/ray.py` | `outer_iterations`, `inner_iterations`, `line_search` | regularized bent-ray-style travel-time baseline |
+| `KWaveFWIDataConsistency` | `solvers/usct/fwi.py` | `gradient_mode`, `step_strategy`, `guidance_gain` | external k-Wave/MATLAB FWI nonlinear DC wrapper |
 
 ### DIP / INR 自定义网络
 
@@ -512,6 +641,7 @@ python tests/test_nonlinear_operator.py
 python tests/test_truncated_operator.py
 python tests/test_cg_dds.py
 python tests/test_lora.py
+python -m pytest -q tests/test_usct_straight_ray_operator.py tests/test_usct_ray_solvers.py tests/test_usct_data_consistency.py tests/test_usct_fwi_wrapper.py
 ```
 
 测试内容:
@@ -537,6 +667,24 @@ python tests/test_lora.py
 
 - **`test_lora.py`**(工业 CT)
   - LoRA 注入 5 不变量:scale=0 恒等、up=0 恒等、踢一脚发散、存取往返精确、只训练 LoRA 参数
+
+- **`test_usct_straight_ray_operator.py`**(USCT)
+  - `USCTStraightRayOperator` 的 `<Ax,y> == <x,A^T y>` 精确伴随测试
+  - autograd backward 与显式 `adjoint` 对齐
+  - 支持单图像、batch/channel 维度和 flattened ray 输入
+
+- **`test_usct_ray_solvers.py`**(USCT)
+  - CGLS / SIRT / SART / bent-ray-style solver 均能降低 travel-time 残差
+  - SART 支持 batched measurements 和不同 valid masks
+  - solver 可按需返回 sound speed,用于后续 AI prior 的图像域接口
+
+- **`test_usct_data_consistency.py`**(USCT)
+  - sound-speed-domain data gradient 与 PyTorch autograd 梯度一致
+  - 局部线性化 CG data consistency 能降低测量 misfit
+
+- **`test_usct_fwi_wrapper.py`**(USCT)
+  - `KWaveFWIDataConsistency` 能调用外部 Helmholtz/FWI backend 的 gradient 与 line-search step
+  - wrapper 保持 torch tensor 的 dtype/device,便于作为 DDS/DPS 的 nonlinear conditioning
 
 ---
 
