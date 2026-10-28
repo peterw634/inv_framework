@@ -1,0 +1,9 @@
+{
+  "seed": 0,
+  "roi_radius": 256,
+  "data": {"kind": "nasn-synthetic", "reference": "/path/to/synthetic_val/000991.tif"},
+  "methods": {
+    "meanflow": {"weights": "/path/to/nasn-pmf-2048-epoch449-ema.safetensors", "image_scale": 0.5, "image_offset": 0.5, "parameters": {"num_inference_steps": 16, "dc_iter": 10, "dc_lam": 5}},
+    "dds": {"weights": "/path/to/pixel_diffusion", "image_scale": 1, "image_offset": 0, "model_grid": 2048, "parameters": {"num_inference_steps": 100, "eta": 0.85, "cg_inner": 5, "gamma": 0}}
+  }
+}

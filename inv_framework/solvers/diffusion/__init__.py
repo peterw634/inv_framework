@@ -1,4 +1,4 @@
-from .scheduler import NoiseSchedule, VPSchedule
+from .scheduler import NoiseSchedule, VPSchedule, MeanFlowSchedule
 from .conditioning import ConditioningMethod, PosteriorSampling, CGDataConsistency
 from .dps import DPSSolver
 from .velocity_prior import VelocityPrior, TinyVelocityPrior
@@ -26,6 +26,7 @@ from .budget_dps import (
 __all__ = [
     "NoiseSchedule",
     "VPSchedule",
+    "MeanFlowSchedule",
     "ConditioningMethod",
     "PosteriorSampling",
     "CGDataConsistency",
@@ -64,3 +65,19 @@ try:
     __all__.extend(["DiffusersScheduleAdapter", "DiffusersUNetWrapper"])
 except ImportError:
     pass
+
+from .guidance import NormalizedPosteriorSampling, ManifoldConstraintGradient, PseudoInverseGuidance
+from .mcg import MCGSolver
+from .pgdm import PGDMSolver
+from .ddim_dds import DDIMDDSSolver
+from .dmplug import DMPlugSolver
+from .reddiff import REDDiffSolver
+from .hybridreg import HybridRegSolver
+from .psld import PSLDSolver
+from .resample import ReSampleSolver
+from .diffstategrad import DiffStateGradSolver
+
+MeanFlowDDSSolver = DDSSolver
+__all__ += ["NormalizedPosteriorSampling", "ManifoldConstraintGradient", "PseudoInverseGuidance",
+            "MCGSolver", "PGDMSolver", "DDIMDDSSolver", "DMPlugSolver", "REDDiffSolver",
+            "HybridRegSolver", "PSLDSolver", "ReSampleSolver", "DiffStateGradSolver", "MeanFlowDDSSolver"]

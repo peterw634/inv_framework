@@ -1,0 +1,11 @@
+name: FullCT_Na_NSS_11um_2
+projection_dir: Projection
+prefixes: {tomo: "tomo_", flat: "flat_", dark: "dark_"}
+tomo_range_1based: [65, 1410]
+detector_columns_1based: [1, 2000]
+slice_range_1based: [20, 1020]
+phase_retrieval: {energy_kev: 27.4, pixel_size_m: 1.1e-6, distance_m: 0.147, epsilon: 0.01}
+rivers_width: 5
+center: 1000.5
+filter_name: shepp
+circular_mask_ratio: 0.95

@@ -1,0 +1,310 @@
+
+JOURNAL INFORMATION
+==============================
+NLM Title Abbreviation: Phys Med Biol
+NLM Journal ID: 0401220
+
+Physics in medicine and biology
+
+ISSN: 0031-9155
+EISSN: 1361-6560
+
+ARTICLE INFORMATION
+==============================
+PMCID: PMC2863332
+Article ID: NIHMS192583
+PMID: 19369711
+DOI: 10.1088/0031-9155/54/9/014
+Article ID: NIHMS192583
+Article ID: NIHPA192583
+Article version: 1
+Subjects: Article
+
+Compressed Sensing Based Interior Tomography
+
+Yu Hengyong
+Wang Ge
+Biomedical Imaging Division, VT-WFU School of Biomedical Engineering and Science, Virginia Tech, Blacksburg, VA 24061, USA
+hengyong-yu@ieee.org, ge-wang@ieee.org
+Electronic publication date: 2009 Apr 15
+Print publication date: 2009 May 7
+Volume: 54
+Issue: 9
+First page: 2791
+Last page: 2805
+Author manuscript; available in PMC: 2010 May 4
+
+Comment in: Interior region-of-interest reconstruction using a small, nearly piecewise constant subregion 38 3 16 2 2011 1307 1312 Medical Physics 10.1118/1.3549763 PMC3055906 21520842
+Erratum in:
+Keywords: Computed tomography (CT), interior tomography, compressed sensing, total variation, sparsifying transform
+
+License: This file is available for text mining. It may also be used consistent with the principles of fair use under the copyright law.
+
+==============================
+While the conventional wisdom is that the interior problem does not have a unique solution, by analytic continuation we recently showed that the interior problem can be uniquely and stably solved if we have a known sub-region inside a region-of-interest (ROI). However, such a known sub-region does not always readily available, and it is even impossible to find in some cases. Based on the compressed sensing theory, here we prove that if an object under reconstruction is essentially piecewise constant, a local ROI can be exactly and stably reconstructed via the total variation minimization. Because many objects in CT applications can be approximately modeled as piecewise constant, our approach is practically useful and suggests a new research direction of interior tomography. To illustrate the merits of our finding, we develop an iterative interior reconstruction algorithm that minimizes the total variation of a reconstructed image, and evaluate the performance in numerical simulation.
+
+I. Introduction
+
+One conventional wisdom is that the interior problem (exact reconstruction of an interior ROI only from data associated with lines through the ROI) does not have a unique solution (Natterer, 2001). Nevertheless, it is highly desirable to perform interior reconstruction for radiation dose reduction and other important reasons. Hence, over past years a number of image reconstruction algorithms were developed that use an increasingly less amount of raw data (Parker, 1982; Noo et al., 2004; Defrise et al., 2006). Specifically, motivated by the major needs in cardiac CT, CT guided procedures, nano-CT and so on (Wang et al., 2007), by analytic continuation we recently proved that the interior problem can be exactly and stably solved if a sub-region in an ROI within a field-of–view (FOV) is known (Ye et al., 2007b; Ye et al., 2007a; Ye et al., 2008; Yu et al., 2008). Similar results were also independently reported by others (Kudo et al., 2008; Courdurier et al., 2008). Although the CT numbers of certain sub-regions such as air in a trachea and blood in an aorta can be indeed assumed, how to obtain precise knowledge of a sub-region generally can be difficult in some cases such as in studies on rare fossils or certain biomedical structures. Therefore, it would be very valuable to develop more powerful interior tomography techniques (Wang and Yu, 2008).
+
+Another conventional wisdom is that data acquisition should be based on the Nyquist sampling theory, which states that to reconstruct a band-limited signal or image, the sampling rate must at least double the highest frequency of nonzero magnitude. Very interestingly, an alternative theory of compressed sensing (CS) has recently emerged which shows that high-quality signals and images can be reconstructed from far fewer data/measurements than what is usually considered necessary according to the Nyquist sampling theory (Donoho, 2006; Candes et al., 2006). The main idea of CS is that most signals are sparse in an appropriate orthonormal system, that is, a majority of their coefficients are close or equal to zero, when represented in some domain. Typically, CS starts with taking a limited amount of samples in a much less correlated basis, and the signal is exactly recovered with an overwhelming probability from the limited data via the ℓ1 norm minimization. Since samples are limited, the task of recovering the image would involve solving an underdetermined matrix equation, that is, there is a huge amount of candidate images that can all fit the limited measurements effectively. Thus, some additional constraint is needed to select the “best” candidate. While the classical solution to such problems is to minimize the ℓ2 norm, Donoho and Tao’s groups showed that finding the candidate with the minimum ℓ1 norm, also equivalent to the total variation (TV) minimization in some cases (Rudin et al., 1992), is a most reasonable choice, and can be expressed as a linear program and solved efficiently using existing methods (Donoho, 2006; Candes et al., 2006).
+
+Inspired by the CS theory, in this paper we show the feasibility of exact interior tomography in the CS framework. In the next section, we perform a theoretical analysis. In the third section, we develop a CS-based interior tomography algorithm and report numerical simulation results. Finally, we discuss relevant issues.
+
+II. Theoretical Analysis
+
+It is well known that the CS theory depends on the principle of transform sparsity. For an object of interest such as a digital image, we can arrange it as a vector, and in numerous cases there exists an orthonormal basis to make the object sparse in terms of significant transform coefficients. In CS-based image reconstruction, frequently used sparsifying transforms are discrete gradient transforms and wavelet transforms. The discrete gradient sparsifying transform was recently utilized in CT reconstruction (Chen et al., 2008). This is because the x-ray attenuation coefficient often varies mildly within organs, and large image variations are usually confined to the borders of tissue structures. A sparse gradient image may also be a good image model in industrial or security applications.
+
+Now, let us analyze the possible exactness of interior tomography in the CS framework subject to the TV minimization. Without loss of generality, let us consider a 2D smooth image f(r⃗) = f(x, y) = f(ρ, θ), ρ ∈ [0,1], θ ∈ [0,2π) on the compact support unit disk Ω. Its Radon transform can be written as R(s, φ), s ∈ [−1,1], φ ∈ [0, π). Suppose that we are only interested in its interior part f(ρ, θ) with ρ < ρ0, and we only know the corresponding local Radon transforms R(s, φ), |s| < ρ0, which is also referred to as local parallel-beam projections. Based on the classic analysis (Natterer, 2001), in general there is no unique solution if we only know these local data. For any reconstructed image from the local data set, it can be viewed as an exact reconstruction from a complete dataset R(s, φ), s ∈ [−1,1], φ ∈ [0, π) and a global dataset R̃(s, φ), ρ0 < |s|≤1,φ ∈[0,π). Although R̃(s, φ) = 0 for |s|<ρ0, it can still produce a non-zero 2D local image g(ρ,θ), ρ ∈ [0, ρ0), θ ∈ [0,2π) inside the ROI, which is the reason for the non-uniqueness (Natterer, 2001).
+
+Lemma 2.1
+
+For any Radon transform R̃(s, φ), ρ0 < |s|≤1,φ ∈ [0,π), the corresponding reconstructed image g(ρ,θ) with ρ < ρ0 is smooth and bounded if R̃(s,φ) is continuous and bounded.
+
+Proof
+
+To prove Lemma 2.1, let us use the classical filtered backprojection (FBP) algorithm. In the filtration step, the filtered data can be written as: (1) R∼f(s,ϕ)=∫−11R∼(t,ϕ)h(s−t)dt=(∫−1−ρ0+∫ρ01)(R∼(t,ϕ)h(s−t)dt),
+
+where h(s) represents the ramp filtering kernel. Given the property that h(s) is analytic everywhere except at s = 0, R̃f(s,φ) will be smooth and bounded for |s| < ρ0 because there is no singular operation in the integral. Actually, R̃f(s,φ) is an analytic function of s for |s| < ρ0. In the backprojection step, the backprojection image g(ρ,θ) can be written as: (2) g(ρ,θ)=∫0πR∼f(ρcos(ϕ−θ),ϕ)dϕ.
+
+Eq. (2) shows that the reconstruction g(ρ,θ) only involves the data R̃f(s,φ) with |s|≤ρ. That is, the reconstruction of g(ρ,θ) with ρ < ρ0 only involves the data R̃f(s,φ) with |s|≤ ρ0. Hence, g(ρ,θ) with ρ < ρ0 is a smooth and bounded function.
+
+Lemma 2.2
+
+For the reconstructed image g(ρ,θ) with |ρ|< ρ0, both ∂g(ρ,θ)∂ρ and ∂g(ρ,θ)ρ∂θ are smooth and bounded.
+
+Proof
+
+Perform a derivation operation on both side of Eq. (2), we have (3) ∂g(ρ,θ)∂ρ=∫0πcos(ϕ−θ)∂R∼f(s,ϕ)∂s|s=ρcos(ϕ−θ)dϕ,
+
+and (4) ∂g(ρ,θ)ρ∂θ=∫0πsin(ϕ−θ)∂R∼f(s,ϕ)∂s|s=ρcos(ϕ−θ)dϕ.
+
+Using the analytic property of R̃f(s,φ) with the variable s for |s|< ρ0 mentioned in the proof of Lemma 2.1, we complete this proof.
+
+Since Natterer has proved that g(ρ,θ) is a non-zero function, it is impossible that both ∂g(ρ,θ)∂ρ and ∂g(ρ,θ)ρ∂θ are zeros inside the ROI. The same results can be extended to higher order derivatives of g(ρ,θ).
+
+Theoretically speaking, the ℓ1 norm of the image f(ρ,θ) inside the ROI can be expressed as: (5) ftv=∫02πdθ∫0ρ0|μ(p,θ)|ρdρ,
+
+where μ(ρ,θ) represents a sparifying transform. For the commonly used gradient transform in the medical imaging field, we have (6) μ(ρ,θ)=(∂f(ρ,θ)∂ρ)2+(∂f(ρ,θ)ρ∂θ)2,
+
+which is the gradient magnitude or absolute value of the maximum directional derivation at (ρ,θ). If there is no other statement in this paper, we always assume that μ(ρ,θ) defined by Eq. (6) and (5) represents the total variation. When there exists an artifact image g(ρ,θ) due to the data truncation, the total variation will be: (7) f∼tv=∫02πdθ∫0ρ0μ∼(ρ,θ)ρdρ=∫02πdθ∫0ρ0ρ(∂f(ρ,θ)∂ρ+λ∂g(ρ,θ)∂ρ)2+(∂f(ρ,θ)ρ∂θ+λ∂g(ρ,θ)ρ∂θ)2dρ,
+
+where μ̃(ρ,θ) represents the sparifying transform of a reconstructed image including an artifact image g(ρ,θ) and λ is a coefficient. If we can prove that f̃tv can be minimized at λ = 0 for the given f(ρ,θ) and g(ρ,θ), the exactness of interior tomography in the CS framework should hold in this particular case.
+
+Theorem 2.1
+
+In the CS framework, it is impossible to reconstruct exactly an interior ROI of a general 2D smooth function by minimizing the total variation Eq. (7).
+
+Proof
+
+First, let us consider a special circular symmetric case. Without loss of generality, we assume that R̃(s,φ) = R̃(−s,φ) = R̃(s). Thus, the corresponding reconstructed image g(ρ,θ) will be independent of the variable θ, that is, g(ρ,θ) = g(ρ). Because g(ρ,θ) is bounded and smooth (Lemma 2.1), we can always construct a circular symmetric local reconstruction f(ρ) = g(ρ) + C > 0 for ρ < ρ0 with a constant C. Note that df(ρ)dρ=dg(ρ)dρ for ρ < ρ0, the TV of f(ρ) inside the ROI can be computed as: (8) ftv=∫02πdθ∫0ρ0∣∂f(ρ,θ)∂ρ∣ρdρ=2π∫0ρ0∣df(ρ)dρ∣ρdρ=2π∫0ρ0∣dg(ρ)dρ∣ρdρ,
+
+and (9) f∼tv=2π∫0ρ0∣df(ρ)dρ+λdg(ρ)dρ∣ρdρ=2π|1+λ|∫0ρ0∣dg(ρ)dρ∣ρdρ.
+
+Clearly, f̃tv reaches the minimal at λ = −1 instead of λ = 0 in this special case, which completes the proof.
+
+Many biomedical images can be approximately modeled as being piecewise constants; for example in (Wang et al., 2004). Now, let us establish the exactness of interior tomography of a symmetric piecewise constant image f(ρ). In this case, we have (10) ∂f(ρ,θ)∂ρ=∂f(ρ)∂ρ=f′(ρ)=∑m=1Mqmδ(ρ−tm),ρ<ρ0,
+
+where tm > 0 indicates a location of discontinuity, qm characterizes the corresponding jump defined as (11) qm=limε→0+(f(tm+ε)−f(tm−ε)),
+
+and δ(•) represents Dirac delta function defined as: (12) δ(ρ)={+∞ρ=00ρ≠0,∫−∞∞δ(ρ)dρ=1.
+
+Lemma 2.3
+
+For two bounded functions g1(ρ) and g2(ρ) with 0 < ρ < ρ0, there will be: (13) limε→0+∫tm−εtm+ερ(qmδ(ρ−tm)+g1(ρ))2+(g2(ρ))2dρ=∣qm∣tm,
+
+where qm and tm are the same as in Eq. (10).
+
+Proof
+
+Since g1(ρ) and g2(ρ) are bounded, there will be limε→0+∫tm−εtm+ε∣g1(ρ)∣dρ=0 and limε→0+∫tm−εtm+ε∣g2(ρ)∣dρ=0. Denoting the left side of Eq. (13) as “LS”, we have (14) LS≤limε→0+∫tm−εtm+ε(∣qmδ(ρ−tm)∣+∣g1(ρ)∣+∣g2(ρ)∣)ρdρ≤limε→0+(tm+ε)∫tm−εtm+ε(∣qmδ(ρ−tm)∣+∣g1(ρ)∣+∣g2(ρ)∣)dρ=tmlimε→0+∫tm−εtm+ε(∣qmδ(ρ−tm)∣+∣g1(ρ)∣+∣g2(ρ)∣)dρ=∣qm∣tmlimε→0+∫tm−εtm+εδ(ρ−tm)dρ+tmlimε→0+∫tm−εtm+ε∣g1(ρ)∣dρ+tmlimε→0+∫tm−εtm+ε∣g2(ρ)∣dρ=∣qm∣tm.
+
+On the other hand, we have (15) LS≥limε→0+∫tm−εtm+ε(∣qmδ(ρ−tm)∣−∣g1(ρ)∣−∣g2(ρ)∣)ρdρ≥limε→0+(tm−ε)∫tm−εtm+ε(∣qmδ(ρ−tm)∣−∣g1(ρ)∣−∣g2(ρ)∣)dρ=tmlimε→0+∫tm−εtm+ε(∣qmδ(ρ−tm)∣−∣g1(ρ)∣−∣g2(ρ)∣)dρ=∣qm∣tmlimε→0+∫tm−εtm+εδ(ρ−tm)dρ−tmlimε→0+∫tm−εtm+ε∣g1(ρ)∣dρ−tmlimε→0+∫tm−εtm+ε∣g2(ρ)∣dρ=∣qm∣tm.
+
+Combining (14) and (15), we have (16) ∣qm∣tm≤LS≤∣qm∣tm,
+
+which implies that LS = |qm| tm.
+
+Theorem 2.2
+
+In the CS framework, an interior ROI of a circular symmetric piecewise constant function f(ρ) can be exactly determined by minimizing the total variation defined in Eq. (7).
+
+Proof
+
+For a symmetric and piecewise constant function f(ρ), the TV formula Eq. (5) becomes (17) ftv=2π∫0ρ0|f′(ρ)|ρdρ=2π∑m=1M∣qm∣tm.
+
+Denoting the set of finite discontinuous points of f(ρ) at tm as ID, and the interval [0, ρ0] as I, we express the TV expansion Eq. (7) as (18) f∼tv=|λ|f∼tvg+f∼tvf,
+
+where (19) f∼tvg=∫02πdθ∫I−IDρ(∂g(ρ,θ)∂ρ)2+(∂g(ρ,θ)ρ∂θ)2dρ,
+
+and (20) f∼tvf=∫02πdθ∫IDρ(∑m=1Mqmδ(ρ−tm)+λ∂g(ρ,θ)∂ρ)2+(λ∂g(ρ,θ)ρ∂θ)2dρ.
+
+Eq. (20) can be simplified as (21) f∼tvf=∫02πdθ∑m=1Mlimε→0+∫tm−εtm+ερ(qmδ(ρ−tm)+λ∂g(ρ,θ)∂ρ)2+(λ∂g(ρ,θ)ρ∂θ)2dρ=∫02πdθ∑m=1M∣qm∣tm=2π∑m=1M∣qm∣tm=ftv,
+
+where Lemma 2.3 has been used. Clearly, Eq. (18) reaches the minimal at λ = 0, which implies that exact reconstruction can be performed in terms of TV minimization only from purely local data.
+
+Next, let us consider a general piecewise constant function f(ρ,θ) defined on the compact supported unit disk Ω. Without loss of generality, we assume that Ω can be divided into finite sub-regions Ωn, n = 1,2,…, N, where each sub-region Ωn has a nonzero area measure, on which f(ρ,θ) is a constant. As a result, these sub-regions also define finitely many boundaries in terms of arc-segments, each of which is of a non-zero length and differentiable almost everywhere excluding at most finitely many points. We assume that an interior ROI Ω0 (defined by ρ < ρ0) covers M boundaries and these line segments are denoted as L1, L2,…Lm…,LM. While the length of Lm is denoted as tm > 0, the difference between the two neighboring sub-regions is denoted as qm, which is defined in the same fashion as in Eq. (11). An example is given in Figure 1, where the compact support Ω includes 6 sub-regions and the ROI Ω0 covers 8 arc-segments as boundaries. For a given point r⃗ = (ρ,θ) on an arc-segment Lm, we set up a local coordinate system with the unit direction u⃗ being the tangent direction of Lm on r⃗ and unit the direction v⃗ being the normal direction of Lm on r⃗ (see Figure 2). By the assumption of piecewise constant, f(r⃗) has the maximal directional derivation along the direction v⃗. What is more, the absolute value of the maximal directional derivative μ in a small neighborhood of r⃗ can be written as (22) μ(r→+vv→)=qmδ(v).
+
+On the other hand, we have a global polar system with the unit vectors being ρ⃗ and θ⃗. If we denote the angle between ρ⃗ and v⃗ as γ, the gradient of f(r⃗) along v⃗ in a small neighborhood of r⃗ can be written as qmδ(v)(cos γρ⃗+sin γθ⃗). When the image f(r⃗) is overlapped with a smooth and bounded function g(r⃗) as we mentioned above in Lemmas 2.1 and 2.2., the absolute value of maximal directional derivative along the direction v⃗ for the composited function should be: (23) μ∼(r→+vv→)=(qmδ(v)cosγ+λ∂g(r→+vv→)∂ρ)2+(qmδ(v)sinγ+λ∂g(r→+vv→)ρ∂θ)2.
+
+Lemma 2.4
+
+For two bounded functions g1(r⃗) and g2(r⃗), there will be: (24) limε→0+∫−εε(qmδ(v)cosγ+λg1(r→+vv→))2+(qmδ(v)sinγ+λg2(r→+vv→))2dv=∣qm∣.
+
+Proof
+
+Denoting the left side of Eq. (24) as “LS”, we have (25) LS=limε→0+∫−εε(qmδ(v))2+(λg1(r→+vv→))2+(λg2(r→+vv→))2+2λqmδ(v)(cosγg1(r→+vv→)+sinγg2(r→+vv→))dv≤limε→0+∫−εε∣qmδ(v)∣(∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣+∣qmδ(v)∣)+(λg1(r→+vv→))2+(λg2(r→+vv→))2dv≤limε→0+∫−εε(∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣+∣qmδ(v)∣)2+(λg1(r→+vv→))2+(λg2(r→+vv→))2dv≤limε→0+∫−εε(∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣+∣qmδ(v)∣+∣λg1(r→+vv→)∣+∣λg2(r→+vv→)∣)dv=limε→0+∫−εε∣qmδ(v)∣dv+limε→0+∫−εε∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣dv+limε→0+∫−εε∣λg1(r→+vv→)∣dv+limε→0+∫−εε∣λg2(r→+vv→)∣dv=∣qm∣+0+0+0=∣qm∣,
+
+where we have used the facts that λ, g1(r⃗) and g2(r⃗) are bounded. On the other hand, (26) LS=limε→0+∫−εε(qmδ(v))2+(λg1(r→+vv→))2+(λg2(r→+vv→))2+2λqmδ(v)(cosγg1(r→+vv→)+sinγg2(r→+vv→))dv≥limε→0+∫−εε∣qmδ(v)∣(∣qmδ(v)∣−∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣)+(λg1(r→+vv→))2+(λg2(r→+vv→))2dv≥limε→0+∫−εε(∣qmδ(v)∣−∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣)2+(λg1(r→+vv→))2+(λg2(r→+vv→))2dv≥limε→0+∫−εε(∣qmδ(v)∣−∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣−(λg1(r→+vv→))2+(λg2(r→+vv→))2)dv=limε→0+∫−εε∣qmδ(v)∣dv−limε→0+∫−εε∣2λ(cosγg1(r→+vv→)+sinγg2(r→+vv→))∣dv−limε→0+∫−εε(λg1(r→+vv→))2+(λg2(r→+vv→))2dv=∣qm∣−0−0=∣qm∣.
+
+Combining Eqs. (25) and (26), we must have LS = |qm|.
+
+Theorem 2.3
+
+In the CS framework, an interior ROI of a general compactly supported function f(r⃗) can be exactly determined by minimizing the total variation defined by Eq.(7) if f(r⃗) can be decomposed into finitely many constant sub-regions.
+
+Proof
+
+For an ROI Ω0 of a general piecewise constant function f(r⃗), the TV formula Eq. (5) becomes (27) ftv=∬Ω0μ(r→)dr→=∑m=1M∫Lmμ(r→)dr→.
+
+To compute ∫Lmμ(r→)dr→, we consider a curved strip ΩLm the central axis Lm and width 2ε (see Figure 3). Using the result of Eq. (22), we have (28) ∫Lmμ(r→)dr→=limε→0+∬ΩLmμ(r→)dr→=tmlimε→0+∫−εε∣qmδ(v)∣dv=tm∣qm∣,
+
+and (29) ftv=∬Ω0μ(r→)dr→=∑m=1M∣qm∣tm,
+
+where the finite many undifferentiable points do not affect the integral result. After the introduction of g(r⃗) as discussed in Lemmas 2.1 and 2.2, the TV expression Eq. (7) becomes (30) f∼tv=∣λ∣f∼tvg+f∼tvf,
+
+where (31) f∼tvg=∬Ω0−Γ(∂g(r→)∂ρ)2+(∂g(r→)ρ∂θ)2dr→,Γ=∪m=1MLm,
+
+and (32) f∼tvf=∑m=1M∫Lmμ∼(r→)dr→.
+
+Using the same strategy for computing ∫Lmμ(r→)dr→ and Lemma 2.4, we immediately obtain that (33) f∼tvf=∑m=1M∣qm∣tm=ftv.
+
+Clearly, Eq. (30) reaches the minimal at λ = 0, which implies Theorem 2.3.
+
+Two comments are in order on the above theorems. First, the above results are independent of scanning geometries and coordinate systems although we have assumed the parallel-beam geometry and polar coordinate system. Second, if we change the parameter λ to a smooth and bounded function λ(ρ,θ), the same results can be proved.
+
+III. Algorithm Development
+
+To verify the theoretical results in Section II, we developed a numerical interior tomography algorithm in the CS framework. The algorithm consists of two major steps. In the first step, the ordered-subset simultaneous algebraic reconstruction technique (OS-SART) (Wang and Jiang, 2004) was used to reconstruct a digital image fm,n = f(mΔ, nΔ) based on all the truncated local projections, where Δ represents the sampling interval, m and n are integers. In the second step, we minimize the ℓ1 norm for a given sparsifying transform of the discrete image fm,n using the standard steepest descent method. These two steps were iteratively performed in an alternating manner. Specifically, the algorithm can be summarized in the following pseudo-code:
+
+α:= 0.005, αs: 0.997, PTV: 5;
+
+k: 0, fm,n0, PART:= 20 ;
+
+Repeat the main loop (OS-SART Reconstruction and Minimizing TV)
+
+k:= k + 1; fm,nk:=fm,nk−1
+
+For part = 1 to PART do
+
+Update fm,nk by OS-SART using the projections in the part subset;
+
+For ptv = 1 to PTV do
+
+Computing the steepest decent direction dm n;
+
+β:=max(∣fm,nk∣)÷max(∣dm,n∣);
+
+fm,nk=fm,nk−α×β×dm,n;
+
+α = α × αs;
+
+End for (ptv)
+
+End for (part)
+
+Until the stopping criteria are satisfied.
+
+Because the OS-SART technique was discussed in our previous paper (Wang and Jiang, 2004), here we only explain the second step in the above pseudo-code. Line 1 initializes the control parameters α, αs and PTV for the minimization of TV, where α represents the maximal step for the steepest descent, αs the decreasing scale of α after each computation, and PTV the local loop time. Line 2 initializes the reconstructed image, the main loop count k and the number of subsets PART for OS-SART. Lines 5-13 perform the OS-SART reconstruction. Line 6 updates fm,nk using the OS-SART technique, where only the projections in one subset are used. Lines 7-12 define the local loop to minimize the ℓ1 norm. Line 8 computes the steepest decent direction dm,n, of fTV. For the discrete gradient transform, the magnitude of the gradient can be approximately expressed as: (34) μm,n≅(fm+1,n−fm,n)2+(fm,n−fm−1,n)2+(fm,n+1−fm,n)2+(fm,n−fm,n−1)22∇2.
+
+Correspondingly, the total variation can be defined as fTV=∑m∑nμm,n. Then, we have the steepest descent direction defined by (35) dm,n=∂fTV∂fm,n=4fm,n−fm+1,n−fm−1,n−fm,n+1−fm,n−1μm,n+fm,n−fm+1,nμm+1,n+fm,n−fm−1,nμm−1,n+fm,n−fm,n+1μm,n+1+fm,n−fm,n−1μm,n−1.
+
+For another sparsifying transform, we can deduce the corresponding dm,n, easily. Line 9 computes the normalized factor β which is the ratio between the maximum absolute values of fm,nk and dm,n. Lines 10 and 11 update fm,nk and α, respectively. Line 14 decides if the main loop should be stopped or not. The stopping criteria may include the iteration time, convergence speed, total variation, image quality, etc.
+
+Our algorithm was numerically implemented in MatLab on a PC (4.0 Gigabyte memory, 3.16G Hz CPU). While the basic structure was constructed in MatLab, all the computationally intensive parts were coded in C, which was linked via a MEX interface. A maximal iteration time was set to stop the main loop. Because many biomedical images can be approximately modeled as piecewise constants, we employed the commonly used discrete gradient transform in the numerical simulation and animal experiment. To avoid the singularity when computing dm,n, using Eq. (35), we added a small constant to Eq.(34) when computing the gradient μm,n. That is, (36) μm,n≅(fm+1,n−fm,n)2+(fm,n−fm−1,n)2+(fm,n+1−fm,n)2+(fm,n−fm,n−1)22∇2+ε2.
+
+In our numerical simulation, we assumed a circular scanning locus of radius 57.0 cm and a fan-beam imaging geometry. We also assumed an equi-spatial virtual detector array of length 12.0 cm. The detector was centered at the system origin and made always perpendicular to the direction from the system origin to the x-ray source. The detector array included 360 elements, each of which is of aperture 0.033 cm. This scanning configuration covered a circular FOV of radius 5.967 cm. For a complete scanning turn, we equi-angularly collected 1300 projections. The reconstructed object was a 2D modified Shepp-logan phantom. This phantom is piecewise constant and includes a set of smooth ellipses whose parameters are listed in Table 1, where a,b, represent the x, y semi-axes, (x0, y0) the center of the ellipse, ω denotes the rotation angle, f the relative attenuation coefficient. The units for a b, and (x0, y0) are cm. The reconstructed images were in a 256×256 matrix covering an FOV of radius 10 cm. The 60 iterations took 60 minutes. For comparison, we also reconstructed an image using a local FBP method with smooth extrapolation from the truncated projections into missing data. Some typical reconstructed images were shown in Figure 4. The typical profiles were in Figure 5. As seen from Figures 4 and 5, the reconstructed images from the proposed algorithm are in a high precision inside the ROI.
+
+To demonstrate the real-world application of the proposed algorithm, we performed a CT scan of a living sheep, which was approved by Virginia Tech IACUC committee. The chest of a sheep was scanned in fan-beam geometry on a SIEMENS 64-Slice CT scanner (100kVp, 150mAs). The x-ray source trajectory of radius 57.0 cm was used. There were 1160 projections uniformly collected over a 360° range, and 672 detectors were equi-angularly distributed per projection. Thus, the FOV of radius 25.05 cm was formed. First, an entire 29.06 cm by 29.06 cm cross-section was reconstructed into 1024 ×1024 pixels using the popular FBP method from a complete dataset of projections. Second, a trachea was selected in reference to the reconstructed image. Around the trachea, a circular ROI of radius 120 pixels was specified. Then, only the projection data through the ROI were kept to simulate an interior scan. Third, the ROI was reconstructed by the local FBP with smooth data extrapolation and our proposed algorithms, respectively. The results were in Figures 6. Comparing the images in Figure 6, we observe that the proposed algorithm not only keeps image accuracy but also suppresses image noise.
+
+IV. Discussions and Conclusion
+
+There are still some differences between the phantom and reconstructed images (see Fig. 5 (b)). These artifacts in the CS-based reconstruction may be due to the following two sources. First, from the viewpoint of signal processing, the sampling process involved in the digitations can be interpreted as a truncation function in the frequency domain. The reconstructed images will not satisfy the piecewise constant condition due to the high-frequency truncation. Second, the reconstruction results will converge to the real values only after an infinite number of iterations. These two problems are also our opportunities to refine CS-based methods in the future. Since our paper is the first of its kind in terms of exact interior tomography, our numerical implementation of the iterative reconstruction algorithm is relatively preliminary. Neither the codes nor the control parameters have been optimized, needless to say the stopping criteria. Thus, we plan to perform optimizations over these issues in follow-up papers. Theoretically speaking, the gradient magnitude of a piecewise constant function will be infinite on the boundaries of different sub-regions. Using the Lambda tomography technique (Yu and Wang, 2006), we can identify these boundaries and handle them differently. Very likely, this type of special processing will give us superior reconstruction performance.
+
+In this paper, we have established the feasibility of exact interior tomography via the total variation minimization in the CS framework. Our theoretical analysis has shown that exact ROI reconstruction is possible for a piecewise constant function. All the analyses in this paper have assumed that the image can be modeled in an appropriate functional form, which is a kind of prior information different from that in our previous papers (Ye et al., 2007b; Ye et al., 2008; Ye et al., 2007a; Yu et al., 2008). In the near future, we plan to introduce more prior information into the CS framework, such as low resolution image, a partially known image inside the ROI, the average intensity and standard deviation, etc. More generally, our overall intuition is that when we have strong knowledge on an interior ROI so that there is explicitly or implicitly a sparse representation of the true image on the ROI, an exact and stable interior reconstruction of the ROI should be achieved definitely or with a high probability. The key is always to define an appropriate sparsifying transform and an associated objective function. Then, among many solutions to the interior problem, the true one (or its good approximation) can be identified. For example, an image on the ROI is often compressible using the wavelet transform. That is, the desired interior reconstruction indeed has a sparse presentation, at least approximately. In this setting, it would be very interesting to develop a CS approach for interior tomography without any need for precise knowledge on a subregion in the ROI. We are actively working on this type of topics.
+
+Furthermore, in the same spirit of the proofs in Section II by defining a different sparisfying transform μ, our results can be extended to some interesting families of functions. Particularly, we have the following conjectures 4.1, 4.2 and 4.3.
+
+Conjecture 4.1
+
+Consider a circular symmetric f(ρ) ≥ 0 defined on the support [0,1]. Suppose that [0,1] can be divided into finitely many sub-intervals on each of which f(ρ) can be expressed as: (37) f(ρ)=∑k=0KCkρk,K≥0,
+
+where Ck are constants. In the CS framework, an interior ROI can be exactly determined by minimizing the ℓ1 norm if we define a sparsifying transform as (38) μ(ρ,θ)=(∂K+1f(ρ,θ)∂ρK+1)2+(∂K+1f(ρ,θ)ρK+1∂θK+1)2.
+
+Conjecture 4.2
+
+Consider a general function f(x, y) ≥ 0 defined on the compact support Ω. Suppose that Ω can be divided into finitely many sub-regions on each of which f(x, y) can be expressed as: (39) f(x,y)=∑k=0K(Ckxxk+Ckyyk),K≥0,
+
+where Ckx and Cky are constants. In the CS framework, an interior ROI can be exactly determined by minimizing the ℓ1 norm if we define a sparsifying transform as (40) μ(x,y)=(∂K+1f(x,y)∂xK+1)2+(∂K+1f(x,y)∂yK+1)2.
+
+Conjecture 4.3
+
+Consider a general function f(x, y) ≥ 0 defined on the compact support Ω. Suppose that Ω can be divided into finitely many sub-regions on each of which f(x, y) has a constant Gaussian curvature κ(x, y) defined as: (41) κ(x,y)=∂2f(x,y)∂x2∂2f(x,y)∂y2−(∂2f(x,y)∂x∂y)2(1+(∂f(x,y)∂x)2+(∂f(x,y)∂y)2)2.
+
+In the CS framework, an interior ROI can be exactly determined by minimizing the ℓ1 norm if we define a sparsifying transform as (42) μ(x,y)=(∂κ(x,y)∂x)2+(∂κ(x,y)∂y)2.
+
+It should be pointed out that Eqs. (38) and (40) are the same thing when K = 0 because they represent the gradient magnitude. Eqs. (41) and (42) are independent of the coordinate system. While Conjecture 4.1 can be proved similar to that of Theorem 2.2, Conjectures 4.2 and 4.3 can be proved similar to that of Theorem 2.3. The major difference lies in that the operations of the higher order derivatives of Dirac delta function must be involved.
+
+In conclusion, we have performed a theoretical analysis for interior tomography in the CS framework, and showed for the first time that exact knowledge on a sub-region of an ROI is not necessary for exact and stable interior reconstruction. Our numerical and experimental data have validated our theoretical analysis and algorithmic implementation, and demonstrated that our approach may have a great potential in medical, industrial and other applications. Furthermore, our work suggests a new direction of interior tomography, and more efforts and results are warranted.
+
+Figures and Table
+
+Figure 1 Piecewise constant function on a compact support.
+
+Figure 2 Fixed point on an arc-segment in the global and local coordinate systems.
+
+Figure 3 Illustration for the computation of Eq. (28).
+
+Figure 4 Reconstructed images of a modified Shepp-logan phantom after 60 iterations. (a) The original phantom, (b) the reconstruction using the local FBP (after smooth data extrapolation), and (c) the reconstruction using the proposed CS-based interior tomography algorithm. The display window is [0.1, 0.4].
+
+Figure 5 Typical profiles along the white lines in Figure 4.
+
+Figure 6 Reconstructed images from a sheep chest CT scan after 60 iterations. (a) The image reconstructed using FBP from complete projections, (b) the reconstruction using local FBP (after smooth data extrapolation), and (c) the reconstruction using the proposed CS-based interior tomography algorithm. The display window is [-800HU, 700HU].
+
+Table 1 Parameters of the 2D modified Shepp-logan phantom
+
+No.	a	b	x0	y0	ω	f	
+1	6.900	9.200	0	0	0	1.0	
+2	6.624	8.740	0	-0.184	0	-0.8	
+3	1.100	3.100	2.200	0	-18.0	-0.2	
+4	1.600	4.100	-2.200	0	18.0	-0.2	
+5	2.100	2.500	0	3.500	0	0.1	
+6	0.460	0.460	0	1.000	0	0.1	
+7	0.460	0.460	0	-0.100	0	0.1	
+8	0.460	0.230	-0.800	-6.050	0	0.1	
+9	0.230	0.230	0	-6.060	0	0.1	
+10	0.230	0.460	0.600	-6.060	0	0.1	
+11	2.000	0.400	5.000	-5.200	60.5	-0.2	
+
+This work is partially supported by NIH/NIBIB grants (EB002667, EB004287, EB007288).
+
+
+Candes EJ Romberg J Tao T 2006 Robust uncertainty principles: Exact signal reconstruction from highly incomplete frequency information IEEE Transactions on Information Theory 52 489 509
+Chen GH Tang J Leng S 2008 Prior image constrained compressed sensing (PICCS): A method to accurately reconstruct dynamic CT images from highly undersampled projection data sets Medical Physics 35 660 3 18383687 10.1118/1.2836423 PMC2655145
+Courdurier M Noo F Defrise M Kudo H 2008 Solving the interior problem of computed tomography using a priori knowledge Inverse Problems 24 Article ID 065001, 27 pages 10.1088/0266-5611/24/6/065001 PMC2897149 20613970
+Defrise M Noo F Clackdoyle R Kudo H 2006 Truncated Hilbert transform and image reconstruction from limited tomographic data Inverse Problems 22 1037 53
+Donoho DL 2006 Compressed sensing IEEE Transactions on Information Theory 52 1289 306
+Kudo H Courdurier M Noo F Defrise M 2008 Tiny a priori knowledge solves the interior problem in computed tomography Phys Med Biol 53 2207 31 18401067 10.1088/0031-9155/53/9/001
+Natterer F 2001 The Mathematics of Computerized Tomography Philadelphia Society for Industrial and Applied Mathematics
+Noo F Clackdoyle R Pack JD 2004 A two-step Hilbert transform method for 2D image reconstruction Physics in Medicine and Biology 49 3903 23 15470913 10.1088/0031-9155/49/17/006
+Parker DL 1982 Optimal short scan convolution reconstruction for fan beam CT Med Phys 9 254 7 7087912 10.1118/1.595078
+Rudin LI Osher S Fatemi E 1992 Nonlinear Total Variation Based Noise Removal Algorithms Physica D 60 259 68
+Wang G Jiang M 2004 Ordered-Subset Simultaneous Algebraic Reconstruction Techniques (OS-SART) Journal of X-ray Science and Technology 12 169 77
+Wang G Li Y Jiang M 2004 Uniqueness theorems in bioluminescence tomography Medical Physics 31 2289 99 15377096 10.1118/1.1766420
+Wang G Ye YB Yu HY 2007 General VOI/ROI Reconstruction Methods and Systems using a Truncated Hilbert Transform Patent disclosure submitted to Virginia Tech Intellectual Properties on May 15, 2007
+Wang G Yu HY 2008 Methods and Systems for Exact Local CT Based on Compressive Sampling Patent disclosure submitted to Virginia Tech Intellectual Properties on Dec. 20
+Ye YB Yu HY Wang G 2007a Exact Interior Reconstruction with Cone-beam CT International Journal of Biomedical Imaging 2007 Article ID: 10693, 5 pages 10.1155/2007/10693 PMC2235933 18299705
+Ye YB Yu HY Wei Y Wang G 2007b A general local reconstruction approach based on a truncated Hilbert transform International Journal of Biomedical Imaging 2007 Article ID: 63634, 8 pages 10.1155/2007/63634 PMC1987387 18256734
+Ye YB Yu HY Wang G 2008 Exact interior reconstruction from truncated limited-angle projection data International Journal of Biomedical Imaging 2008 Article ID: 427989, 6 pages 10.1155/2008/427989 PMC2383990 18490957
+Yu HY Wang G 2006 A general formula for fan-beam lambda tomography International Journal of Biomedical Imaging 2006 Article ID: 10427, 9 pages 10.1155/IJBI/2006/10427 PMC2324036 23165013
+Yu HY Ye YB Wang G 2008 Local Reconstruction Using the Truncated Hilbert Transform via Singular Value Decomposition Journal of X-Ray Science and Technology 16 243 51 20428482 PMC2860313

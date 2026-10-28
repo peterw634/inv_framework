@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inv-framework"
+version = "0.1.0"
+description = "Composable forward operators and inverse-problem solvers"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["torch>=2.0"]
+
+[project.optional-dependencies]
+diffusion = ["diffusers==0.32.2", "numpy>=1.24", "safetensors>=0.4", "tifffile>=2023.7", "scikit-image>=0.21"]
+nasn = [
+    "torch>=2.1", "numpy>=1.24", "opencv-python-headless>=4.8",
+    "PyYAML>=6", "safetensors>=0.4", "scikit-image>=0.21",
+    "tifffile>=2023.7", "zstandard>=0.21", "ninja>=1.11",
+]
+nasn-train = ["lpips>=0.1.4", "pytorch-msssim>=1.0", "tensorboard>=2.14"]
+test = ["pytest>=7"]
+
+[project.scripts]
+inv-nasn-ct = "inv_framework.applications.nasn_ct.cli:main"
+inv-nasn-ct-train = "inv_framework.applications.nasn_ct.training.train:entrypoint"
+
+[tool.setuptools.packages.find]
+include = ["inv_framework*"]
+
+[tool.setuptools.package-data]
+"inv_framework.operators.ct.radon_cuda" = ["*.cpp", "*.cu"]
+"inv_framework.applications.nasn_ct" = ["configs/*.yaml", "manifests/*.json"]
+
+[tool.setuptools]
+license-files = ["LICENSES/*.txt", "THIRD_PARTY_NOTICES.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

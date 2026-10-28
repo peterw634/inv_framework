@@ -1,0 +1,15 @@
+{
+  "scope": "TIFF files under each raw Projection directory",
+  "training": {
+    "scan1": {"tomo": 1523, "flat": 11, "dark": 291, "files": 1825, "bytes": 8501657072},
+    "scan2": {"tomo": 1523, "flat": 13, "dark": 0, "files": 1536, "bytes": 7155462144},
+    "scan3": {"tomo": 1523, "flat": 11, "dark": 0, "files": 1534, "bytes": 7146145136},
+    "scan4": {"tomo": 1523, "flat": 17, "dark": 0, "files": 1540, "bytes": 7174096160}
+  },
+  "target": {
+    "scan1": {"tomo": 900, "flat": 3, "dark": 0, "files": 903, "bytes": 10003152264},
+    "scan2": {"tomo": 900, "flat": 3, "dark": 0, "files": 903, "bytes": 10003152264},
+    "scan3": {"tomo": 900, "flat": 3, "dark": 0, "files": 903, "bytes": 10003152264},
+    "scan4": {"tomo": 900, "flat": 3, "dark": 0, "files": 903, "bytes": 10003152264}
+  }
+}

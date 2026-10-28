@@ -1,0 +1,553 @@
+
+JOURNAL INFORMATION
+==============================
+NLM Title Abbreviation: Inverse Probl
+NLM Journal ID: 101189510
+
+Inverse problems
+
+ISSN: 0266-5611
+
+ARTICLE INFORMATION
+==============================
+PMCID: PMC2857378
+Article ID: NIHMS192276
+PMID: 20411159
+DOI: 10.1088/0266-5611/26/3/035013
+Article ID: NIHMS192276
+Article ID: NIHPA192276
+Article version: 1
+Subjects: Article
+
+High Order Total Variation Minimization for Interior Tomography
+
+Yang Jiansheng 1 2
+Yu Hengyong 2
+Jiang Ming 1 2
+Wang Ge 2
+1 LMAM, School of Mathematical Sciences, Peking University, Beijing 100871, P.R. China
+2 Biomedical Imaging Division, VT-WFU School of Biomedical Engineering and Sciences Virginia Tech, Blacksburg, VA 24061, USA
+jsyang@pku.edu.cn, hengyong-yu@ieee.org, ming-jiang@ieee.org, ge-wang@ieee.org
+Print publication date: 2010 Jan 1
+Volume: 26
+Issue: 3
+First page: 350131
+Last page: 3501329
+Author manuscript; available in PMC: 2010 Apr 20
+
+Keywords: Interior tomography, compressive sensing, total variation (TV), high order TV
+
+License: This file is available for text mining. It may also be used consistent with the principles of fair use under the copyright law.
+
+==============================
+Recently, an accurate solution to the interior problem was proposed based on the total variation (TV) minimization, assuming that a region of interest (ROI) is piecewise constant. In this paper, we generalize that assumption to allow a piecewise polynomial ROI, introduce the high order TV (HOT), and prove that an ROI can be accurately reconstructed from projection data associated with x-rays through the ROI through the HOT minimization if the ROI is piecewise polynomial. Then, we verify our theoretical results in numerical simulation.
+
+I. Introduction
+
+While classic CT theory targets exact reconstruction of a whole cross-section or an entire object from un-truncated projections, practical applications often focus on much smaller regions of interest (ROIs). Classic CT theory cannot exactly reconstruct an internal ROI only from truncated projections associated with x-rays through the ROI because this interior problem does not have a unique solution [1-2]. When applying traditional CT algorithms for interior reconstruction from truncated projection data, features outside the ROI may seriously disturb inside features and often hide diagnostic information.
+
+Over past decades, lambda tomography has been extensively studied [3-5][6-10] but it only targets gradient-like features and has not been well received in the biomedical community. In recent work, Ye et al. found that the interior problem can be exactly and stably solved if a sub-region in the ROI is known [11]. Similar results were also independently reported by other researchers [12-13]. However, it can be difficult to obtain precise prior knowledge of a sub-region in many cases such as cardiac CT perfusion studies.
+
+The classic Nyquist sampling theorem states that one must sample a signal at least twice faster than its bandwidth to keep all the information. Surprisingly, an emerging theory – compressive sensing (CS) – promises to capture compressible signals at a much lower rate than the Nyquist rate and yet allows accurate reconstruction of such a signal from a limited number of samples [14-15]. The main idea of CS is that most signals are sparse in appropriate orthonormal systems, that is, a majority of their coefficients are close or equal to zero. Typically, CS starts with taking a limited amount of representative measures, and then recovers a signal with an overwhelming probability via the ℓ1 norm minimization. Since the number of samples is limited, recovery of the signal or image would involve solving an underdetermined matrix equation. That is, there are many candidate solutions that can all well fit the incomplete measurement. Thus, some additional constraint is needed to select the “best” candidate. While the classic solution is to minimize the ℓ2 norm, Donoho, Candes, Romberg and Tao showed that finding the candidate with the minimum ℓ1 norm, which leads to the TV minimization in some cases, is most likely the correct choice [14-15].
+
+Under the guidance of CS theory, we recently demonstrated that exact interior reconstruction could be achieved if an ROI is piecewise constant [16-19]. Inspired by these results, here we extend their work to utilize more general prior knowledge for interior tomography. Specifically, we will prove that if an ROI is piecewise polynomial, then the interior problem can be accurately solved through the high order TV (HOT) minimization.
+
+The organization of this paper is as follows. In the next section, the interior problem will be defined. In the third section, our theoretical findings will be presented. In the fourth section, numerical results will be described to support our methodology. In the last section, related issues will be discussed.
+
+II. Interior Problem
+
+Without loss of generality, we assume the following conditions throughout this paper: Condition (1) An object image f0(x) is compactly supported on a disc ΩA={x=(x1,x2)∈R2:∣x∣<A}, where A is a positive constant. Furthermore, f0(x) is a piecewise smooth function; that is, ΩA can be partitioned into finitely many sub-domains {Dj}j=1N0, such that f0(x) is smooth with bounded derivatives in each Dj;
+
+Condition (2) An internal ROI is a smaller disc Ωa={x=(x1,x2)∈R2:∣x∣<a}, as shown in Fig. 1, where a is a positive constant and a < A;
+
+Condition (3) Projections through the ROI (1) Rf0(s,θ)=∫−∞∞f0(sθ+tθ⊥)dt,−a<s<a,θ∈S1,
+
+are available, where θ = (cos φ, sin φ), θ⊥ = (−sin φ, cos φ), 0 ≤ φ < 2π.
+
+The interior problem is to find an image f(x) such that Condition (4) f(x) is a piecewise smooth function and compactly supported on the disc ΩA;
+
+Condition (5) Rf(s,θ) = Rf0(s,θ), −a < s < a, θ ∈ S1.
+
+It is well known that under the conditions (4) and (5) the interior problem does not have a unique solution [1-2]. The following theorem characterizes the structure of solutions to the interior problem.
+
+Theorem 1. Any image f(x) satisfying Conditions (4) and (5) can be written as f(x) = f0(x) + u(x) for x∈R2, where u(x) is an analytic function in the disc Ωa, and Ru(s,θ)=0,−a<s<a,θ∈S1.
+
+We call such an image f(x) a candidate image, and correspondingly u(x) an ambiguity image.
+
+Proof: Let u(x) = f(x)–f0(x). Clearly, u(x) is a piecewise smooth function and compactly supported on the disc ΩA, and (2) Ru(s,θ)=0,−a<s<a,θ∈S1.
+
+By the well-known Radon inversion formula, we have (3) u(x)=14π2∫02π∫∣s∣≥a∂sRu(θ,s)x•θ−sdsdφ,x∈Ωa.
+
+By the Taylor expansion (4) 1x•θ−s=−1s(1−x•θ∕s)=−∑k=0∞(x•θ)ksk+1,
+
+we obtain (5) u(x)=∑k=0∞∑k1+k2=kck1,k2x1k1x2k2.
+
+Hence, the function u(x) is an analytic function in Ωa. Examples of non-zero ambiguity images can be found in [1].
+
+From now on, let u(x) always represent an ambiguity image unless otherwise stated. Theorem 1 suggests that the interior problem can be solved by utilizing appropriate a priori knowledge. In the following, we will introduce the concept of the high order TV (HOT) and minimize it to solve the interior problem exactly under the assumption that an image f0(x) is a piecewise polynomial function in an ROI Ωa.
+
+III. Theoretical Analysis
+
+If an object image f0(x) is a piecewise polynomial function in an ROI Ωa, we can prove that f0(x) is the only candidate image that minimizes the HOT to be defined by Eqs. (44-45) and (81-82). First, let us prove that if an ambiguity image is a polynomial function in Ωa, then it must be zero. This result will be formally stated as Theorem 2. In order to prove Theorem 2, we will need Lemmas 1 and 2.
+
+Lemma 1. Suppose that a is a positive constant. If (a) g(z) is an analytic function in C\(−∞,−a]∪[a,+∞);
+
+(b) p(x) is a polynomial function;
+
+(c) g(x)=1πp.v∫∣t∣<ap(t)x−tdt, for x ∈ (−a,a),
+
+then limy→0+Im(g(x+iy))=p(x), for x∈(−∞,−a)∪(a,+∞).
+
+Proof: Since g(z) is uniquely determined by its value on interval (−a,a) and (6) g(x)=1πp.v∫∣t∣<ap(t)x−tdt,forx∈(−a,a),
+
+g(z) is uniquely determined by p(x) for x ∈ (−a,a). Let g(z) be denoted by gn(z) with respect to p(x) = xn. Because of the linear relationship between g(z) and p(x), it suffices to prove the lemma in the case p(x) = xn (n = 0, 1, 2,···). That is, we need to prove (7) limy→0+Im(gn(x+iy))=xn,forx∈(−∞,−a)∪(a,+∞),n=0,1,2,⋯.
+
+Let us proceed by induction with respect to n . When n = 0 , that is, p(x) = 1, we have (8) g0(x)=1πp.v∫∣t∣<a1x−tdt=1π(ln(a+x)−ln(a−x)),forx∈(−a,a).
+
+Hence, (9) g0(z)=1π(ln(a+z)−ln(a−z)),forz∈C\(−∞,−a]∪[a,+∞),
+
+where the principal value interval for the logarithm function is (−π,π). That is, (10) ln(a+z)=ln∣a+z∣+iarg(a+z),−π<arg(a+z)<π,forz∈C\(−∞,−a],
+
+and (11) ln(a−z)=ln∣a−z∣+iarg(a−z),−π<arg(a−z)<π,forz∈C\[a,+∞).
+
+As shown in Fig. 2, arg(a − z1) approaches −π when arg(a + z1) is close to −π, and arg(a − z2) approaches π when arg(a + z2) is close to π. Clearly, (12) Im(g0(z))=1π(arg(a+z)−arg(a−z)),forz∈C\(−∞,−a]∪[a,+∞).
+
+Since (13) limy→0+arg(a+x+iy)=π,limy→0+arg(a−x−iy)=0,forx∈(−∞,−a)
+
+and (14) limy→0+arg(a+x+iy)=0,limy→0+arg(a−x−iy)=−π,forx∈(a,∞),
+
+we have (15) limy→0+Im(g0(x+iy))=1,forx∈(−∞,−a)∪(a,+∞).
+
+For n > 0 and x ∈(−a,a), we have (16) gn(x)=1πp.v∫∣t∣<atnx−tdt=1πp.v∫∣t∣<a(tn−xtn−1)+xtn−1x−tdt=−1π∫∣t∣<atn−1dt+xπp.v∫∣t∣<atn−1x−tdt=−1nπ(an−(−a)n)+xgn−1(x).
+
+Therefore, (17) gn(z)=−1nπ(an−(−a)n)+zgn−1(z),forz∈C\(−∞,−a]∪[a,+∞),
+
+and (18) Im(gn(z))=Im(zgn−1(z)),forz∈C\(−∞,−a]∪[a,+∞).
+
+For x∈(−∞,−a)∪(a,+∞) and y > 0 , we have (19) Im(gn(x+iy))=xIm(gn−1(x+iy))+yRe(gn−1(x+iy)),
+
+and (20) limy→0+Im(gn(x+iy))=xlimy→0+Im(gn−1(x+iy))=x2limy→0+Im(gn−2(x+iy))=⋯=xnlimy→0+Im(g0(x+iy))=xn,
+
+which completes the proof of Lemma 1.
+
+Lemma 2. Suppose that a and A are positive constants with a < A. If a function v(x) satisfies (d) v(x) is bounded with supp v ⊆ [−A,A];
+
+(e) v(x) = p(x) for x ∈ (−a,a), where p(x) is a polynomial function;
+
+(f) Hv(x) = 0, for x ∈ (−a,a), where Hv(x) is the Hilbert transform of v(x), that is, Hv(x)=1πp.v.∫Rv(t)x−tdt,
+
+then v(x) = 0, for x ∈ (−∞,∞).
+
+Proof: The function (see Corollary 4.1.2 on page 40 in [20]) (21) g(z)=1π∫∣t∣≥av(t)t−zdt,
+
+is analytic on C\(−∞,−a]∪[a,+∞). Since (22) 1t−(x+iy)=t−x+iy(t−x)2+y2,
+
+we have (23) Im(g(x+iy))=1π∫∣t∣≥ay(t−x)2+y2v(t)dt=1π∫Ry(t−x)2+y2v~(t)dt=1π∫R1(t−xy)2+1v~(t)d(t−xy)=1π∫R1τ2+1v~(x+τy)dτ,fory>0,
+
+where (24) v~(x)={v(x),x∈(−∞,−a)∪(a,∞)0,x∈[−a,a]}.
+
+Because ṽ(x) can be written as (25) v~(x)=1π∫R1τ2+1v~(x)dτ,
+
+we have (26) limy→0+∫R∣Im(g(x+iy))−v~(x)∣dx≤limy→0+{1π∫R‖v~(•+τy)−v~(•)‖1τ2+1dτ}=0,
+
+where (27) ‖v~(•+τy)−v~(•)‖1=∫R∣v~(x+τy)−v~(x)∣dx.
+
+Therefore, (28) limy→0+Im(g(x+iy))=v~(x)=v(x),
+
+for x∈(−∞,−a)∪(a,∞) almost everywhere (a.e.).
+
+By Condition (f), we have (29) g(x)=1πp.v∫Rv(t)t−xdt−1πp.v∫∣t∣<av(t)t−xdt=Hv(x)+1πp.v∫∣t∣<ap(t)x−tdt=1πp.v∫∣t∣<ap(t)x−tdt,forx∈(−a,a).
+
+By Lemma 1, we obtain (30) limy→0+Im(g(x+iy))=p(x),forx∈(−∞,−a)∪(a,+∞).
+
+Combining Eq. (28), (30) and Condition (e), we have (31) v(x)=p(x),fora.e.x∈(−∞,∞).
+
+Condition (d) and Eq. (31) imply p(x) ≡ 0. Hence, v(x) = 0, for a.e. x ∈ (−∞,∞), which completes the proof.
+
+Theorem 2. If an ambiguity image u(x) satisfies (g) u(x) = p(x) for x ∈Ωa, where p(x) is a 2-D polynomial function;
+
+(h) Ru(s,θ) = 0, for s ∈ (−a,a), θ ∈ S1,
+
+then u(x) = 0.
+
+Proof: As illustrated in Fig. 3, for an arbitrary φ0 ∈[0,π), let Lθ0 denote the line through the origin and tilted by θ0 = (cos φ0, sin φ0). When u(x) is restricted to the line Lθ0, it can be expressed as (32) vθ0(t)=u(t(cosφ0,sinφ0)),t∈(−∞,∞).
+
+By the relationship between the differentiated backprojection of projection data and the Hilbert transform of an image [21-22], we have (33) Hvθ0(t)=−12π∫φ0−π2φ0+π2∂Ru(s,θ)∂s∣s=xθ0t⋅θdφ,
+
+where xθ0t=t(cosφ0,sinφ0), θ = (cos φ, sin φ).
+
+By Condition (g) and Eq. (32), we have (34) vθ0(t)=p(t(cosφ0,sinφ0)),fort∈(−a,a),
+
+where p(t(cos φ0, sin φ0)) is a polynomial function with respect to t. By Condition (h) and Eq. (33), we have (35) Hvθ0(t)=0,fort∈(−a,a).
+
+By Lemma 2, we obtain that vθ0t = 0, which implies that u(x) = 0.
+
+Now, let us analyze a candidate image under the assumption that f0(x) is a piecewise polynomial function in Ωa.
+
+Theorem 3. Suppose that an object image f0(x) is a piecewise polynomial function in Ωa. If a candidate image f(x) is also a piecewise polynomial function in Ωa, then f(x) = f0(x).
+
+Proof: By Theorem 1, we have that f(x) = f0(x) + u(x), where u(x) is an analytic function in Ωa. On the other hand, by the assumption of Theorem 3, u(x) = f(x) − f0(x) is also a piecewise polynomial function in Ωa. Combining these two facts, u(x) must be a polynomial function in Ωa. Then, by Theorem 2 we have u(x) = 0.
+
+Theorem 3 suggests that f0(x) can be singled out among all candidate images by minimizing some kind of high order TV. For simplicity, let us first assume that an object image f0(x) is a piecewise linear function in Ωa; that is, Ωa can be decomposed into finitely many sub-domains: {Ωi}i=1m (Fig. 4) such that (36) f0(x)=fi(x)=aix1+bix2+ci,forx∈Ωi,1≤i≤m,
+
+and each sub-domain Ωi is adjacent to its neighboring sub-domains Ωj with piecewise smooth boundaries Γi,j,, j ∈ Ni.
+
+If m = 1, that is, f0(x) is a linear function in Ωa, then any candidate image f(x) = f0(x) + u(x) is a smooth function in Ωa. We define the second order TV for any candidate image f(x) of this type as (37) HOT2(f)=∫Ωamin(maxθ∈S1∣dfdθ(x)∣,maxθ∈S1∣d2fdθ2(x)∣)dx1dx2.
+
+where θ = (cos φ, sin φ), φ ∈ [0, 2 π), dfdθ(x)=dfx,θ(t)dt∣t=0, d2fdθ2(x)=d2fx,θ(t)dt2∣t=0 and fx,θ(t) = f(x + tθ), t ∈ (−(ε,ε).
+
+Note that if ∂f∂x1, ∂f∂x2 are continuous at x, then (38) dfdθ(x)=∂f∂x1(x)cosφ+∂f∂x2(x)sinφ.forθ=(cosφ,sinφ)∈S1.
+
+Hence, (39) maxθ∈S1∣dfdθ(x)∣=(∂f∂x1(x))2+(∂f∂x2(x))2.
+
+There also exists a similar formula for maxθ∈S1∣d2fdθ2(x)∣, as represented in the following Lemma.
+
+Lemma 3. Suppose that f(x) is a candidate image. If ∂2f∂x12, ∂2f∂x1∂x2 and ∂2f∂x22 are continuous at x, then (40) maxθ∈S1∣d2fdθ2(x)∣=14(∂2f∂x12(x)−∂2f∂x22(x))2+(∂2f∂x1∂x2(x))2+12∣∂2f∂x12(x)+∂2f∂x22(x)∣.
+
+Proof: If ∂2f∂x12, ∂2f∂x1∂x2 and ∂2f∂x22 are continuous at x, then (41) d2fdθ2(x)=(∂∂x1cosφ+∂∂x2sinφ)2f(x)=∂2f∂x12(x)cos2φ+2∂2f∂x1∂x2(x)cosφsinφ+∂2f∂x22(x)sin2φ=∂2f∂x12(x)(1+cos2φ2)+∂2f∂x1∂x2(x)sin2φ+∂2f∂x22(x)(1−cos2φ2)=12(∂2f∂x12(x)+∂2f∂x22(x))+12(∂2f∂x12(x)−∂2f∂x22(x))cos2φ+∂2f∂x1∂x2(x)sin2φ.
+
+Thus, ∣d2fdθ2(x)∣ reaches its maximum when (42) (cos2φ,sin2φ)=sgn(12(∂2f∂x12(x)+∂2f∂x22(x)))(12(∂2f∂x12(x)−∂2f∂x22(x)),∂2f∂x1∂x2(x))14(∂2f∂x12(x)−∂2f∂x22(x))2+(∂2f∂x1∂x2(x))2.
+
+This leads to Eq. (40).
+
+Combining Eqs. (37), (39) and (40), we have (43) HOT2(f)=∫Ωamin{14(∂2f∂x12−∂2f∂x22)2+(∂2f∂x1∂x2)2+12∣∂2f∂x12+∂2f∂x22∣,(∂f∂x1)2+(∂f∂x2)2}dx1dx2.
+
+where f(x) = f0(x) + u(x), and f0(x) is a linear function in Ωa.
+
+If m > 1, dfdθ(x) or d2fdθ2(x) may not exist on the boundaries ⋃i=1m⋃j>i,j∈NiΓi,j Hence, we need modify the definition Eq. (37) of the second order TV to incorporate jumps of the image f(x) at Γi,j into the second order TV. To address the discontinuity of the first and second order derivatives across internal boundaries, we define the second order TV as the limit of the following sum: (44) HOT2(f)=lim sup(max1≤k≤Mdiam{Qk})→0∑k=1MIk(f),
+
+where {Qk}k=1M is an arbitrary partition of Ωa, diam(Qk) the diameter of Qk, and (45) Ik(f)=min(supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx,supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx).
+
+In the following Lemma, we will derive an explicit formula for HOT2(f ).
+
+Lemma 4. Suppose that an object image f0(x) is a piecewise linear function in Ωa as defined by Eq. (36). For any candidate image f(x) = f0(x) + u(x), we have (46) HOT2(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣(ai−aj)x1+(bi−bj)x2+(ci−cj)∣ds+∫Ωamin{14(∂2f∂x12−∂2f∂x22)2+(∂2f∂x1∂x2)2+12∣∂2f∂x12+∂2f∂x22∣,(∂f∂x1)2+(∂f∂x2)2}dx1dx2,
+
+where the second term is a Lebesgue integral.
+
+Proof: Note that f(x) = f0(x) + u(x), where u(x) is an analytic function. Let {Qk}k=1M be an arbitrary partition of Ωa. First, let us consider Qk which covers a common boundary Γi,j of a pair of neighboring sub-domains Ωi and Ωj, and is contained in Ωi∪Ωj (Fig. 5 (a)). Let θN be the normal vector of the curve Γi,j pointing from Ωj towards Ωi, and <θ,θN > the angle between the vectors θ and θN. For g∈C0∞(Qk), we have (47) ∫Qkf(x)dgdθ(x)dx=∫Qk∩Ωif(x)dgdθ(x)dx+∫Qk∩Ωjf(x)dgdθ(x)dx.
+
+Performing 2-D integration by parts on the two terms of the right-hand side of Eq. (47) respectively, and utilizing the fact that g(x) = 0 near the boundary of Qk, we have (48) ∫Qk∩Ωif(x)dgdθ(x)dx>−∫Γi,j∩Qk(fi(x)+u(x))g(x)cos<θ,θN>ds−∫Qk∩Ωidfdθ(x)g(x)dx,
+
+(49) ∫Qk∩Ωjf(x)dgdθ(x)dx=∫Γi,j∩Qk(fj(x)+u(x))g(x)cos<θ,θN>ds−∫Qk∩Ωjdfdθ(x)g(x)dx.
+
+Inserting Eqs. (48) and (49) into Eq. (47), we obtain (50) ∫Qkf(x)dgdθ(x)dx=∫Γi,j∩Qk(fj(x)−fi(x))g(x)cos<θ,θN>ds−∫Qk∩Ωidfdθ(x)g(x)dx−∫Qk∩Ωjdfdθ(x)g(x)dx.
+
+We have (51) supg∈C0∞(Qk),∣g(x)∣≤1∫Γi,j∩Qk(fj(x)−fi(x))g(x)cos<θ,θN>ds=∫Γi,j∩Qk∣(fj(x)−fi(x))cos<θ,θN>∣ds,
+
+(52) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Γi,j∩Qk(fj(x)−fi(x))g(x)cos<θ,θN>ds=∫Γi,j∩Qk∣fj(x)−fi(x)∣ds+o(1)∣Γi,j∩Qk∣.
+
+where o(1) represents an infinitesimal, satisfying lim(max1≤k≤Mdiam{Qk})→0o(1)=0. Besides, we have (53) ∫Qk∩Ωidfdθ(x)g(x)dx=O(1)∣Qk∩Ωi∣,
+
+(54) ∫Qk∩Ωidfdθ(x)g(x)dx=O(1)∣Qk∩Ωi∣,
+
+where O(1) represents a quantity bounded by a constant which does not depend on Qk. Summing Eqs. (53-54) up, we obtain (55) ∫Qk∩Ωidfdθ(x)g(x)dx+∫Qk∩Ωidfdθ(x)g(x)dx=O(1)∣Qk∣.
+
+Combining Eqs. (50), (52) and (55), we obtain (56) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Γi,j∩Qk∣fj(x)−fi(x)∣ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+Repeatedly performing 2-D integration by parts, for g∈C0∞(Qk), we have (57) ∫Qkf(x)d2gdθ2(x)dx=∫Qk∩Ωif(x)d2gdθ2(x)dx+∫Qk∩Ωjf(x)d2gdθ2(x)dx=∫Γi,j∩Qk(fj(x)−fi(x))dgdθ(x)cos<θ,θN>ds−∫Qk∩Ωidfdθ(x)dgdθ(x)dx−∫Qk∩Ωjdfdθ(x)dgdθ(x)dx=∫Γi,j∩Qk(fj(x)−fi(x))dgdθ(x)cos<θ,θN>ds−∫Γi,j∩Qk(dfjdθ(x)−dfidθ(x))g(x)cos<θ,θN>ds+∫Qk∩Ωid2fd2θ(x)g(x)dx+∫Qk∩Ωjd2fdθ2(x)g(x)dx=∫Γi,j∩Qk(fj(x)−fi(x))dgdθ(x)cos<θ,θN>ds−∫Γi,j∩Qk(dfjdθ(x)−dfidθ(x))g(x)cos<θ,θN>ds+∫Qkd2fdθ2(x)g(x)dx.
+
+For the second term on the right-hand side of Eq. (57), we have (58) supg∈C0∞(Qk),∣g(x)∣≤1∫Γi,j∩Qk(dfjdθ(x)−dfidθ(x))g(x)cos<θ,θN>ds=∫Γi,j∩Qk∣dfjdθ(x)−dfidθ(x)∣cos<θ,θN>ds,
+
+(59) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Γi,j∩Qk(dfjdθ(x)−dfidθ(x))g(x)cos<θ,θN>ds=∫Γi,j∩Qkmaxθ∈S1(∣dfjdθ(x)−dfidθ(x)∣cos<θ,θN>)ds+o(1)∣Γi,j∩Qk∣.
+
+For the third term on the right-hand side of Eq. (57), we have (60) ∫Qkd2fdθ2(x)g(x)dx=O(1)∣Qk∣.
+
+Next, let us evaluate supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx in the following two cases.
+
+Case 1: If there exists some x∈Γi,j∩Qk such that fj(x) − fi(x) ≠ 0, then for θ ∈ S1, an arbitrary real constant C and an arbitrary compact set K⊂Qk, there exists a g∈C0∞(Qk) satisfying |g(x|≤1 and (61) dgdθ(x)=C(fj(x)−fi(x)),forx∈Γi,j∩K,and
+
+we have (62) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Γi,j∩Qk(fj(x)−fi(x))dgdθ(x)cos<θ,θN>ds=+∞.
+
+Combining Eqs. (59), (60) and (62), we obtain (63) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx≥supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Γi,j∩Qk(fj(x)−fi(x))dgdθ(x)cos<θ,θN>ds−supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Γi,j∩Qk(dfjdθ(x)−dfidθ(x))g(x)cos<θ,θN>ds−supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkd2fdθ2(x)g(x)dx=+∞.
+
+Case 2: Otherwise, fj(x) − fi(x) = 0 for any x∈Γi,j∩Qk, and the first term on the right-hand side of Eq. (57) equals 0. Then, we have (64) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx=∫Γi,j∩Qkmaxθ∈S1(∣dfjdθ(x)−dfidθ(x)∣cos<θ,θN>)ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+In this case, we also have (65) ∫Γi,j∩Qk∣fj(x)−fi(x)∣ds=0,
+
+(66) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Γi,j∩Qk∣fj(x)−fi(x)∣ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣=O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+Combining Eqs. (63), (64) and (66), we arrive at the following conclusion: If Qk covers the common boundary Γi,j of a pair of neighboring sub-domains Ωi and Ωj and is contained in Ωi∪Ωj, then (67) Ik(f)=min(supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx,supθ∈S1supθ∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx)=supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Γi,j∩Qk∣fj(x)−fi(x)∣ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣=∫Γi,j∩Qk∣(ai−aj)x1+(bi−bj)x2+(ci−cj)∣ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+Next, let us consider Qk that is completely contained in some sub-domain Ωi (Fig. 5(b)). For g∈C0∞(Qk), performing 2-D integration by parts again we have (68) ∫Qkf(x)dgdθ(x)dx=−∫Qkdfdθ(x)g(x)dx,
+
+(69) ∫Qkf(x)d2gdθ2(x)dx=∫Qkd2fdθ2(x)g(x)dx.
+
+Hence, (70) supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Qk∣dfdθ(x)∣dx,
+
+(71) supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx=∫Qk∣d2fdθ2(x)∣dx.
+
+Furthermore, (72) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Qkmaxθ∈S1∣dfdθ(x)∣dx+o(1)∣Qk∣,
+
+(73) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx=∫Qkmaxθ∈S1∣d2fdθ2(x)∣dx+o(1)∣Qk∣.
+
+Combining Eqs. (72-73), we have (74) Ik(f)=min(supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx,supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)d2gdθ2(x)dx)=∫Qkmin(maxθ∈S1dfdθ(x)dx,maxθ∈S1d2fdθ2(x))dx+o(1)∣Qk∣=∫Qkmin{14(∂2f∂x12−∂2f∂x22)2+(∂2f∂x1∂x2)2+12∣∂2f∂x12+∂2f∂x22∣,(∂f∂x1)2+(∂f∂x2)2}dx1dx2+o(1)∣Qk∣,
+
+where we have used the fact that f0(x) is a piecewise linear function, ∂2f∂x12, ∂2f∂x1∂x2 and ∂2f∂x22 are continuous at x∈Ωa\⋃i=1m⋃j>1,j∈NiΓi,j. Combining (67) and (74), we obtain (75) ∑k=1MIk(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣(ai−aj)x1+(bi−bj)x2+(ci−cj)∣ds+∫Ωamin{14(∂2f∂x12−∂2f∂x22)2+(∂2f∂x1∂x2)2+12∣∂2f∂x12+∂2f∂x22∣,(∂f∂x1)2+(∂f∂x2)2}dx1dx2+O(1)(∑i=1m∑j>i,j∈Ni∣Γi,j∣)(max1≤k≤Mdiam{Qk})+o(1)∣Ωa∣.
+
+Therefore, we have (76) HOT2(f)=lim sup(max1≤k≤Mdiam{Qk})→0∑k=1MIk(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣(ai−aj)x1+(bi−bj)x2+(ci−cj)∣ds+∫Ωamin{14(∂2f∂x12−∂2f∂x22)2+(∂2f∂x1∂x2)2+12∣∂2f∂x12+∂2f∂x22∣,(∂f∂x1)2+(∂f∂x2)2}dx1dx2.
+
+which completes the proof of Lemma 4.
+
+For the second term of Eq. (46), because of the zero Lebesgue measure of ⋃i=1m⋃j>i,j∈NiΓi,j, even if (77) min{14(∂2f∂x12(x)−∂2f∂x22(x))2+(∂2f∂x1∂x2(x))2+12∣∂2f∂x12(x)+∂2f∂x22(x)∣,(∂f∂x1(x))2+(∂f∂x2(x))2}
+
+does not exist for x∈⋃i=1m⋃j>i,j∈NiΓi,j, the value of (78) ∫Ωamin{14(∂2f∂x12−∂2f∂x22)2+(∂2f∂x1∂x2)2+12∣∂2f∂x12+∂2f∂x22∣,(∂f∂x1)2+(∂f∂x2)2}dx1dx2
+
+will remain well defined in the sense of Lebesgue integral.
+
+Now, our main contribution can be presented in the following Theorem.
+
+Theorem 4. Suppose that an object image f0(x) is a piecewise linear function in Ωa as defined by Eq. (36). If h(x) is a candidate image and HOT2(h)=minf=f0+u1HOT2(f) where u1(x) is an arbitrary ambiguity image, then h(x) = f0(x) for x ∈Ωa.
+
+Proof: Let h(x) = f0(x) + u(x) for some ambiguity image u . By Lemma 4, we have (79) HOT2(f)≥∑i=1m∑j>i,j∈Ni∫Γi,j∣(ai−aj)x1+(bi−bj)x2+(ci−cj)∣ds,forf(x)=f0(x)+u1(x),
+
+where u1(x) is an arbitrary ambiguity image, and (80) HOT2(f0)=∑i=1m∑j>i,j∈Ni∫Γi,j∣(ai−aj)x1+(bi−bj)x2+(ci−cj)∣ds.
+
+Hence, (81) minf=f0+u1HOT2(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣(ai−aj)x1+(bi−bj)x2+(ci−cj)∣ds.
+
+Because HOT2(h)=minf=f0+uHOT2(f), we have (82) ∫Ωamin{14(∂2h∂x12−∂2h∂x22)2+(∂2h∂x1∂x2)2+12∣∂2h∂x12+∂2h∂x22∣,(∂h∂x1)2+(∂h∂x2)2}dx1dx2=0.
+
+Therefore, (83) min{14(∂2h∂x12(x)−∂2h∂x22(x))2+(∂2h∂x1∂x2(x))2+12∣∂2h∂x12(x)+∂2h∂x22(x)∣,(∂h∂x1(x))2+(∂h∂x2(x))2}=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j;
+
+that is, (84) 14(∂2h∂x12(x)−∂2h∂x22(x))2+(∂2h∂x1∂x2(x))2+12∣∂2h∂x12(x)+∂2h∂x22(x)∣=0or(∂h∂x1(x))2+(∂h∂x2(x))2=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j.
+
+We assert that (85) 14(∂2h∂x12(x)−∂2h∂x22(x))2+(∂2h∂x1∂x2(x))2+12∣∂2h∂x12(x)+∂2h∂x22(x)∣=0,forx=(x1,x2)∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j.
+
+Otherwise, there exists some x0∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j such that (86) (14(∂2h∂x12−∂2h∂x22)2+(∂2h∂x1∂x2)2+12∣∂2h∂x12+∂2h∂x22∣)∣x=x0>0,
+
+By continuity, there exists a neighborhood of x0 denoted by Ωx0 such that (87) Ωx0⊂Ωa\⋃i=1m⋃j>i,j∈NiΓi,j,
+
+and (88) 14(∂2h∂x12(x)−∂2h∂x22(x))2+(∂2h∂x1∂x2(x))2+12∣∂2h∂x12(x)+∂2h∂x22(x)∣>0,forx∈Ωx0.
+
+By Eq. (84), we have (89) (∂h∂x1(x))2+(∂h∂x2(x))2=0,forx∈Ωx0,
+
+i.e., (90) ∂h∂x1(x)=∂h∂x2(x)=0,forx∈Ωx0.
+
+Therefore, (91) ∂2h∂x12(x)=∂2h∂x1∂x2(x)=∂2h∂x22(x)=0,forx∈Ωx0.
+
+This is in contradiction to Eq. (88). Eq. (85) implies that (92) ∂2h∂x12(x)=∂2h∂x1∂x2(x)=∂2h∂x22(x)=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j.
+
+Because f0(x) is a piecewise linear function in Ωa, it follows from Eq. (92) that (93) ∂2u∂x12(x)=∂2u∂x1∂x2(x)=∂2u∂x22(x)=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j.
+
+Due to the analyticity of u(x) by Theorem 1, we have (94) ∂2u∂x12(x)=∂2u∂x1∂x2(x)=∂2u∂x22(x)=0,forx∈Ωa.
+
+Hence, (95) u(x)=ax1+bx2+c,forx∈Ωa.
+
+By Theorem 2, we obtain u(x) = 0 and h(x = f0(x).
+
+Generally speaking, we assume that an object image f0(x) is a piecewise n-th (some n ≥ 1) order polynomial function in Ωa; that is, Ωa can be decomposed into finitely many sub-domains {Ωi}i=1m (Fig. 4) such that (96) f0(x)=fi(x),forx∈Ωi,1≤i≤m,
+
+where fi(x) is a n-th order polynomial function, and each sub-domain Ωi is adjacent to its neighboring sub-domains Ωj with piecewise smooth boundaries Γi,j, j ∈ Ni. We can similarly define the n+1-th order TV for any candidate image f(x) as follows: (97) HOTn+1(f)=lim sup(max1≤k≤Mdiam{Qk})→0∑k=1MIk(f),
+
+where {Qk}k=1M is an arbitrary partition of Ωa, and (98) Ik(f)=min(supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx,supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx),
+
+where (99) dn+1gdθn(x)=dn+1gx,θ(t)dtn∣t=0.
+
+We have the following generalized version of Lemma 4.
+
+Lemma 5. Suppose that an object image f0(x) is a piecewise n-th (n ≥ 1) order polynomial function in Ωa, as defined by Eq. (96). For any candidate image f(x) = f0(x) + u(x), we have (100) HOTn+1(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣fi(x)−fj(x)∣ds+∫Ωamin(maxθ∈S1∣dfdθ(x)∣,maxθ∈S1∣dn+1fdθn+1(x)∣)dx1dx2,
+
+where the second term is a Lebesgue integral.
+
+Proof: We proceed by arguments similar to that for Lemma 4. Again, f(x) = f0(x) + u(x), and u(x) is an analytic function. Let {Qk}k=1M be an arbitrary partition of Ωa. First, let us consider Qk covering the common boundary Γi,j of a pair of neighboring sub-domains Ωi and Ωj and is contained in Ωi∪Ωj (Fig. 5 (a)). As in the proof of Lemma 4, for g∈C0∞(Qk) we have (101) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Γi,j∩Qk∣fj(x)−fi(x)∣ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+Repeatedly performing 2-D integrations by parts, for g∈C0∞(Qk) we have (102) ∫Qkf(x)dn+1gdθn+1(x)dx=∫Qk∩Ωif(x)dn+1gdθn+1(x)dx+∫Qk∩Ωjf(x)dn+1gdθn+1(x)dx=∫Γi,j∩Qk(fj(x)−fi(x))dngdθn(x)cos<θ,θN>ds−∫Qk∩Ωidfdθ(x)dngdθn(x)dx−∫Qk∩Ωjdfdθ(x)dngdθn(x)dx=∫Γi,j∩Qk(fj(x)−fi(x))dngdθn(x)cos<θ,θN>ds−∫Γi,j∩Qk(dfjdθ(x)−dfidθ(x))dn−1gdθn−1(x)cos<θ,θN>ds+∫Qk∩Ωid2fdθ2(x)dn−1gdθn−1(x)dx+∫Qk∩Ωjd2fdθ2(x)dn−1gdθn−1(x)dx=∑l=1n(−1)l∫Γi,j∩Qk(dlfjdθl(x)−dlfidθl(x))dn−lgdθn−l(x)cos<θ,θN>ds+(−1)n+1(∫Qk∩Ωidn+1fdθn+1(x)g(x)dx+∫Qk∩Ωjdn+1fdθn+1(x)g(x)dx)=∑l=1n−1(−1)l∫Γi,j∩Qk(dlfjdθl(x)−dlfidθl(x))dn−lgdθn−l(x)cos<θ,θN>ds+(−1)n∫Γi,j∩Qk(dnfjdθn(x)−dnfidθn(x))g(x)cos<θ,θN>ds+(−1)n+1∫Qkdn+1fdθn+1(x)g(x)dx,
+
+where θN is the normal vector of the boundary curve Γi,j pointing from Ωj towards Ωi, and <θ,θN > the angle between the vectors θ and θN. For the second term on the right-hand side of Eq. (102), we have (103) supg∈C0∞(Qk),∣g(x)∣≤1(−1)n∫Γi,j∩Qk(dnfjdθn(x)−dnfidθn(x))g(x)cos<θ,θN>ds=∫Γi,j∩Qk∣dnfjdθn(x)−dnfidθn(x)∣cos<θ,θN>ds,
+
+(104) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1(−1)n∫Γi,j∩Qk(dnfjdθn(x)−dnfidθn(x))g(x)cos<θ,θN>ds=∫Γi,j∩Qkmaxθ∈S1(∣dnfjdθn(x)−dnfidθn(x)∣cos<θ,θN>)ds+o(1)∣Γi,j∩Qk∣.
+
+For the third term on the right-hand side of Eq. (102), we have (105) (−1)n+1∫Qkdn+1fdθn+1(x)g(x)dx=O(1)∣Qk∣.
+
+We proceed to evaluate supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx in the following two cases.
+
+Case 1: If there exist some θ ∈ S1 and some x∈Γi,j∩Qk such that max0≤l≤n−1∣dlfjdθl(x)−dlfjdθl(x)∣≠0, then for an arbitrary real constant series {Cl}l=1n−1 and an arbitrary compact set K⊂Qk, there exists a g∈C0∞(Qk) satisfying |g(x) and (106) dn−lgdθn−1(x)=Cl(−1)l(dlfjdθl(x)−dlfidθl(x)),for1≤l≤n−1,x∈Γi,j∩K,and
+
+we have (107) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∑l=1n−1(−1)l∫Γi,j∩Qk(dlfjdθl(x)−dlfidθl(x))dn−1gdθn−l(x)cos<θ,θN>ds=+∞.
+
+Combining Eqs. (104), (105) and (107), we obtain (108) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx≥supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∑l=1n−1(−1)l∫Γi,j∩Qk(dlfjdθl(x)−dlfidθl(x))dn−lgdθn−l(x)cos<θ,θN>ds−supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1(−1)n∫Γi,j∩Qk(dnfjdθn(x)−dnfidθn(x))cos<θ,θN>ds−supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkdn+1fdθn+1(x)g(x)dx=+∞.
+
+Case 2: Otherwise, dlfjdθl(x)−dlfjdθl(x)=0 for x∈Γi,j∩Qk, θ ∈ S1, 0 ≤ l ≤ n −1. The first term on the right-hand side of Eq. (102) equals 0. Then, we have (109) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx=∫Γi,j∩Qkmaxθ∈S1(∣dnfjdθn(x)−dnfidθn(x)∣cos<θ,θN>)ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+In this case we also have (110) ∫Γi,j∩Qk∣fj(x)−fi(x)∣ds=0,
+
+(111) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Γi,j∩Qk∣fj(x)−fi(x)∣ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣=O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+Combining Eqs. (108), (109) and (111), we have the following conclusion: If Qk covers the common boundary Γi,j of a pair of neighboring sub-domains Ωi and Ωj and is contained in Ωi∪Ωj, then (112) Ik(f)=min(supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx,supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx)=supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Γi,j∩Qk∣fj(x)−fi(x)∣ds+O(1)∣Qk∣+o(1)∣Γi,j∩Qk∣.
+
+Next, Let us consider Qk that is completely contained in some sub-domain Ωi (Fig. 5 (b)). For g∈C0∞(Qk), performing 2-D integration by parts we have (113) ∫Qkf(x)dgdθ(x)dx=−∫Qkdfdθ(x)g(x)dx,
+
+(114) ∫Qkf(x)dn+1gdθn+1(x)dx=(−1)n+1∫Qkdn+1fdθn+1(x)g(x)dx.
+
+Hence, (115) supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Qk∣dfdθ(x)∣dx,
+
+(116) supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx=∫Qk∣dn+1fdθn+1(x)∣dx.
+
+Furthermore, (117) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx=∫Qkmaxθ∈S1∣dfdθ(x)∣dx+o(1)∣Qk∣,
+
+(118) supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx=∫Qkmaxθ∈S1∣dn+1fdθn+1(x)∣dx+o(1)∣Qk∣.
+
+Combining Eqs. (117-118), we have (119) Ik(f)=min(supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dgdθ(x)dx,supθ∈S1supg∈C0∞(Qk),∣g(x)∣≤1∫Qkf(x)dn+1gdθn+1(x)dx)=min(∫Qkmaxθ∈S1∣dfdθ(x)∣dx,∫Qkmaxθ∈S1∣dn+1fdθn+1(x)∣dx)+o(1)∣Qk∣=∫Qkmin(maxθ∈S1dfdθ(x)dx,maxθ∈S1dn+1fdθn+1(x))dx+o(1)∣Qk∣.
+
+In Eqs. (113-119), we have utilized the fact that maxθ∈S1dn+1fdθn+1(x)∇ is continuous in each Ωi(1 ≤ i ≤ m ). This fact can be derived from the following equation (120) dn+1fdθn+1(x)=(∂∂x1cosφ+∂∂x2sinφ)n+1f(x)=∑l=0n+1Cn+1l∂n+1f∂x1l∂x2n+1−l(x)coslφsinn+1−lφ,forx∈Ωi,1≤i≤m,θ=(cosφ,sinφ)∈S1.
+
+Combining Eqs. (112) and 119), we obtain (121) ∑k=1MIk(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣fi(x)−fj(x)∣ds+∫Ωamin(maxθ∈S1∣dfdθ(x)∣,maxθ∈S1∣dn+1fdθn+1(x)∣)dx1dx2+O(1)(∑i=1m∑j>i,j∈Ni∣Γi,j∣)(max1≤k≤Mdiam{Qk})+o(1)∣Ωa∣.
+
+Therefore, we have (122) HOT2(f)=lim sup(max1≤k≤Mdiam{Qk})→0∑k=1MIk(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣fi(x)−fj(x)∣ds+∫Ωamin(maxθ∈S1∣dfdθ(x)∣,maxθ∈S1∣dn+1fdθn+1(x)∣)dx1dx2.
+
+which completes the proof of Lemma 5.
+
+Although it is difficult to have an explicit formula for maxθ∈S1∣dn+1fdθn+1(x)∣ with x∈Ωa\⋃i=1m⋃j>1,j∈NiΓi,j in the cases of n ≥ 2, we can still have the following Theorem as a generalized version of Theorem 4.
+
+Theorem 5. Suppose that an object function f0(x) is a piecewise n-th (n ≥1) order polynomial function in Ωa, as defined by Eq. (80). If h(x) is a candidate image and HOTn+1(h)=minf=f0+u1HOTn+1(f) where u1(x) is an arbitrary ambiguity image, then h(x) = f0(x) for x ∈ Ωa.
+
+Proof: We proceed by arguments similar to that for Theorem 4. Let h(x) = f0(x) + u(x) for some ambiguity image u(x). By Lemma 5, we have (123) HOTn+1(f)≥∑i=1m∑j>i,j∈Ni∫Γi,j∣fi(x)−fj(x)∣ds,forf=f0(x)+u1(x),
+
+where u1(x) is an arbitrary ambiguity image, and (124) HOTn+1(f0)=∑i=1m∑j>i,j∈Ni∫Γi,j∣fi(x)−fj(x)∣ds.
+
+Hence, (125) minf=f0+u1HOTn+1(f)=∑i=1m∑j>i,j∈Ni∫Γi,j∣fi(x)−fj(x)∣ds.
+
+Because HOTn+1(h)=minf=f0+uHOTn+1(f), we have (126) ∫Ωa∫Ωamin(maxθ∈S1∣dhdθ(x)∣,maxθ∈S1∣dn+1hdθn+1(x)∣)dx1dx2=0.
+
+Therefore, (127) min(maxθ∈S1∣dhdθ(x)∣,maxθ∈S1∣dn+1hdθn+1(x)∣)=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j.
+
+That is, (128) maxθ∈S1∣dhdθ(x)∣=0ormaxθ∈S1∣dn+1hdθn+1(x)∣=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j.
+
+We assert that (129) maxθ∈S1∣dn+1hdθn+1(x)∣=0,forx=(x1,x2)∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j.
+
+Otherwise, there exists some x0∈Ωa\⋃i=1m⋃j>1,j∈NiΓi,j such that (130) maxθ∈S1∣dn+1hdθn+1(x0)∣>0,
+
+By continuity, there exists a neighborhoodof x0 denoted by Ωx0 such that (131) Ωx0⊂Ωa\⋃i=1m⋃j>i,j∈NiΓi,j,
+
+and (132) maxθ∈S1∣dn+1hdθn+1(x)∣>0,forx∈Ωx0.
+
+By Eq. (128), we have (133) maxθ∈S1∣dhdθ(x)∣=0,forx∈Ωx0,
+
+e.g., (134) dhdθ(x)=∂h∂x1(x)cosφ+∂h∂x2(x)sinφ=0,forx∈Ωx0,θ=(cosφ,sinφ)∈S1.
+
+From Eq.(134) we have (135) ∂h∂x1(x)=∂h∂x2(x)=0,forx∈Ωx0.
+
+Therefore, (136) ∂n+1h∂x1l∂x2n+1−l(x)=0,forx∈Ωx0,0≤l≤n+1,
+
+which leads to (137) dn+1hdθn+1(x)=∑l=0n+1Cn+1l∂n+1h∂x1l∂x2n+1−l(x)coslφsinn+1−lφ=0,forx∈Ωx0,θ=(cosφ,sinφ)∈S1.
+
+Eq. (137) means that (138) maxθ∈S1∣dn+1hdθn+1(x)∣=0,forx∈Ωx0.
+
+This is in contradiction to Eq. (132). Eq. (129) implies that (139) ∂n+1h∂x1l∂x2n+1−l(x)=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j,0≤l≤n+1.
+
+Because f0(x) is a piecewise n-th (n ≥ 1) order polynomial function in Ωa, it follows from Eq. (139) that (140) ∂n+1h∂x1l∂x2n+1−l(x)=0,forx∈Ωa\⋃i=1m⋃j>i,j∈NiΓi,j,0≤l≤n+1.
+
+Due to the analyticity of u(x) by Theorem 1, we have (141) ∂n+1h∂x1l∂x2n+1−l(x)=0,forx∈Ωa,0≤l≤n+1.
+
+Hence, u(x) is a n-th (n ≥ 1) order polynomial function in Ωa. By Theorem 2, we obtain u(x) = 0 and h(x) = f0(x).
+
+IV. Numerical Simulation
+
+To verify our theoretical findings described in the preceding section , we developed a HOT minimization based interior tomography algorithm. This iterative algorithm is a modification of our previously reported TV minimization based interior tomography algorithm [17]. Our HOT minimization algorithm consists of two major steps. In the first step, the ordered-subset simultaneous algebraic reconstruction technique (OS-SART) [23] is used to reconstruct a digital image fm,n = f(mΔ,nΔ) based on all the available local projections, where Δ represents the sampling interval, m and n are integers. In the second step, the discrete HOT of fm,n is minimized using the standard steepest descent method. These two steps are iteratively performed in an alternating manner. The major difference between this algorithm and that in [17] lies in the formulas for computing steepest descent directions. Here we assume that ∂2f∂x12, ∂2f∂x1∂x2, ∂2f∂x22 are continuous at x, and we have (142) HOT2=∫Ωa(14(∂2f∂x12−∂2f∂x22)2+(∂2f∂x1∂x2)2+12∣∂2f∂x12+∂2f∂x22∣)dx1dx2≐Δ2∑m,n(14(fm+1,n+fm−1,n−fm,n+1−fm,n−1Δ2)2+(fm+1,n+1+fm−1,n−1−fm+1,n−1−fm−1,n+14Δ2)2+12∣fm+1,n+fm−1,n−2fm,nΔ2+fm,n+1+fm,n−1−2fm,nΔ2∣)=∑m,n((fm+1,n+fm−1,n−fm,n+1−fm,n−12)2+(fm+1,n+1+fm−1,n−1−fm+1,n−1−fm−1,n+14)2+∣fm+1,n+fm−1,n+fm,n+1+fm,n−1−4fm,n2∣)=∑m,n(Vm,na+Vm,nb),
+
+where (143) Vm,na=(fm+1,n+fm−1,n−fm,n+1−fm,n−12)2+(fm+1,n+1+fm−1,n−1−fm+1,n−1−fm−1,n+14)2,
+
+(144) Vm,nb=∣fm+1,n+fm−1,n+fm,n+1+fm,n−1−4fm,n2∣.
+
+Therefore, (145) ∂HOT2∂fm,n=Dm+1,na,1+Dm−1,na,1−Dm,n+1a,1−Dm,n−1a,1+Dm+1,n+1a,2+Dm−1,n−1a,2−Dm+1,n−1a,2−Dm−1,n+1a,2,−4Dm,nb+Dm+1,nb+Dm−1,nb+Dm,n+1b+Dm,n−1b,
+
+where (146) Dm,na,1=(fm+1,n+fm−1,n−fm,n+1−fm,n−1)4Vm,na,
+
+(147) Dm,na,2=(fm+1,n+1+fm−1,n−1−fm+1,n−1−fm−1,n+1)16Vm,na,
+
+(148) Dm,nb={0.5if(fm+1,n+fm−1,n+fm,n+1+fm,n−1−4fm,n)≥0−0.5if(fm+1,n+fm−1,n+fm,n+1+fm,n−1−4fm,n)<0}.
+
+For the other essential details of our algorithm, the reader may check[17].
+
+A 2D Shepp-Logan phantom was modified to test our algorithm. The modified phantom included a set of piecewise linear ellipses with the parameters listed in Table 1. For each ellipse, the function was first defined inside a compact support Ωe={(x1,x2)∈R2:x12a12+x22a22<1} with the value (x2ra2+1)μ, then its center was translated to (x10,x20) and rotated by an angle ω. The units for a1, a2 and (x10,x20) were in mm and the unit for ω in degree.
+
+In our numerical simulation, we assumed a circular scanning locus of radius 570 mm and a fan-beam imaging geometry. We used an equi-spatial detector array of length 100 mm. The detector was centered at the system origin and made always perpendicular to the direction from the system origin to the x-ray source. The detector array consisted of 300 elements, each of which had a 0.33 mm aperture. This configuration covered a circular field of view (FOV) of radius 49.8 mm. For a full scan, we equi-angularly collected 720 projections.
+
+In the aforementioned FOV, we first created a high-resolution phantom image in a 2048×2048 matrix, and numerically generated truncated projections through an ROI using a well-known ray-tracing technique. Then, ROI images were reconstructed in a 256×256 matrix o using our proposed HOT minimization algorithm and a local FBP method from truncated projections after smooth extrapolation into missing data. Representative reconstructed images are in Fig. 6. The typical profiles are in Fig. 7. The convergence curves in terms of truncated projection discrepancy and relative reconstruction error are in Fig. 8. It can be seen in Figs. 6-8 that the reconstructed image using our proposed HOT minimization algorithm is in an excellent agreement with the truth inside the ROI.
+
+To evaluate the noise characteristics and demonstrate the stability of our proposed HOT minimization algorithm, Poisson noise [24] was added to the simulated projection data. In this process, 105 photons were emitted from the x-ray source towards each detector aperture. Then, we repeated the above reconstruction procedures and produced the typical images and profiles as shown in Figs. 9 and 10, along withthe convergence curves in Fig. 7. These figures demonstrate that the proposed algorithm not only produces satisfactory image accuracy but also suppresses image noise. This is not surprising, since the TV minimization technique was initially proposed to reduce noise [25].
+
+V. Discussions and Conclusion
+
+In Theorem 5, we have claimed that if f0(x) is a piecewise n-th (n ≥ 1) order polynomial function in Ωa, then it can be uniquely determined by minimizing its (n+1)-th order HOT. To apply our theoretical result in practical applications, it is critical to estimate the maximum polynomials order n inside an ROI. In principle, there would be no problem if n is overestimated. Actually, as long as n captures the main features of image variations, even if it is underestimated, we can decompose f0(x) into a n-th polynomial plus a residual error item much smaller than the primary term. Our hypothesis is that the reconstructed results can be written as the n-th polynomial plus a small artifact function. The higher the order n is, the smaller the artifact function becomes. When n is equal to or larger than the real polynomial order, the artifact function would be zero.
+
+In practical applications, high order derivatives can be implemented as high order differences. Given the sensitivity of the discrete high order differencing operation, we suggest that the polynomial order be initially set to 1 ≤ n ≤ 3, and refined as needed. Note that in many cases we do have prior knowledge about images in a particular context. Hence, we can often estimate the polynomial order reliably. For example, in non-destructive testing machinery parts are fairly homogeneous, and the piecewise constant or piecewise linear assumption should work well.
+
+As an important molecular imaging modality, single-photon emission computed tomography (SPECT) is to reconstruct a radioactive source distribution within a patient or animal. Different from the line integral model for x-ray imaging, SPECT projections are modeled as exponentially attenuated Radon transform data [26-28]. Extending x-ray interior tomography results [11-12], we previously proved that accurate and stable interior SPECT reconstruction is feasible from uniformly attenuated local projection data aided by prior knowledge of a sub-region [29]. Naturally, it would be useful to extend the theoretical results reported in this paper to SPECT. That is, it is possible to reconstruct a SPECT ROI accurately only from the uniformly attenuated local projections by minimizing the HOT if the distribution function is piecewise polynomial in the ROI. We are actively working along this direction.
+
+To verify the correctness of our theoretical analysis in Section III, we have developed an iterative algorithm in Section IV. Nevertheless, our numerical implementation has been relatively preliminary. Neither the codes nor the control parameters have been optimized. Currently, we are developing efficient yet robust algorithms for real-world applications. In particular, we may merge the HOT minimization and iterative reconstruction into a more integrated procedure. Hopefully, we will be able to report more in follow-up papers. A theoretically interesting topic is about the convergence of the proposed algorithm. Previously, we studied the convergence of the well-known SART technique [30], and a general Landweber scheme [23] [30]. Although these results are relevant to the proposed algorithm, its convergence analysis may be much more challenging, and will be investigated in the future.
+
+In conclusion, we have extended our TV minimization based interior tomography into a HOT minimization framework. Our work has indicated that an interior ROI can be accurately reconstructed from truncated projection data through the ROI if it can be partitioned into finitely many sub-domains over each of which a polynomial function well represents the image to be reconstructed. This HOT approach may find important applications in biomedical CT such as cardiac perfusion studies, and could inspire development of other imaging modalities as well.
+
+Acknowledgement
+
+We would like to thank anonymous reviewers for their advice and suggestions. This work was partially supported by NSFC (60325101, 60532080, 60628102, 60872078), Key Laboratory of Machine Perception (Ministry of Education) of Peking University, Microsoft Research of Asia, and NIH/NIBIB grants (EB002667, EB004287, EB007288).
+
+Figures and Table
+
+Figure 1 Region of interest (ROI) inside a compact support.
+
+Figure 2 Illustration of (a) arg(a+z) and (b) arg(a-z).
+
+Figure 3 Radial line through the origin.
+
+Figure 4 ROI consisting of 7 sub-domains.
+
+Figure 5 Sub-domain Qk of (a) the first and (b) second types.
+
+Figure 6 Reconstruction of the modified Shepp-Logan phantom with linearly varying shadings over subdomains. (a) The original phantom, (b) the reconstruction with the local FBP (after smooth data extrapolation), and (c) the reconstruction with the proposed HOT minimization algorithm after 40 iterations. The display window is [0.1, 0.4].
+
+Figure 7 Representative profiles along (a) horizontal and (b) vertical lines in Figure 6. The horizontal and vertical axes represent the pixel coordinate and functional value respectively, with the thick line on the horizontal axis indicating the ROI.
+
+Figure 8 Convergence curves of the proposed HOT minimization algorithm. While the horizontal axis represents the iteration index, the vertical axis shows (a) the projection error and (b) reconstruction error (%) respectively.
+
+Figure 9 Counterpart of Figure 6, with data noise reflected in the local FBP and HOT minimization reconstructions. The display window is [0.1, 0.4].
+
+Figure 10 Counterpart of Figure 7, with data noise reflected in Figure 9 (b) and (c).
+
+Table 1 Parameters of the 2D modified Shepp-Logan phantom.
+
+No.	a1	a2	μ	r	x10	x20	ω	
+1	69.00	92.00	1.0	0	0	0	0	
+2	66.24	87.40	−0.8	0	0	−1.84	0	
+3	11.00	31.00	−0.1	1.0	22.00	0	−18.0	
+4	16.00	41.00	−0.1	1.0	−22.00	0	18.0	
+5	21.00	25.00	0.1	1.0	0	35.00	0	
+6	4.60	4.60	0.1	1.0	0	10.00	0	
+7	4.60	4.60	0.1	1.0	0	−10.00	0	
+8	4.60	2.30	0.1	1.0	−8.00	−60.50	0	
+9	2.30	2.30	0.1	1.0	0	−60.60	0	
+10	2.30	4.60	0.1	1.0	6.00	−60.60	0	
+
+
+References
+
+1 Natterer F The mathematics of computerized tomography. Classics in Applied Mathematics 2001 Society for Industrial and Applied Mathematics Philadelphia
+2 Hamaker C Smith KT Solmon DC Wagner SC The Divergent beam X-ray transform. Rocky Mountain Journal of Mathematics 1980 10 1 253 283
+3 Faridani A Finch DV Ritman EL Smith KT Local tomography II. SIAM J. Appl. Math 1997 57 4 1095 1127
+4 Faridani A Ritman EL Smith KT Local tomography. SIAM J. Appl. Math 1992 52 459 484
+5 Ramm AG Katsevich AI The Randon transform and local tomography 1996 CRC Press Boca Raton
+6 Yu HY Ye YB Wang G Practical cone-beam lambda tomograpy. Medical Physics 2006 33 10 3640 3646 17089830 10.1118/1.2348767
+7 Katsevich A Improved cone beam local tomography. Inverse Problems 2006 22 2 627 643
+8 Katsevich A Motion compensated local tomography. Inverse Problems 2008 24 4 Paper ID: 045012 (21pp)
+9 Ye YB Yu HY Wang G Cone-beam pseudo-lambda tomography. Inverse Problems 2007 23 1 203 215
+10 Yu HY Wang G A general formula for fan-beam lambda tomography. International Journal of Biomedical Imaging 2006 2006, Article ID: 10427, 9 pages 10.1155/IJBI/2006/10427 PMC2324036 23165013
+11 Ye YB Yu HY Wei YC Wang G A general local reconstruction approach based on a truncated Hilbert transform. International Journal of Biomedical Imaging 2007 2007: Article ID: 63634, 8 pages 10.1155/2007/63634 PMC1987387 18256734
+12 Kudo H Courdurier M Noo F Defrise M Tiny a priori knowledge solves the interior problem in computed tomography. Phys. Med. Biol 2008 53 9 2207 2231 18401067 10.1088/0031-9155/53/9/001
+13 Courdurier M Noo F Defrise M Kudo H Solving the interior problem of computed tomography using a priori knowledge. Inverse Problems 2008 24 Article ID 065001 , 27 pages 10.1088/0266-5611/24/6/065001 PMC2897149 20613970
+14 Candes EJ Romberg J Tao T Robust uncertainty principles: Exact signal reconstruction from highly incomplete frequency information. IEEETransactions on Information Theory 2006 52 2 489 509
+15 Donoho DL Compressed sensing. IEEE Transactions on Information Theory 2006 52 4 1289 1306
+16 Wang G Yu HY Methods and Systems for Exact Local CT Based on Compressive Sampling Patent disclosure submitted to Virginia Tech. Intellectual Properties on Dec. 20, Editor 2008
+17 Yu HY Wang G Compressed sensing based Interior tomography. Phys Med Biol 2009 54 9 2791 2805 19369711 10.1088/0031-9155/54/9/014 PMC2863332
+18 Yu HY Jiang JS Jiang M Wang G Further analysis on compressed sensing based interior tomography. Phys Med Biol 2009 54 18 N425 N432 19717891 10.1088/0031-9155/54/18/N04 PMC2858336
+19 Han WM Yu HY Wang G A total variation minimization theorem for compressed sensing based tomography. International Journal of Biomedical Imaging 2009 2009: Article ID: 125871, 3 pages 10.1155/2009/125871 PMC2786191 20011656
+20 Courdurier M Restricted Measurements for the X-ray Transform. PhD. Dissertation 2007 University of Washington-Seattle
+21 Gel'fand IM Graev MI Crofton function and inversion formulas in real integral geometry. Functional Analysis and its Applications 1991 25 1 1 5
+22 Noo F Clackdoyle R Pack JD A two-step Hilbert transform method for 2D image reconstruction. Physics in Medicine and Biology 2004 49 17 3903 3923 15470913 10.1088/0031-9155/49/17/006
+23 Wang G Jiang M Ordered-subset simultaneous algebraic reconstruction techniques (OS-SART). Journal of X-ray Science and Technology 2004 12 3 169 177
+24 Yu HY Ye YB Zhao SY Wang G Local ROI reconstruction via generalized FBP and BPF algorithms along more flexible curves. International Journal of Biomedical Imaging 2006 2006 2 Article ID: 14989,7 pages 10.1155/IJBI/2006/14989 PMC2324013 23165018
+25 Rudin LI Osher S Fatemi E Nonlinear total variation based noise removal algorithms. Physica D 1992 60 1-4 259 268
+26 Rullgard H An explicit inversion formula for the exponential Radon transform using data from 180~. Ark. Mat 2004 42 353 362
+27 Rullgard H Stability of the inverse problem for the attenuated Radon transform with 180 degrees data. Inverse Problems 2004 20 3 781 797
+28 Noo F Defrise M Pack JD Clackdoyle R Image reconstruction from truncated data in single-photon emission computed tomography with uniform attenuation. Inverse Problems 2007 23 2 645 667
+29 Yu HY Yang JS Jiang M Wang G Interior SPECT-exact and stable ROI reconstruction from uniformly attenuated local projections. International Journal for Numerical Methods in Engineering 2009 25 6 693 710 10.1002/cnm.1206 PMC2759671 20160959
+30 Jiang M Wang G Convergence studies on iterative algorithms for image reconstruction. IEEE Trans. Med. Imaging 2003 22 569 579 12846426 10.1109/TMI.2003.812253

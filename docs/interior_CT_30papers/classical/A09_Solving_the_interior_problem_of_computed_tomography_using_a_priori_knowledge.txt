@@ -1,0 +1,533 @@
+
+JOURNAL INFORMATION
+==============================
+NLM Title Abbreviation: Inverse Probl
+NLM Journal ID: 101189510
+
+Inverse problems
+
+ISSN: 0266-5611
+
+ARTICLE INFORMATION
+==============================
+PMCID: PMC2897149
+Article ID: NIHMS77371
+PMID: 20613970
+DOI: 10.1088/0266-5611/24/6/065001
+Article ID: NIHMS77371
+Article ID: NIHPA77371
+Article version: 1
+Subjects: Article
+
+SOLVING THE INTERIOR PROBLEM OF COMPUTED TOMOGRAPHY USING A PRIORI KNOWLEDGE
+
+Courdurier M. 1
+Noo F. 2
+Defrise M. 3
+Kudo H. 4
+1 Department of Applied Physics and Applied Mathematics, Columbia University, U.S.A.
+2 Department of Radiology, University of Utah, U.S.A.
+3 Department of Nuclear Medicine, Vrije Universiteit Brussels, Belgium.
+4 Department of Computer Science, University of Tsukuba, Japan.
+Print publication date: 2008 Sep 12
+Volume: 24
+Issue: 6
+First page: 65001
+Last page: 65001
+Author manuscript; available in PMC: 2010 Jul 6
+
+License: This file is available for text mining. It may also be used consistent with the principles of fair use under the copyright law.
+
+==============================
+The case of incomplete tomographic data for a compactly supported attenuation function is studied. When the attenuation function is a priori known in a subregion, we show that a reduced set of measurements is enough to uniquely determine the attenuation function over all the space. Furthermore, we found stability estimates showing that reconstruction can be stable near the region where the attenuation is known. These estimates also suggest that reconstruction stability collapses quickly when approaching the set of points that are viewed under less than 180 degrees. This paper may be seen as a continuation of the work “Truncated Hilbert transform and Image reconstruction from limited tomographic data” that was published in Inverse Problems in 2006. This continuation tackles new cases of incomplete data that could be of interest in applications of computed tomography.
+
+1. Introduction
+
+In two-dimensional (2D) Computed Tomography (CT), all line integrals of the attenuation function may not always be available. When all line integrals are available, there is an accurate and stable reconstruction formula to recover the attenuation function from the measurements [15, 22]. But when the set of measurement is not complete, several problems can arise. Different complications appear depending on how the data set is truncated. In textbooks the kinds of possible truncations are generally listed into three distinct classes: the limited angle problem, the exterior problem and the interior problem. Below we briefly review these three problems, then focus the discussion on the interior problem, for which we present here new theoretical results. Beforehand, let us clarify that we are considering a continuum of measurements, and when we talk about truncation of the data set we are not thinking about discretization of the measurements, but about limitation of the measurements in this continuous setting. And let us also mention that when we talk about measured lines, measured data, or just measurements, we are making a slight abuse of language. The line integral of the attenuation function is not equal to the intensity of X-ray beam measured at the detector, but we call them measured data because they are computed automatically from the intensity measured at the detectors.
+
+Various acquisition geometries can be used to measure the line integrals. For example, early CT scanners used the parallel-beam geometry while the fan-beam geometry is now preferred. In any case a simple re-parametrization always allows description of the measured line integrals using the Radon Transform notation. We adopt this notation. Let μ(x) be the attenuation function to be reconstructed. We parameterize the lines in ℝ2 with an angle α and a scalar s ∈ ℝ, and we let the line integral along the (s, α)-line be Rμ(s,α). The angle α defines the direction of the line, while s specifies the signed distance from the origin to the line. This distance is measured in the direction of vector θ(α) ≔ (cos α, sin α), and θ⊥(α) ≔ (−sin α, cos α), which is obtained by rotating θ counterclockwise by 90°, is the line direction. By construction, Rμ(s,α)≔∫ℝμ(sθ(α)+tθ⊥(α))dt.
+
+Observe that Rμ(s, α) = Rμ(−s, α + π) since (s, α) parameterizes the same line as (−s, α + π). And observe also, for a similar reason, that Rμ(s, α) = Rμ(s, α + 2kπ) for any integer k.
+
+To describe the region covered by the object being scanned we use the concept of support of a function. The support of the attenuation function μ(x) is defined as the smallest closed set outside which the attenuation function vanishes. To keep the arguments simple, we may not distinguish between the support of the attenuation function and the region covered by the object, though this requires the attenuation function to be non-zero inside the object.
+
+We now review the limited angle problem, the exterior problem and the interior problem. The limited angle problem appears when knowledge of the Radon Transform Rμ(s, α) is restricted to the set (s, α) ∈ ℝ x [−φ,φ} with (φ) < π/2. This situation arises, for example, in electron microscopy or radio astronomy, where the angle of view is restricted. In the case of the limited angle problem the data is enough to uniquely determine the attenuation function (e.g., [22]). However, the inversion is severely ill-posed and it is not possible to obtain a good reconstruction of the attenuation function in presence of data noise. This fact is emphasized by the singular value decomposition of the limited-angle Radon Transform [19].
+
+The exterior problem arises when the Radon Transform is only measured over the lines that do not intersect a ball of radius α. In other words, Rμ(s, α) is known only on the (s, α)-lines defined with |s| > α. This situation happens in non-destructive material testing. For instance, it is of special interest to detect cracks or corrosion in the outermost layers of pipes and rockets. X-ray CT is a way to achieve this task, but the object is in general so dense that X-rays cannot cross through the diameter, and therefore only exterior measurements can be obtained. In the case of the exterior problem, the measurements are enough to uniquely determine the attenuation function for the points satisfying |x| > α (Helgason support Theorem, [15]), and a reconstruction formula for these points was provided by Cormack [6]. But, as shown by singular value decomposition [25], the exterior problem is also very ill-posed, so that accurate reconstruction of the attenuation function is hardly possible from real (noisy) data.
+
+The interior problem appears when we measure only the line integrals that intersect a ball totally contained inside the object. Namely the Radon Transform is available only for the lines intersecting the set FOV ≔ {x ∈ R2 : |x| < α} and this set is inside the object (FOV stands for field-of-view). This situation could appear in medical imaging when we are interested in reconstructing the attenuation function only in a region-of-interest (ROI). Indeed, in such a case, it is desirable to reduce the patient exposure to X-ray radiation by measuring only the line integrals that go through that region. In general, such a set of measurements is not enough to uniquely determine the attenuation function, not even inside the FOV. Nonetheless, the undetermined part is not arbitrary [14], it belongs to a space of functions which are smooth in the set |x| < α. A singular value decomposition of this problem, for the fan-beam and parallel-beam geometries, can be found in [20, 21].
+
+In summary, truncation of the data set strongly impacts the CT reconstruction problem. It either eliminates the possibility of recovering the value of the attenuation function (interior problem), or makes the reconstruction of the attenuation function very unstable (limited angle and exterior problems). Such a behavior, in addition to the non-local nature of the classical inversion formula for the 2D Radon transform [15, 22], sustained the belief that in two dimensions, reconstruction at a given point required knowledge of the transform over all possible lines in order to be accurate and stable.
+
+There exist some insightful results about what can be stably recovered from local data. More specifically, it is known that limited sets of measurements can be enough to reconstruct the singularities of the attenuation function in a stable way [13, 16, 26]. By singularities of the attenuation function we mean, for example, discontinuities of the function. To be able to determine in a stable way a discontinuity of the attenuation function at a given point, the knowledge of all line integrals through a neighborhood of that point is required. In particular, this means that for the limited angle problem and the exterior problem, there are discontinuities that cannot be detected in a stable way. On the other hand, in the interior problem, there is enough data to recover the discontinuities of the function inside the ball {x ∈ ℝ2 : |x| < α} (i.e. inside the FOV). The relation between the singularities of a function and the singularities of its Radon transform, and stability estimates in Sobolev spaces, can be found in [13, 26].
+
+Summarizing, the amount of measurements in the interior problem is enough to recover the discontinuities of the function inside the FOV, but not enough to determine the value of the function at any point. Surprisingly, this situation changes drastically when the FOV is not completely contained inside the object. We elaborate on this change below.
+
+Assume that Rμ(s, α) is measured for all lines intersecting FOV = {x ∈ ℝ2 : |x| < α}. Assume that the FOV is not completely contained inside the object. And assume that the attenuation function μ(x) is continuously differentiate and with known compact support, i.e. μ(x) vanishes outside some compact set and we know that set. In such a case, when the object is convex and the FOV contains opposite sides of the boundary, some recent papers have provided accurate inversion formulas for the attenuation function in a subregion of the FOV (e.g., [4, 5, 23, 24, 31, 32, 33, 34, 35]). Some non-convex objects, such as the one in figure 3.2a), are also covered by these results. These inversion formulas are semi-local: knowledge of line integrals far from the reconstruction point are still necessary, but they do not require to know all the line integrals. It is important to observe that, on one hand, we are allowing considerable truncation in the set of measurements. But on the other hand, for reconstruction to be possible, we are requiring some extra a priori knowledge on the location and support of the object. Note that the required extra knowledge is far from being equivalent to having complete measurements. In particular, it does not imply that accurate reconstruction of the attenuation function, or its discontinuities, is possible outside the FOV [13, 26].
+
+Most of the semi-local inversion formulas cited in the above paragraph require the FOV to contain opposite sides of the boundary of the object (as in figure 3.2a)). Interestingly, some useful results can also be stated in the case where the FOV exceeds the object only from one side (as in figure 3.2b)). Indeed, it was proved in [11] that, in such a case, the data is still enough to uniquely determine the attenuation function inside the FOV. Moreover, a pointwise stability result was found. This stability result suggests that reconstruction of the attenuation function should be more stable for the FOV points that are near the boundary of the object, and that reconstruction stability may logarithmically decrease as we go deeper into the object.
+
+In the present paper we focus on the interior problem. This means that we assume knowledge of the Radon transform for all lines intersecting the FOV = {x ∈ ℝ2 : |x| < α} and that we allow this field of view to be completely contained inside the object. However, unlike other studies on the interior problem, we include some extra a priori knowledge: we assume that the compact support of the attenuation function is known, and we also assume that the value of the attenuation function is known in some subregion of the FOV. Under these hypotheses, we extend the uniqueness and stability results of [11] to new cases of practical interest. Such extensions provide tools to explore image reconstruction in truncated Computed Tomography and can translate into a reduced radiation dose in CT, which is becoming of increasing importance as well described in the introduction of [29].
+
+Uniqueness results for the interior problem with prior knowledge have been obtained in our earlier work [17, 18] and independently in [29]. The result presented here is slightly stronger in concluding uniqueness over the whole space instead of just a restricted region. Uniqueness however does not imply stability, and therefore the main focus of the present paper is a theoretical analysis of stability. In [17, 18, 29], the good stability of this inverse problem was demonstrated empirically for specific reconstruction algorithms, which use the POCS method to invert the Hilbert transform with limited data. Although POCS is an efficient algorithm with guaranteed convergence if the data are noise-free (consistent), it does not by itself guarantee stability when applied to ill-posed problems with noisy data, such as, for instance, the severely ill-posed problem of limited-angle tomography. This motivated a theoretical analysis of the stability of the interior problem with prior knowledge, which led us to point-wise upper bounds on the reconstruction error that are independent of the specific algorithm used for reconstruction, as soon as this algorithm enforces a number of constraints. These results (Theorems 4.2 and 4.3) are useful since they show that the problem is not arbitrarily unstable and they give insight into the accuracy that is attainable. We will also present some numerical examples with simulated data to illustrate the theoretical results, using the same POCS algorithm as in [18]. We refer the reader to [18] for a detailed numerical study for a variety of geometric configurations, and with different sets of prior knowledge, some of which are not covered by the results included here. The results here, together with the studies already done in [18], [29], [30], point out new interesting data acquisition settings, where accurate and stable reconstruction may be possible.
+
+The organization of the paper is as follows. Section 2 contains background material on mathematical concepts; specifically, we review the definition and properties of the Hilbert transform and Nevanlina’s principle. These tools will be essential in the forthcoming sections. In section 3 we recall the Differentiated Backprojection formula that relates the Radon transform and the directional Hilbert transform, formula that together with the inversion of the truncated Hilbert transform, produces the semi-local inversion formulas presented in papers [23, 24]. In section 4 we describe explicitly the interior problem with a priori knowledge (figure 4.1 and figure 4.2). We also analyze the implications of the results presented in previous sections and with some extra calculation, we obtain the main uniqueness and stability results of this paper. In particular, in section 4 we use the relation presented in section 3 to reduce the problem of inverting the Radon transform in 2D to a problem on the Hilbert transform in ID. In section 5 numerical experiments are done in order to support the theoretical results of section 4. Section 6 mentions possible extensions, in particular to the 2D fan-beam and the 3D cone-beam geometries. Section 7 contains the conclusions.
+
+2. Background Material
+
+2.1. Hilbert Transform on the Real Line
+
+Unless otherwise specified, all over this section f is going to be a function in C0σ(ℝ) with 0 < σ ≤ 1 (see appendix A).
+
+For a function f∈C0σ(ℝ) its Hilbert transform is a function in Cσ (ℝ) defined as Hf(y)≔1πp.v.∫ℝf(x)x−ydx≔1πlimε→0[∫−∞y−εf(x)x−ydx+∫y+ε∞f(x)x−ydx].
+
+Since 1x−y is not integrable at x = y, to make sense of the integral it is necessary to remove a ball of radius ε around y and then let ε → 0. This is defined as the Cauchy principal value of the integral, and it is denoted with a p.v..
+
+The Hilbert transform is a classical transformation that appears in many different subjects, in particular it relates the real and imaginary parts of analytic complex valued functions. It satisfies H(Hf)(x) = −f(x) and it also verifies the following property.
+
+Lemma 2.1
+
+Let (a, b) be any non-empty open interval in ℝ. If f(x) = 0 and Hf(x) = 0 for x ∈ (a, b) ⊂ ℝ, then f ≡ 0 in ℝ.
+
+Proof
+
+Let Ω = (C \ ℝ) ∪ (a, b) i.e. Ω is the complex plane with the intervals (−∞, a) and (b, ∞) removed. For z ∈Ω define g(z)≔1π[∫−∞af(x)x−zdx+∫b∞f(x)x−zdx].
+
+The function g(z) is analytic in Ω and satisfies the classic Plemelj-Sokhotski formula [1, 2]: for any x ∈ ℝ \[a, b] limy→0+g(x+iy)−limy→0−g(x+iy)=12if(x).
+
+We assumed f ≡ 0 in (a, b), hence from its definition g(x) = Hf(x) for x ∈ (a, b). But we additionally assumed Hf(x) = 0 in (a, b). Therefore g ≡ 0 in (a, b) and consequently the analyticity of g implies g(z) ≡0 all over Ω. Using this and Plemelj-Sokhotski formula we obtain that f(x) = 0 for any x ∈ ℝ \ [a, b]. Since we already had assumed that f(x) = 0 in (a, b) the continuity of f implies that f ≡ 0 on all of ℝ.
+
+Corollary 2.2
+
+For any non-empty interval (a, b) the knowledge of f(x) and Hf(x) for all x ∈ (a, b) determines uniquely the value of f over all the real line.
+
+The next result about the Hilbert transform is quite remarkable [27, 28], and this property will be referred to as the inversion formula for the truncated Hilbert transform. For simplicity suppose that the support of a given function f is contained in the interval (−1,1). The knowledge of the Hilbert transform in (−1,1), plus some small a priori knowledge on f, is enough to recover the function with the following inversion formula.
+
+Theorem 2.3
+
+Let f be such that its support set is contained in (−1,1) and assume g(x) = Hf(x) is known in that interval. Then, for x ∈ (−1,1), 1−x2f(x)=C+1πp.v.∫−11g(y)x−y1−y2dy
+
+where C is a constant to be determined by a priori knowledge on f. For example, under the current assumptions, C can be determined using the relation C=1π∫ℝf(x)dx or from knowing some ε > 0 for which f(x) = 0 for x ∈ (−1, −1 + ε) ∪ (1 − ε, 1).
+
+2.2. Nevanlina’s Principle
+
+Apart from the Hilbert transform, the other important result we will use is known as Nevanina's Principle [2]. It provides an upper bound for the modulus of analytic functions and will be used later to estimate errors in the reconstruction of the attenuation function.
+
+Nevanlina’s principle will be used in the following context. Consider Ω ⊂ C to be a connected open subset of the complex plane with a piecewise smooth boundary. The boundary of Ω are the points that delimit Ω from its complement and it is denoted as ∂Ω. A real valued function ω(z) is said to be harmonic in Ω if the Laplacian of the function vanishes in the domain, i.e. if Δω(z) = 0 for all z in Ω. A harmonic function in Ω satisfies the maximum principle; this means that it attains its maximum and minimum values on the boundary of Ω.
+
+Theorem 2.4
+
+Let f(z) be an analytic function in a domain Ω ⊂ C. Let D ⊂ ∂Ω be a segment of the boundary. Let ω(z) be a harmonic function in Ω satisfying (2.1)
+
+Because of the maximum principle, ω(z) depends only on the domain Ω and the set D ⊂ ∂Ω. Also 0 < ω(z) < 1 for z ∈ Ω. This harmonic function is called the Nevanlina’s exponent for Ω and D.
+
+2.3. Applying Nevanlina’s principle
+
+Consider a disk in the complex plane. Remove from this disk a segment of its horizontal diameter, as shown in figure 2.1, and let that domain be Ω. We picture the diameter as being the interval (a, c) of the real line, while the removed segment is the interval (b, c). We let D = (b, c) so that ∂Ω \ D is the boundary of the disk. These Ω and D are the particular case in which we will apply Nevanlina’s principle, so let us compute Nevanlina’s exponent explicitly for such domain.
+
+The easiest way to compute the exponent is to map Ω conformally into the upper half plane {z ∈ C : Im(z) > 0}, mapping D onto the interval (0, ∞). Once in the upper half plane an expression for Nevanlina’s exponent is straightforward. Indeed, if z5 is a point in the upper half plane, write it as z5 ≔ reiβ with r > 0 and (β ∈ (0,π). The function ωH(reiβ) = β/π happens to be harmonic, bounded, and takes the values 0 on (0, ∞) and 1 on (−∞, 0).
+
+We map Ω onto the upper half plane by using a sequence of conformal maps. In figure 2.1 we show the intermediate domains that we map through, keeping track of the images of the sets D (dark solid line), ∂Ω \ D (thin solid line) and (a, b) ⊂ Ω (dark dotted line). The conformal maps that we use, and a short description of what they do, are as follows.
+
+Translation and scaling of the disk, centering the disk at 0 and normalizing the radius: z1:z↦z−(a+c2)c−a2
+
+Linear fractional transformation that map d ↦ 0, while mapping the disk onto itself: z2:z↦z−d1−d¯zford=2b−a−cc−a
+
+A duplicated D is mapped onto (−1,1), mapping the disk to a half-disk. This is achieved using a square root with a branch along [0, ∞): z3:z↦z
+
+Linear fractional transformation that maps the half-disk to a quadrant of C: z4:z↦1+z1−z
+
+Open the quadrant onto the upper half plane: z5:z↦z2
+
+Summarizing, we map Ω conformally onto the upper half plane using the composition of maps z5 ○ z4 ○ z3 ○ z2 ○ z1, mapping D onto (0, ∞) and ∂Ω \ D onto (−∞, 0). Once in the upper half plane we compose with ωH to obtain Nevanlina’s exponent for Ω, D. Therefore, Nevanlina’s exponent for Ω,D can be computed as ω(z) ≔ ωH(z5(z4(z3(z2(z1 (z)))))). And though this is a rather complicated expression, it is not hard to compute ω(z) explicitly for z ∈ (a, b), noting that (a, b) ⊂ Ω is mapped onto {z : |z| = 1, Im(z) > 0} in the upper half plane.
+
+Lemma 2.5
+
+For the domain Ω ⊂ C specified above and D = (b, c), Nevanlina’s exponent at x ∈ (a, b) has the following expression (2.2) ω(x)=4πarctan2(b−x)(c−a)(c−a)2−(2b−a−c)(2x−a−c).
+
+3. Differentiated Backprojection (DBP) and Hilbert Transform
+
+In Computerized Tomography (CT) the goal is to reconstruct an unknown attenuation function from some of its line integrals. In the absence of noise these line integrals correspond exactly to the measured data. In modern scanners, the data is acquired by an X-ray source and detectors rotating around the patient (see figure 3.1). In such a setting, the measured data gives rise to the concept of FOV: the set of points through which the line integrals in all directions are measured. This FOV corresponds exactly to our previous definition FOV ≔ {x ∈ ℝ2 : |x| < a} (e.g., figure 3.1). Recalling the definition of Rμ(s,α) from the introduction, the FOV corresponds to the set of points in ℝ2 for which Rμ(x . θ(α), α) is known for all α ∈ [0,π) Here x · θ denotes the inner product in ℝ2. We will refer to the region outside the FOV as the region of incomplete measurements since for x ∉ FOV, Rμ(x·θ(α), α) is known only for α in an angular range smaller than [0,π).
+
+Consider a function μ ∈ C0∞(ℝ2) and fix a vector η ∈ ℝ2 \ {0}. The Hilbert transform of μ in the direction η at point x ∈ ℝ2 is defined as Hημ(x)≔−1πp.v.∫ℝμ(x−tη)tdt.
+
+This is an odd function in η, namely H−ημ (x) = −Hημ(x).
+
+For an attenuation function μ, the connection between its Radon transform and this Hilbert transform is as follows [23].
+
+Lemma 3.1
+
+Let θ1, θ2 and θ(α) be the unitary vectors corresponding to α1, α2 and α respectively, where α1 and α2 are arbitrary angles and α∈[α1−π2,α2−π2]. Then (3.1) −1π∫α1−π2α2−π2[∂∂sRμ(s,α)]s=x·θ(α)dα=Hθ2μ(x)−Hθ1μ(x).
+
+And since the directional Hilbert Transform is odd in η we get the following Corollary.
+
+Corollary 3.2
+
+Let θ0 be the unitary vector corresponding to α0. Then (3.2) 12π∫α0−π2α0+π2[∂∂sRμ(s,α)]s=x·θ(α)dα=Hθ0μ(x).
+
+This formula relates the Radon transform and the Hilbert transform over a line. It will be used to reduce the problem of inverting the Radon transform in 2D to the problem of inverting the Hilbert transform in ID. Corollary 3.2 implies the following for the points in the FOV.
+
+Corollary 3.3
+
+For a point x in the FOV and in the case of noiseless measurements, Hημ(x) can be computed from the measured data for any direction η.
+
+Let us study the consequences of the previous result. In particular let us revisit some of the results presented in [23] and [11].
+
+Assume we have the situation of figure 3.2a): The object is described by the thin line and we know the boundary of the object. The circle represents the FOV and therefore we are measuring all the line integrals intersecting that circle. As in the figure 3.2a) pick a line L that exits the object at opposite sides contained in the FOV. Let η denote the direction of such a line. Corollary 3.3 tells us that from the measurements we can compute Hημ(x) for all points x in L ∩ FOV. This includes a segment I ⊂ L such that μ(x) = 0 ∀x ∈ L \ I. As we will see in more detail in section 4, in such a setting the inversion formula for the truncated Hilbert transform (Theorem 2.3 in this paper), allows us to recover μ(x) over the line L. Using the same argument over different lines, we obtain an inversion formula for all the points in the shadowed region of figure 3.2a). This is essentially the inversion formula presented in [23].
+
+A key element in the previous argument is that the FOV needs to be large enough, and be located in such a way with respect to the object, that it covers opposite portions of the boundary of the object. Therefore, the previous argument does not work anymore when the FOV only covers one side of the object, as the one in figure 3.2b). We can still consider a line L that, at least in one direction, exits the object at a piece of boundary contained in the FOV. We can compute Hημ(x) for all points x in L∩FOV, but there are points in L where μ(x) does not vanish and where we are not able to compute Hημ(x). Still, in [11] it is proved that the measured data is enough to uniquely determine μ(x) inside the FOV. Additionally some stabilitv estimates are provided about how the non-measured data influences the inversion of the Hilbert transform at points in the FOV. Theorem 4.2 in this paper is an extension of the estimates in [11]. In this paper we also present a generalization of the uniqueness result of [11], showing that, actually, the measurements in figure 3.2b) determine the function μ(x) uniquely over all the object, although maybe not stably everywhere. This is a consequence of Lemma 2.1 and Corollary 3.3, and will be presented in detail in the following section.
+
+The situation described in figure 3.2 arises in medical imaging when the patient is bigger than the FOV, or when we want to reduce the size of the FOV to reduce the patient exposure to X-ray radiation.
+
+4. Incomplete Data and A Priori Knowledge
+
+We are now ready to present the case studied in this paper. As mentioned in the introduction, we consider the interior problem: we assume the FOV is completely contained inside the object. In order to tackle the problem we assume we know the boundary of the object and we assume we know the value of the attenuation function in a subregion A inside the FOV. This situation is represented in figure 4.1a) and figure 4.2a).
+
+First, we study the situation described in figure 4.1a). For such a case we are able to obtain uniqueness and stability result, presented in Corollary 4.1 and Theorem 4.2 respectively. After-wards we focus on the situation described in figure 4.2a). The analysis will be analogous and the uniqueness result applies immediately, but we obtain a somewhat stronger stability result for the points in the FOV that are between regions where μ(x) is assumed to be known (Theorem 4.3).
+
+The uniqueness result establishes that the truncated measurements and the a priori knowledge are enough to determine the attenuation uniquely. For this result to hold we also need to assume that the measurements are noiseless and, therefore, that they correspond exactly to Rμ(s, α).
+
+4.1. Reducing to a ID problem
+
+Consider a line L that intersects the region A as in figure 4.1a). We regard the function μ(x) restricted to the line L. For that, fix x0 ∈ L and choose η ∈ ℝ2 \ {0} such that L = {x0 + tη : t ∈ ℝ}. For t ∈ ℝ define f(t) ≔ μ(x0 + tη). Such a function corresponds to the restriction of μ(x) to the line L and from its definition f∈C0∞(ℝ). We also have the following relation between the Hilbert transform of f(t) and the directional Hilbert transform of μ(x), Hf(t0)=1πp.v.∫ℝf(s)s−t0ds=1πp.v.∫ℝf(s+t0)sds==1πp.v.∫ℝμ(x0+(s+t0)η)sds=1πp.v.∫ℝμ(x0+t0η+sη)sds==−H−ημ(x0+t0η)=Hημ(x0+t0η).
+
+Therefore, if (x0 + t0η) ∈ FOV Corollary 3.3 implies that Hημ(x0 + t0η) can be computed from the measured data, hence Hf(t0) can be computed from the measured data. In addition to that, if (x0 + t0η) ∈ A then μ(x0 + t0η) is assumed to be known, hence f(t0) is known.
+
+This idea is summarized in figure 4.1. The function μ restricted to the line L corresponds to a function f : ℝ → ℝ. The FOV corresponds to an interval (a, e) and perfect measurement of Rμ for the lines intersecting the FOV translate, using formula (3.2), into the knowledge of Hf(t) for t ∈ (a,e). The region A ⊂ FOV corresponds to an interval (b, c) ⊂ (a, e) and knowledge of μ(x) for x ∈ A translates into knowledge of f(t) for t ∈ (b, c).
+
+In particular, using Corollary 2.2, this implies that f is uniquely determined over ℝ and the following result follows.
+
+Corollary 4.1
+
+Recalling that μ(x)∈C0∞(ℝ2). If μ(x) is known in a non-empty open region A contained in the FOV and the measurements are noiseless, then μ is uniquely determined over all lines L intersecting A. This readily implies that μ is uniquely determined in ℝ2.
+
+The reduction above of the original problem to a 1D problem is quite useful. The problem of recovering μ over L ∩ FOV reduces to recovering f(t) in the interval (a, e) (see figure 4.1). The information that we have available to reconstruct f(t) comes from the a priori knowledge on μ(x) and the measurements of Rμ(s,α). We established that perfect measurement of Rμ(s,α) for the lines intersecting the FOV imply that μ is uniquely determined. Now we will study what happens when we allow errors in the measurements.
+
+In the presence of noise the measurements are not exactly Rμ(s, α) anymore and we denote them as Rmμ(s,α). For a given line L we can compute the left hand side of the DBP formula using Rmμ(s,α) instead of Rμ(s,α) (equation (3.2)) and then restrict the problem to 1D like in section 4.1. We denote by gm(t) the function obtained using the prescribed procedure. If the measurements were perfect the DBP formula tells us that gm(t) = Hf(t), but in the presence of noise this needs not be the case.
+
+4.2. Setting of the Problem
+
+In this subsection and the next ones, the variable x will denote a point in ℝ, as in section 2. This is for simplicity of notation when doing references to complex variables.
+
+Let us assume without loss of generality, that supp f ⊂ (−1,1). We observed in the case of noiseless measurements, that Hf(x) can be obtained from the measured data for the points x ∈ (a, e), while f(x) is known for x ∈ (b, c). The points −l < a < b < c < e < l are specified in figure 4.1.
+
+Recall the inversion formula for the truncated Hilbert transform: 1−x2f(x)=C+1πp.v.∫−11Hf(y)x−y1−y2dy
+
+and let us split the integral as follows. Define (4.1) h1(x)=C+1πp.v.∫aeHf(y)x−y1−y2dy
+
+(4.2) h2(x)=1τ(x)1π[p.v.∫−1aHf(y)x−y1−y2dy+p.v.∫e1Hf(y)x−y1−y2dy]
+
+where τ(x) will be specified later and C=1π∫ℝfdx=1π∫Lμdl. I.e. we can write (4.3) 1−x2f(x)=h1(x)+τ(x)h2(x)
+
+where h1(x) corresponds to the part that could be obtained from noiseless measurements while h2(x) is defined with the values of Hf(x) that cannot be computed from the measurements. In this context, errors in the measurements translate into errors in the value of h1(x) and therefore the uniqueness given by Corollary 4.1 is lost.
+
+Nonetheless, we would like to know if it is possible to obtain a reasonable reconstruction when the errors in the measurements are small, i.e. when the errors in Rm(s,α) and gm(t) are small.
+
+We will tackle this stability question in two steps. As we mentioned above, h1(x) corresponds to the part of f(x) that can be obtained from noiseless measurements, and errors in the measurements imply errors in h1(x). The first step, included in this subsection and the next two, consist in giving a criterion that allow stable reconstruction but which relies on having a bound for the error in h1(x). The error in h1(x) is not straightforwardly related to the errors in the measurements Rm(s,α) or the errors in gm(t), and therefore the criterion presented in this subsection is an indirect one and it is somewhat technical. The second step, which is discussed in subsection 4.5, analyzes how bounds in the errors of Rm(s,α) and gm(t) can be translated into bounds for the error in h1(x), i.e., in subsection 4.5 we obtain a set of conditions that refer directly to the errors in Rm(s,α) and gm(t) and that allow for a stable reconstruction.
+
+Now we focus on the main goal of this subsection: a criterion that ensures that a candidate reconstruction fr will be close to the original function f, at least for the points inside the interval (a,e). The criterion that leads to the stability bounds of Theorem 4.2 and Theorem 4.3 is written as fr ∈ Sε (the definition of the set Sε is given below) and it can be roughly summarized as follows. Let Hfr be the Hilbert transform of the candidate reconstruction fr and let h1r be obtained using equation (4.1) with H.fr(y) instead of Hf(y) and Cr ≔ ∫ℝfr(y)dy instead of C = ∫ℝ f(y)dy. We will request that for x ∈ (a, e) the error of h1,r(x) is not too large, namely, we will request that there is a non-negative continuous function E(x) such that, (4.4) |h1,r(x)−h1(x)|<εE(x)forx∈(a,e)withE(x)≤1forx∈(b,c)
+
+This is a somewhat technical condition that amounts to a tight uniform control over the error |h1,r(x) − h1(x)| in the interval (b, c), while allowing for the possibility of a larger error in the rest of the interval (a,e), as defined by the function E(x). A condition requiring a uniform bound over all of (a,e), especially near a and e, may be too restrictive since, as we approach the region of incomplete measurements, it might be impossible to control the precision of the reconstruction fr, and h1,r is related to fr by equation (4.3).
+
+Let us describe explicitly the set Sε. Due to the non-local nature of the Hilbert transform we need to add an a priori bound on |Hf| for x ∈ (−l,a) ∪ (e, 1). We know that f∈C0∞(ℝ) and therefore Hf ∈ C∞(ℝ). Hence |Hf(x)| is uniformly bounded for x ∈ (−l,a) ∪ (e, 1) and we assume that we know constants M1 and M2 such that 1π1−x2|Hf(x)|≤{M1/2forx∈(−1,a)M2/2forx∈(e,1)
+
+We define Sε as the set of smooth and compactly supported functions fr∈C0∞(ℝ) that satisfy the following four conditions: Sε≔{fr∈C0∞(ℝ):−suppfr(x)⊂(−1,1)(weknowthatsuppf(x)⊂(−1,1)).−fr(x)=f(x)forx∈(b,c)(recallthatf(x)isknownin(b,c)).−|h1,r(x)−h1(x)|<εE(x)forx∈(a,e)withE(x)≤1forx∈(b,c)−1π1−x2|Hfr(x)|<{M1/2forx∈(−1,a)M2/2forx∈(e,1)}
+
+The function E(x) is any arbitrary non-negative continuous function on (a, e) satisfying E(x) ≤ 1 for x ∈ (b,c).
+
+One of the main results in this paper is to show that for any fr ∈ Sε the reconstruction error |fr(x) − f(x)| is bounded by equation (4.6). Now we make some computations that help us prove such result. Let us denote the reconstruction error as ferr(x) ≔ fr(x) − f(x) Define h1,err(x) and h2,err(x) using equation (4.1) and equation (4.2) with f(x) replaced by ferr(x). Observe that equation (4.3) holds with ferr,h1,err and h2,err instead. The assumption fr(x) ∈ Sε translates into supp ferr(x) ⊂ (−1,1)
+
+ferr(x) = 0 for x ∈ (b, c)
+
+|h1,err(x)| < εE(x) for x ∈ (a, e) with E(x) ≤ 1 for x ∈ (b, c)
+
+1π1−x2|Hferr(x)|<{M1forx∈(−1,a)M2forx∈(e,1)
+
+We will bound |ferr(x)| in terms of ε for x ∈ (a, b). Because of (4.3) it will be enough to bound τ(x)h2,err(x) in terms of ε for x ∈ (a, b). The bound we find is not a norm or uniform bound, but instead it is a pointwise bound that depends on the position of x with respect to −1,a, b, c, e, 1.
+
+Since ferr(x) = 0 for x ∈ (b, c) equation (4.3) implies, (4.5) |h2,err(x)|=|h1,err(x)τ(x)|<ε|τ(x)|∀x∈(b,c)
+
+Also, we can extend the definition of h2,err(z) to z ∈ C \ ((−1, a) ∪ (e, 1)) by just replacing x by z in the definition of h2,err(x). The extended function h2,err(z) will be analytic in any subset of C \ ((−1, a) ∪ (e, 1)) as lone: as τ(z) is analvtic there. The inclusion of the function τ(z) in the definition of h2,err(z) is due to the singular behavior of the integrals ∫−1aHferr(y)z−y1−y2dy and ∫e1Hferr(y)z−y1−y2dy for z ∈ (e, 1) respectively. For a fixed domain Ω, we will see shortly that we can choose an analytic function τ(z) that is easy to analyze and that in Ω has the same behavior as these integrals. That way h2,err(z) can be bounded and Nevanlina’s principle can be applied.
+
+4.3. Bound for x ∈ (a, b)
+
+Consider Ω to be the disk of diameter (a, c) and remove the subinterval (b, c). Let D = (b, c) ⊂ ∂Ω (i.e Ω and D are like in Lemma 2.5). Define, τ(z)≔κ+∫−1a1z−ydy   withκ≔M2ln(1−ce−c)M1.
+
+This function τ(z) is analytic in Ω and, as proved in the appendix B, |h2,err(z)| < 2M1 for z ∈ ∂Ω \ D. Also, for x ∈ (b, c), |τ(x)|=κ+ln(x+1x−a). Inequality (4.5) then implies |h2,err(z)|<εκ+ln(c+1c−a) for z ∈ D = (b, c). Using Nevanlina’s principle (Theorem 2.4) and formula (4.3) we conclude the following theorem.
+
+Theorem 4.2
+
+If fr is a reconstruction satisfying the conditions imposed by fr ∈ Sε, where Sε is defined in Subsection 4.2, then for any x ∈ (a, b), (4.6) 1−x2|fr(x)−f(x)|<[εE(x)+2M1(κ+ln(x+1x−a))(ε2M1(κ+ln(c+1c−a)))1−ω(x)].
+
+The function ω(x)=4πarctan2(b−x)(c−a)(c−a)2(2b−a−c)(2x−a−c) is the Nevanlina’s exponent that was calculated in Lemma 2.5.
+
+In order to identify the consequence of this result, we rewrite the bound in Theorem 4.2 in a less explicit form (assume 0 < ε ≤ 1): |fr(x)−f(x)|≤K(x)εδ(x),   withδ(x)=1−ω(x).
+
+The function δ(x) > 0 is continuous and satisfies limx→b δ(x) = 1 and limx→a δ(x) = 0, actually this function is δ(x) = 1 − ω(x). The function K(x) is also continuous and limx→bK(x) = (κ+ln(b+1b−a))/(κ+ln(c+1c−a)) < ∞ while limx→a K(x) = ∞. Written in this form the bound implies the following: accurate reconstruction is possible near b, and reconstruction should become more unstable as we approach a.
+
+With respect to the reconstruction of μ over the line L, Theorem 4.2 implies reconstruction should be accurate near the region A, where μ is assumed to be known, while reconstruction should be less accurate as we move far from the region A towards the region of incomplete measurements.
+
+By symmetry, the points in the interval (c, e) admit a bound of exactly the same kind. We skip such computation and we focus on studying the case of a different region A.
+
+4.4. Points Between Regions Where μ is Known
+
+We study what happens when we restrict the attenuation function μ to a line L as the one in figure 4.2a). As before, we reduce the analysis to a 1D problem, and uniqueness follows in the same way.
+
+We modify the list of conditions that imply a bound for the reconstruction error, accordingly to the situation presented in figure 4.2. Let us define S˜ε as the set of smooth compactly supported function fr satisfying, S˜ε≔{fr∈C0∞(ℝ):−suppfr(x)⊂(−1,1)−fr(x)=f(x)forx∈(b,c)∪(d,e)−|h1,r(x)−h1(x)|<εE(x)forx∈(a,e)   withE(x)≤1forx∈(b,c)∪(d,e).−1π1−x2|Hfr(x)|<{M1/2forx∈(−1,a)M2/2forx∈(e,1)}
+
+As in subsection 4.2, let ferr(x) ≔ fr(x) − f(x) denote the reconstruction error. Since fr ∈ Sε the following set of conditions replace those of subsection 4.2: supp ferr(x) ⊂ (−1, 1)
+
+ferr(x) = 0 for x ∈ (b, c) ⊂ (d, e)
+
+|h1,err(x)| < εE(x) for x ∈ (a, e) with E(x) ≤ 1 for x ∈ (b, c) ∪ (d, e).
+
+1π1−x2|Hferr(x)|<{M1forx∈(−1,a)M2forx∈(e,1) (twice the a priori bound on H f(x))
+
+To obtain a bound for the reconstruction error it is enough to bound h2,err(x). In order to do this we consider adequate domains Ω= {a disk minus a subinterval of the diameter} and functions τ(z) with the right behavior in each Ω. Applications of Nevanlina’s principle for h2,err(z) will then produce the desired bounds.
+
+The interval (c, d) is contained in the domains Ω1and Ω2 described in figure 4.2b). Namely we obtain Ω1 by removing the interval D1 = (b, c) from the disk of diameter (b, d). Since Ω1 is far from (−1, a) ∪ (e, 1) we can consider different candidates for the function τ(z). We obtain Ω2 by removing the interval D2 = (d, e) from the disk of diameter (c, e). Let us define the following functions: τ1(z)≔κ1+∫−1a1z−ydywithκ1≔M2ln(1−de−d)M1τ2(z)≔κ2+∫e11y−zdywithκ2≔M1ln(c+1c−a)M2τ3(z)≔κ3+∫e11y−zdywithκ3≔M1ln(b+1b−a)M2
+
+After a slight modification of appendix B, the analysis leading to Theorem 4.2 is valid for Ω1 with τ1(z), for Ω2 with τ2(z), and for Ω1 with τ3(z). The application of Nevanlina’s principle on those three different settings provide us with the bounds (4.7), (4.8), (4.9) in Theorem 4.3. In addition to that, since Ω1 is far from (−l, a) ∪ (e, 1) then h2,err(z) does not have a singular behavior in Ω1, and we can consider Ω1 with τ4(z) ≔ 1. Inequality (4.5) implies |h2,err(z)| ≤ ε for z ∈ (b, c), while the second part of appendix B shows that |h2,err(z)|≤M1ln(c+1c−a)+M2ln(1−de−d) for z ∈ ∂Ω1 \ D1. An application of Nevanlina’s principle in this case provide us with the bound (4.10) in Theorem 4.3.
+
+Theorem 4.3
+
+For a reconstruction fr (x) satisfying fr ∈ S͂ε we have the following bounds at points x ∈ (c, d). Using Ω1 with τ1(z) we obtain (4.7) 1−x2|fr(x)−f(x)|<[εE(x)+2M1(κ1+ln(x+1x−a))(ε2M1(κ1+ln(c+1c−a)))1−ω1(x)]
+
+where ω1(x)=4πarctan2(x−c)(d−b)(d−b)2−(2c−d−b)(2x−d−b).
+
+Using Ω2 with τ2(z) we obtain (4.8) 1−x2|fr(x)−f(x)|<[εE(x)+2M2(κ2+ln(1−xe−x))(ε2M2(κ2+ln(1−de−d)))1−ω2(x)]
+
+where ω2(x)=4πarctan2(d−x)(e−c)(e−c)2−(2d−c−e)(2x−c−e).
+
+Using Ω1 with τ3(z), we obtain (4.9) 1−x2|fr(x)−f(x)|<[εE(x)+2M2(κ3+ln(1−xe−x))(ε2M2(κ3+ln(1−de−d)))1−ω1(x)].
+
+Using Ω1 with τ4(z) ≔ 1, we obtain (4.10) 1−x2|fr(x)−f(x)|<[εE(x)+(M1ln(b+1b−a)+M2ln(1−de−d))(εM1ln(b+1b−a)+M2ln(1−de−d))1−ω1(x)].
+
+Which bound is better actually depends on the values of a, b, c, d, e, M1, M2 and the location of the point x in the interval (c, d).
+
+Let us rewrite the combination of the bounds in Theorem 4.3 in a less explicit way (assume ε ≤ 1): |fr(x)−f(x)|≤K(x)εδ(x)
+
+with δ(x) > 0 and K(x) continuous. The main difference with respect to the bound in subsection 4.3 is that now, by putting together the bounds in Theorem 4.3, the functions δ(x) and K(x) satisfy limx→c δ(x) = limx→d δ(x) = 1, while limx→c K(x) < ∞ and limx→d K(x) < ∞. In particular, for δ = min(c,d) δ(x) > 0 and K = max(c,d) K(x) < ∞ we have: |fr(x)−f(x)|≤Kεδ.
+
+This is a uniform bound for the reconstruction of f in the interval (c, d). The intuition that stability should be achievable inside the whole interval (c, d) is verified: when we move inside the interval (c, d) we stay away from the regions of incomplete data.
+
+4.5. Stability based on measurements errors
+
+In the previous subsections we bounded the reconstruction error |fr(x) − f(x)| for the points x inside the FOV. But these results are not easy to interpret because they require fr ∈ Sε, and that means that we have to bound the error |h1,r(x) − h1(x)| of the intermediate function h1(x) defined by equation (4.1). A more useful error bound for the reconstruction would be expressed in terms of the error for quantities related directly to the measurements, namely Rm(s,α) and gm(t).
+
+In this subsection we study how to bound the reconstruction error only from the knowledge that Rm(s,α) and gm(t) contain small errors plus the a priori knowledge. The answer is not straightforward. The condition fr ∈ Sε requires us to bound |h1,r(x) − h1(x)| and h1(x) is computed from H f(x) as denned in equation (4.1). In the noiseless case we know that gm(x) = H f(x) and therefore, even in the presence of noise, we may want to construct fr such that Hfr = gm, this is a good idea but it does not produce fr ∈ Sε: even if the error |Hfr − Hf| is very small there is no guarantee that h1,r will be close to h1 (such a fact can be noted by observing that the Hilbert transform of a discontinuous function is not bounded, and it would be unrealistic to assume continuity constraints on the error |gm − Hf|).
+
+We overcome this problem by reconstructing instead a smooth approximation f̄ of the original attenuation function f. We define f̄(x) ≔ ϕ * f(x) ≔ ∫ℝ ϕ (x − y)f(y)dy as the convolution of f with a smooth non-negative blurring kernel ϕ(x) ∈ C0∞ (ℝ), ϕ being such that ∫ℝ ϕ(x)dx = 1 and with bounded support supp ϕ ⊂ (−δ, δ). We are in the setting of subsection 4.2 (see figure 4.1) and we assume that δ > 0 is small enough to satisfy −1 + δ < a, b + δ < c − δ, e < 1 − δ (see figure 4.3).
+
+We assume the following a priori information about f: supp f ⊂ (−1 + δ, 1 − δ) hence supp f̄ ⊂ (−1, 1).
+
+f(x) is known for x ∈ (b, c).
+
+We know constants M1 and M2 such that 1π|Hf(x)|≤{M1/2forx∈(−1−δ,a+2δ)M2/2forx∈(e−2δ,1+δ)
+
+We also assume that the error in the measurements is small, as prescribed by the following bounds (4.11) |gm(x)−Hf(x)|<εforx∈(a,e)and|Rmμ(s0,α0)−Rμ(s0,α0)|<ε
+
+where (s0, α0) parameterize the line L that defines f, hence Rμ,(s0, α0) = ∫ℝ f(y)dy.
+
+We define the set Aε of admissible solution estimates as Aε≔{fr∈C0∞(ℝ):−suppfr⊂(−1+δ,1−δ)−fr(x)=f(x)forx∈(b,c)−1π|Hfr(x)|≤{M1/2forx∈(−1,−δ,a+2δ)M2/2forx∈(e−2δ,1+δ)−Hfr(x)−gm(x)=λ(x)for someλwith|λ(x)|<εforx∈(a,e)−|∫ℝfr(y)dy−Rmμ(s0,α0)|<ε}
+
+The first three conditions in the definition of Aε correspond exactly to the a priori knowledge about f(x). The last two conditions in Aε correspond to the bounds of the measurements errors, as specified by (4.11). Therefore the original function f(x) is an admissible solution, i.e. f ∈ Aε and if fr ∈ Aε we will say that fr is compatible with the a priori information and the measurements.
+
+As mentioned before, just the fact that fr ∈ Aε does no guarantee that fr ∈ Sε. What we will show though, is that for any admissible solution fr ∈ Aε the convolution ϕ * fr (x), as a reconstruction of f̄ (x) = ϕ * f(x), has a bounded reconstruction error. In order to establish that let us define ā = a+δ, b̄ = b+δ, c̄ = c−δ and ē = e−δ (see figure 4.3) and let us define the set Aε¯≔{f̄r∈C0∞(ℝ):−suppf̄r⊂(−1,1)−f̄r(x)=f̄(x)forx∈(b̄,c̄)−1π1−x2|Hf̄r(x)|≤{M1/2forx∈(−1,ā)M2/2forx∈(ē,1)−Hf̄r(x)−ϕ*gm(x)=ϕ*λ(x)for some|λ(x)|<εforx∈(a,e)−|∫ℝf¯r(y)dy−Rmμ(s0,α0)|<ε}
+
+Since ϕ* (Hf) = H(ϕ * f) it easy to check that, if fr ∈ Aε then ϕ * fr ∈ A̅ε. In particular f̄ ∈ A̅ε. We also define the following set S̅ε̄≔{f̄r∈C0∞(ℝ):−suppf̄r(x)⊂(−1,1)−f̄r(x)=f̄(x)forx∈(b̄,c̄)−1π1−x2|Hf̄r(x)|≤{M1/2forx∈(−1,ā)M2/2forx∈(ē,1)−|h̄1,r(x)−h̄1(x)|<ε̄E̅(x)forx∈(ā,ē)withE̅(x)≤1forx∈(b̄,c̄)}
+
+where h̄1,r (x) (respectively h̄1(x)) are calculated using equation (4.1) with f̄r instead of f (respectively f̄ instead of f), and with ā and ē instead of a and e. The constant ε̄ is proportional to ε and E̅(x) is a continuous function in (ā, ē) with E̅(x) ≤ 1 for x ∈ (b̄, c̄). The precise description of ē and E̅(x) are in Appendix C, where it is also shown that if (4.11) holds then A̅ε ⊂ S̅ε̄ and therefore ϕ * fr ∈ S̅ε̄ for any fr ∈ Aε. Lets stop one second to notice the following: the last two conditions in the definition of A̅ε are bounds of the candidates compared to the measurements, but the last condition in S̅ε̄ involves f̄ and not the measurements. Roughly speaking, this transition is possible because f̄ ∈ A̅ε and all the functions in A̅ε are close to each other.
+
+We observe that the set S̅ε̄ coincides with the criterion introduced in subsection 4.2 (listed in the set Sε), provided that we replace a, b, c, e, ε and E(x) by ā, b̄, c̄, ē, ε̄ and E̅ (x). Using Theorem 4.2 we conclude. For any admissible solution fr ∈ Aε the error |ϕ* fr(x)−f̄(x)| will be bounded by equation (4.6), with the corresponding substitutions.
+
+5. Numerical Experiments
+
+In order to support numerically the previous results we consider the situation described in figure 5.1a). The Shepp-Logan phantom is enlarged 2.5 times, so its ellipse axes are 4.6 and 3.45. We consider a rectangular FOV of 1.5 × 2 located in the center of the phantom, the fact that the FOV is a rectangle does not change the theory and makes the presentation of the numerical results clearer. A total of 1200 parallel-beam projections over an angular range of 180° are computed. On each projection, lines are sampled at every 2/256 of distance and the lines not intersecting the FOV are truncated. The FOV is reconstructed as an image of 192 × 256 pixels.
+
+The gray strips in figure 5.1b) correspond to the region A, where the attenuation is known a priori. The region A divides the FOV in the regions B, C and D, to the left, in between and to the right of A respectively. With respect to the support of the object we consider two situations (see figure 5.1c)): we have the knowledge that the phantom is contained inside a region 1.2 times its original size, labelled “tight support” case; or we have the knowledge that the object is contained in a region 1.8 times its original size, labelled “loose support” case.
+
+Consider an horizontal line L as the one in figure 5.1b). Let f(x) be the restriction of μ to that line and let fr(x) be the reconstruction of f(x). The a priori knowledge on μ corresponds to the following knowledge on f(x), - f(x) is known ∀x ∈ (−.55, −.45) ∪ (.45, .55).
+
+- f(x) = 0 ∀x ∉ (−di, di). Let d be the intersection of the line L and the boundary of the phantom as in figure 5.1, di = 1.2 × d for the “tight support” case, di = 1.8 × d for the “loose support” case.
+
+- f(x) ≥ 0 since it is a density function.
+
+From the measurements we compute - gm(x) ∀x ∈ (−1, 1), computed using the measurements in the DBP formula (3.2).
+
+- Rmμ(s,π2), the measurement on the horizontal line L.
+
+The reconstruction of f(x) is done by trying to find a function fr in the intersection of the following sets: E1 ≔ {f̃ ∈ L2 (ℝ) : f̃(x) = f(x) ∀x ∈ (−.55, −.45) ∪ (.45, .55)}
+
+E2 ≔ {f̃ ∈ L2 (ℝ) : f̃(x) = 0 ∀x ∉ (−.di, di)}
+
+E3 ≔ {f̃ ∈ L2 (ℝ) : f̃(x) ≤ 0}
+
+E4 ≔{f̃ ∈ L2 (ℝ) : |Hf̃(x) − gm(x)| ≤ ε ∀x ∈ (−1, 1)}
+
+E5≔{f˜∈L2(ℝ):∫−didif˜(x)dx=Rmμ(s,π2)}
+
+Observing that the mentioned sets are convex, the scheme followed to find fr(x) in the intersection of the Ei is by iteratively projecting into them, in the order E2,E4,E1,E5,E3. The projection operators on the sets above are straightforward except for the projection on E4. Denote as P4 : L2 → E4 ⊂ L2 the orthogonal projection on E4. This operator takes the following form [11]: for f̃ ∈ L2(ℝ) let φ(x)≔{Hf˜(x)x∉(−1,1)max{gm(x)−ε,min{gm(x)+ε,Hf˜(x)}}x∈(−1,1)
+
+then P4f̃=H−1φ.
+
+The methodology described above is essentially the DBP-POCS method in [11].
+
+In figure 5.2 we present the reconstruction obtained if we do not include the a priori knowledge, i.e. without projecting on E1. Without the a priori knowledge the reconstructed value of the attenuation function is shifted and it presents strong low frequency artifacts, this is a large bias in the reconstruction and is the kind of behavior that usually shows up in the interior problem. Reconstructions including the a priori knowledge, i.e. including the projection on E1, are shown in figure 5.3. For region C, contained in between regions of a priori knowledge, we observe that reconstructions are accurate and stable even with noisy data and only with a loose knowledge about the support of the attenuation. In regions B and D the reconstructions tend to be more accurate near the region of a priori knowledge, and becomes less accurate as we move away from it. Artifacts appear towards the region of incomplete measurements and reconstruction near the region of incomplete measurements depends importantly on the knowledge about the support of the function. The quantitative aspects of the reconstructions in figure 5.3 are also illustrated by profiles in figure 5.4.
+
+The table in figure 5.5 shows the effect of noisy data for reconstruction, with and without a priori knowledge, in the “tight support” case. We also include the bias of the reconstruction with respect to the original phantom. Namely, let μ(x) be the attenuation function of the original phantom, let μr (x) be the reconstruction without noise and let μr,n(x) be the reconstruction obtained with Poisson noise added to the data. On each R()I we compute the standard deviations and biases as SDROI=∑x∈ROI(μr(x)−μr,n(x))2#{x:x∈ROI},BIASROI=∑x∈ROI|μ(x)−μr(x)|#{x:x∈ROI}.
+
+We notice in figure 5.5 that all the standard deviations, with and without a priori knowledge, are on the same order of magnitude, while the bias in the reconstruction with a priori knowledge is much smaller than the bias in the reconstruction without a priori knowledge. We also observe that, going from reconstruction without a priori knowledge to reconstruction with a priori knowledge, the standard deviation in regions B and D increases by 12% and 15% respectively, while in region C the standard deviation increases only by 1.6% (and becomes about 3% smaller than the standard deviations in regions B and D). I.e. for the ROI C, located between regions of a priori knowledge, the reconstruction that includes the a priori knowledge is much more accurate than the reconstruction without the a priori knowledge while the standard deviation remains essentially unchanged.
+
+6. Extensions
+
+For Theorems 4.2 and 4.3 we can relax our a priori knowledge on the attenuation function. For the a priori knowledge it is enough to assume that we know με0(x) such that |με0(x)−μ(x)|≤ε0 for x ∈ A. In the computations leading to Theorems 4.2 and 4.3 this extra ε0 can be absorbed in h1,err and the bounds presented in Theorems 4.2 and 4.3 are still valid if we replace ε by ε + ε0.
+
+A second extension is with respect to the acquisition geometry assumed in this paper. We assumed that the measurements were either acquired in parallel beam geometry or that they were rebinned into a parallel beam parametrization. This assumption was done in order to simplify the presentation and it is not strictly necessary. The explicit parallel beam parametrization was used only in Corollary 3.2. There is an analogous formula relating the fan beam or cone beam measurements to the directional Hilbert transform [24]. Once the directional Hilbert transform of the attenuation function is obtained, the rest of the analysis is the same. An extension to the fan beam geometry is direct. Nonetheless, in the case of cone beam geometry, truncation of the data set can take a complicated form, and it is not easy to characterize all the segments along which the directional Hilbert transform can be computed from the available data.
+
+Throughout the paper we have been picturing the FOV as a circular region. However, as we saw with the simulation, the FOV does not need to be circular; it can be rectangular or it can take less regular shapes. Note however, that the FOV will always be convex or the union of convex sets [3].
+
+7. Conclusion
+
+In the present paper we studied the interior problem of Computerized Tomography. We concluded that adding extra knowledge on the support of the attenuation function, and adding knowledge of the value of the attenuation function in a subregion of the FOV, the measurements are enough to uniquely determine the function all over the object. Additionally, we proved that any candidate reconstruction satisfying the set of conditions in subsection 4.2 (or the conditions in subsection 4.4) has a reconstruction error bounded by equation (4.6) (respectively equations (4.7) (4.8)(4.9)(4.10)). These bounds establish that accurate reconstruction is possible for points inside the FOV if they are near the region where the attenuation is known. The same bounds suggest that reconstruction becomes unavoidably unstable as we approach the region of incomplete measurements. Last, we showed that reconstruction can be stable along any interval in the FOV that is contained in between two regions where the attenuation is known. All our theoretical predictions were illustrated by numerical reconstructions using the DBP-POCS method of [11]. The reconstructed attenuation showed good accuracy and stability as suggested by Theorem 4.2 and Theorem 4.3, thus supporting our results for the interior problem with a priori knowledge.
+
+The possibility of stable reconstruction for the interior problem has interesting consequences for the problem of Computed Tomography with truncated data. For example, in low-dose cardiac CT the region of interest is well inside the patient and image reconstruction on a reduced FOV translates into a reduced radiation dose. The required a priori knowledge about the support of the attenuation function is easy to obtain, at least loosely (the patient is inside the scanner). More difficult is to obtain the a priori knowledge of the attenuation function in a subregion of the FOV. Some suggestions are to complement the CT measurements with other imaging techniques or to try to identify a region of tissue or bone inside the FOV for which the attenuation function can be guessed with good enough accuracy.
+
+A case in which the a priori knowledge is not hard to obtain is when performing multiple CT scans of the same region in a short period of time. For instance, when conducting a scan before and after a contrast agent has been administered. With the first full scan the non-dyed attenuation coefficients are determined, and any region not affected by the contrast agent is a region of a priori knowledge for the subsequent scans. If such a region can be identified and we are interested only in an image of a localized region well inside the body (as in the case of urography), the results of stable reconstruction for the interior problem with a priori knowledge would allow to reduce the FOV for the subsequent scans and therefore reduce the overall radiation dose on the patient.
+
+Figures
+
+Figure 2.1 Sequence of conformal maps from Ω to the upper half plane. The images of D correspond to the dark solid line. The images of ∂Ω \ D correspond to the thin solid line. The images of the interval (a, c) ⊂ Ω correspond to the dark dotted line.
+
+Figure 3.1 Typical data acquisition setting in X-ray CT. The source and detectors rotate around the patient. The shadowed region represents the FOV.
+
+Figure 3.2 a) Not all line integrals are measured, but μ(x) can be reconstructed in the shadowed region, b) The attenuation μ(x) is uniquely determined in the shadowed region
+
+Figure 4.1 a) The attenuation function is known a priori in the region A. b) In reduction to ID, the region A correspond to the interval (b, c) therefore f(t) is known in that interval The FOV correspond to the interval (a, e) therefore Hf(t) can be computed from the measured data inside the interval (a, e).
+
+Figure 4.2 a) The attenuation function is known a priori in the region A. b) In reduction to 1D, region A corresponds to the intervals (b, c) ∪ (d, e).
+
+Figure 4.3 Relevant intervals after smoothing.
+
+Figure 5.1 Description of the numerical experiment, a) The rectangular FOV is completely contained in the Shepp-Logan phantom, b) The attenuation μ is known in region A. We use DBP on horizontal lines L. c) We assume we approximately know the support of the object.
+
+Figure 5.2 Left: noiseless reconstruction with only the “tight support” knowledge. The display window is [0.874,0.926] instead of [0.994,1.046]. Right: reconstruction with noise and “tight support” knowledge, display window [0.874,0.926]
+
+Figure 5.3 Top left: noiseless reconstruction with a priori knowledge in A and “tight support” knowledge. Top right: reconstruction under noise with knowledge as in top left. Bottom left: noiseless reconstruction with a priori knowledge in A and “loose support” knowledge. Bottom right: Reconstruction under noise with knowledge as in bottom left. All reconstructions displayed on the original phantom display window [0.994,1.046].
+
+Figure 5.4 Example of a profile line of the reconstruction, supp1 and supp2 correspond to the “tight support” and “loose support” cases respectively. The first graph is noiseless reconstruction, the second graph is the profile of noisy reconstruction. With no noise added to the data, the reconstruction with support 1 is very close to the original phantom, except near the edges; accordingly, the curves for these two images can only be distinguished near the edges.
+
+Figure 5.5 SD shows the standard deviation of the noisy reconstruction with respect to the noiseless reconstruction. Bias shows the average bias of the noise-less reconstruction compared to the original phantom. The size of each R()I is 0.4 × 0.2.
+
+ACKNOWLEDGMENTS
+
+This work was supported in part by the U.S. National Institutes of Health (NIH) and the grant R01 EB000627. Its contents are solely the responsibility of the authors and do not necessarily represent the official views of the NIH.
+
+Appendix
+
+9.1. Appendix A
+
+We say that a function f is in Cσ(ℝn), with 0 < σ ≤ 1, if for any point x ∈ ℝn there exist constants C and δ > 0 such that |f(y)−f(x)|<C|x−y|σforanyysatisfying|y−x|<δ.
+
+We say f ∈ C∞(ℝ) if it is differentiate to any order.
+
+The support of a function f, denoted as supp f, is defined as the complement of the largest open set in where f vanishes. We say that f∈C0σ(ℝn) if it is in Cσ(ℝn) and also has compact support. Analogously for C0∞(ℝn).
+
+9.2. Appendix B
+
+Let Ω be the disc of diameter (a, c) with −1 < a < c < e <1 and let k(z)≔1π[p.v.∫−1aHf(t)z−t1−t2dt+p.v.∫e1Hf(t)z−t1−t2dt].
+
+Assume that 1π1−t2|Hf(t)|<{M1fort∈(−1,a)M2fort∈(e,1)
+
+then for z = x + iy with Re(z) = x ∈ (a, c) we have, |k(z)|<M1|∫−1a1z−tdt|+M2∫e1|1t−z|dt≤M1|∫−1a1z−tdt|+M2∫e11t−xdt≤M1(|∫−1a1z−tdt|+M2ln(1−ce−c)M1)≤2M1|∫−1a1z−tdt+M2ln(1−ce−c)M1|
+
+where the last step is valid since Re (∫−1a1z−tdt)andM2ln(1−ce−c)M1 are both non-negative.
+
+Additionally, for z = x + iy with Re(z) = x ∈ (c, d) we also have |k(z)|<M1|∫−1a1z−tdt|+M2∫e1|1t−z|dt≤M1∫−1a1x−tdt+M2∫e11t−xdt≤M1ln(b+1b−a)+M2ln(1−de−d).
+
+9.3. Appendix C
+
+As mentioned in subsection 4.5, assuming that (4.11) holds, we want to prove that Āε ⊂ S̄ε̄. The constant ε̄ will be proportional to ε and Ē(x) will be a continuous function in (ā, ē) with Ē(x) ≤ 1 for x ∈ (b̄, c̄). Recall that ϕ∈C0∞(ℝ) is such that fℝ ϕ(x)dx = 1 and supp ϕ ⊂ (−δ,δ).
+
+We are assuming that (4.11) holds, i.e. we assume that (9.1) |gm(x)−Hf(x)|<εforx∈(a,e)and|Rmμ(s0,α0)−Rμ(s0,α0)|<ε
+
+and given (9.1) we want to prove that the following two conditions (9.2) Hf¯r(x)−ϕ*gm(x)=ϕ*λ(x)forx∈(a¯,e¯)forsome|λ(x)|<εforx∈(a,e)
+
+(9.3) |∫ℝf¯r(y)dy−Rmμ(s0,α0)|≤ε
+
+imply (9.4) |h¯1,r(x)−h¯1(x)|<ε¯E¯(x)forx∈(a¯,e¯)withE¯(x)≤1forx∈(b¯,c¯)
+
+where h̄1,r (x) (respectively h̄1(x)) are calculated using equation (4.1) with f̄r instead of f (respectively f̄ ≔ ϕ * f instead of f), and with ā ≔ a + δ and ē ≔ e − δ instead of a and e.
+
+First we will use (9.1) to eliminate reference to the measurements in (9.2) and (9.3). Recall that ϕ * (Hf) = H(ϕ * f) = Hf̄ and that the convolution is linear. Hence (9.2) imply Hf¯r(x)−Hf¯(x)=[Hf¯r(x)−ϕ*gm(x)]+[ϕ*gm(x)−ϕ*Hf(x)]=ϕ*(λ(x)+[gm(x)−Hf(x)]
+
+and letting λ̃(x) ≔ λ(x) + [gm(x) − Hf(x)] the first bound in (9.1) allows us to replace (9.2) by (9.5) Hf¯r(x)−Hf¯(x)=ϕ*λ˜(x)forx∈(a¯,e¯)forsome|λ˜(x)|<2εforx∈(a,e)
+
+To replace (9.3) we use the second bound in (9.1) and the fact that Rμ(s0,α0) = ∫ℝf(y)dy = ∫ℝf̄(y)dy to obtain (9.6) |∫ℝf¯r(y)dy−∫ℝf¯(y)dy|≤2ε
+
+Now we use (9.5) and (9.6) to prove (9.4). Recalling the definition of h̄1 and h̄1,r (with the corresponding substitutions in formula (4.1)) we have (9.7) |h¯1,r(x)−h¯1(x)|≤1π|∫ℝf¯r(y)dy−∫ℝf¯(y)dy|+|1πp.v.∫a¯e¯Hf¯r−Hf¯(y)x−y1−y2dy|≤2επ+|1πp.v.∫a¯e¯ϕ*λ˜(y)x−y1−y2dy|
+
+and we are left to bound |1πp.v.∫a¯e¯ϕ*λ¯(y)x−y1−y2dy|. Let us write 1−y2=1−x2+κ(y,x) with κ(y,x)≔(1−y2−1−x2), then (9.8) |1πp.v.∫a¯e¯ϕ*λ˜(y)x−y1−y2dy|≤1−x2|1πp.v.∫a¯e¯ϕ*λ˜(y)y−xdy|
+
+(9.9) +|1πp.v.∫a¯e¯ϕ*λ˜(y)y−xκ(x,y)dy|
+
+In order to bound (9.9) we observe that supy∈(ā,ē) |ϕ * λ̃(y)| ≤ supy∈(a,e)|λ̃(y)| ≤ 2ε, that sup(y,x)∈[a¯,e¯]×[a¯,e¯]|κ(y,x)x−y|≕C1<∞ and that (ā,ē) ⊂ (−1, 1), hence (9.10) |1πp.v.∫a¯e¯ϕ*λ˜(y)y−xκ(x,y)dy|≤4C1επ
+
+In order to bound the right hand side of (9.8) let us define G :ℝ → ℝ as G(x)≔{λ˜(x)forx∈(a,e)=(a¯−δ,e¯+δ)0otherwise
+
+We have the following; properties for G, (9.11) ϕ*G(x)=ϕ*λ˜(x)forx∈(a¯,e¯)
+
+(9.12) supx∈ℝ|ϕ*G(x)|≤2ε
+
+(9.13) supp(ϕ*G)⊂(−1,1)
+
+(9.14) [H(ϕ*G)](x)=[(Hϕ)*G](x)
+
+Since ϕ ∈ C0∞(ℝ) we have that Hϕ ∈ C∞(ℝ) and Hϕ(x) → 0 as |x| → ∞. Hence supx∈ℝ |Hϕ(x)| ≕ C2 < ∞ and C2 depends only on ϕ. With (9.12), (9.13) and (9.14) this implies (9.15) |H(ϕ*G)(x)|=|(Hϕ)*G(x)|≤C2∫ℝ|G(y)|dy=≤4C2ε.
+
+For x ∈ (ā, ē) we use (9.12) to compute directly that (9.16) |1πp.v.∫(−1,a¯)∪(e¯,1)ϕ*G(y)y−xdy|≤1π∫(−1,a¯)∪(e¯,1)2ε|y−x|dy=2επ(ln(x+1x−a¯)+ln(1−xe¯−x)).
+
+And using (9.11) and inequalities (9.15), (9.16) we conclude that for x ∈ (ā,ē) (9.17) 1−x2|1πp.v.∫a¯e¯ϕ*λ˜(y)y−xdy|≤|H(ϕ*G)(x)−1xp.v.∫(−1,a¯)∪(e¯,1)ϕ*G(y)y−xdy|≤ε[4C2+2π(ln(x+1x−a¯)+ln(1−xe¯−x))]
+
+Finally, putting together (9.7), (9.10) and (9.17) we conclude that for x ∈ (ā, ē) (9.18) |h¯1,r(x)−h¯1(x)|≤2επ+4C1επ+ε[4C2+2π(ln(x+1x−a¯)+ln(1−xe¯−x))]
+
+Let C=2+4C1π+[4C2+2π(ln(b¯+1b¯−a¯)+ln(1−c¯e¯−c¯))], defining ε̄ ≔ Cε, which is proportional to ε. Let E¯(x)=1C{2+4C1π+[4C2+2π(ln(x+1x−a)+ln(1−xe¯−x))]}, which is continuous in (ā, ē) with 0 ≤ E(x) ≤ 1 for x ∈ (b̄,c̄). Then (9.18) corresponds exactly to (9.19) |h¯1,r(x)−h¯1(x)|≤ε¯E¯(x).
+
+
+REFERENCES
+
+1 Ablowitz MJ Fokas AS Introduction and Applications of Complex Variables 2003 Second ed. Cambridge University Press
+2 Berenstein CA Gay R Complex Variables, An Introduction 1991 New York Springer-Verlag
+3 Clackdoyle R Defrise M Noo F Kudo H Greuel G-M Klaus S Two-Dimensional Region-of-Interest Tomography Oberwolfach Reports 2006 3 2070 2074
+4 Clackdoyle R Noo F Guo J Roberts JA Quantitative Reconstruction from Truncated Projections in Classical Tomography IEEE Trans. Nucl. Sci 2004 51 2570 2578
+5 Clackdoyle R Noo F A Large Class of Inversion Formulas for the 2D Radon Transform of Functions of Compact Support Inverse Problems 20 2004 1281 1291 10.1109/IEMBS.2007.4353316 18002982
+6 Cormack AM Representation of a Function by its Line Integrals, With Some Radiological Applications J. Appl. Phys 1963 34 2722 2727
+7 Courdurier M La Transformada de Rayos X: El Problema Interior con Conocimiento A Priori 2007 January Santiago, Chile Seminario at Centro de Modelamiento Matematico (www.cmm.uchile.cl/doc/seminarios/anuncio_16_30_3_1_2007_2.pdf )
+8 Courdurier M Image Reconstruction from Limited Angle Tomographic Data With a Priori Knowledge 2007 January Symposium on Inverse Problems Honoring Alberto Calderón Rio de Janeiro, Brazil (http://www.math.purdue.edu/~sabarre/Calderon/parallel.html)
+9 Courdurier M Solving the Interior Problem of Computerized Tomography Using a Priori Knowledge 2007 February Columbia University Applied Mathematics Colloquium at APAM (http://www.apam.Columbia.edu/newsevents/am_colloq_S'07.htm)
+10 Courdurier M Solving the Interior Problem in Computerized Tomography Using a Priori Knowledge 2007 June Conference on Applied Inverse Problems 2007: Theoretical and Computational Aspects (http://www.pims.math.ca/science/2007/07aip/abstracts.html) 10.1088/0266-5611/24/6/065001 PMC2897149 20613970
+11 Defrise M Noo F Clackdoyle R Kudo H Truncated Hilbert Transform and Image Reconstruction from Limited Tomographic Data Inverse Problems 2006 22 1037 1053
+12 Gelfand IM Graev MI Crofton’s Function and Inversion Formulas in Real Integral Geometry Funct. Anal. Appl 1991 25 1 5
+13 Greenleaf A Uhlmann G Non-Local Inversion Formulas in Integral Geometry Duke J. Math 1989 58 205 240
+14 Hamaker C Smith KT Solomon DC Wagner SL The Divergent Beam X-ray Transform Rocky Mountain J. Math. 1980 10 253 283
+15 Helgason S The Radon Transform second ed. Boston Birkhäuser 1999 second ed.
+16 Katsevich AI Ramm AG The Radon Transform and Local Tomography 1996 CRC-Press
+17 Kudo H Analytical Image Reconstruction Methods for Medical Tomography - Recent Advances and a New Uniqueness Result 2006 Proceedings of Mathematical Aspects of Image Processing and Computer Vision 2006 (http://eprints.math.sci.hokudai.ac.jp/archive/00001652/)
+18 Kudo H Courdurier M Noo F Defrise M Tiny A Priori Knowledge Solves the Interior Problem in Computed Tomography Phys. Med. Biol 2008 53 2207 2231 18401067 10.1088/0031-9155/53/9/001
+19 Louis AK Incomplete Data Problems in X-ray Computerized Tomography. I: Singular Value Decomposition of the Limited Angle Transform Numer. Math 1985 48 251 262
+20 Louis AK Rieder A Incomplete Data Problems in X-ray Computerized Tomography. II: Truncated Projections and Region-of-Interest Tomography Numer. Math 1989 56 371 383
+21 Maass P The Interior Radon Transform SIAM J. Appl. Math 1992 52 710 724
+22 Natterer F The Mathematics of Computerized Tomography 1986 New York, Leipzig John Wiley, B.G Teubner
+23 Noo F Clackdoyle R Pack JD A two-step Hilber transform method for 2D image reconstruction Phys. Med. Biol 2004 49 3903 3923 15470913 10.1088/0031-9155/49/17/006
+24 Pack JD Noo F Clackdoyle R Cone-Beam Reconstruction Using the Backprojection of Locally Filtered Projections IEEE Trans. Med. Imaging 2005 24 70 85 15638187 10.1109/tmi.2004.837794
+25 Quinto ET Singular Value Decomposition and Inversion Methods for the Exterior Radon Transform and a Spherical Transform J. Math. Anal. Appl 1985 95 437 448
+26 Quinto ET Singularities of the X-Ray Transform and Limited Data Tomography in ℝ2 and ℝ3 SIAM J. Math. Anal 1993 24 1215 1225
+27 Söhngen H Die Lösungen der Integralgleichung g(x)=12π∫−aaf(ξ)x−ξdξ und deren Anwendung in der Tragflügeltheorie Math. Z 1937 45 245 264
+28 Tricomi FG Integral Equations 1957 New York Dover
+29 Ye Y Yu H Wei Y Wang G A General Local Reconstruction Approach Based on a Truncated Hilbert Transform Int.J.Biomed.Imaging 2007 Article ID 63634 10.1155/2007/63634 PMC1987387 18256734
+30 Ye Y Yu H Wang G Exact Interior Reconstruction with cone-beam CT Int.J.Biomed.Imaging 2007 Article ID 10693 10.1155/2007/10693 PMC2235933 18299705
+31 Ye Y Zhao S Yu H Wang G A General Exact Reconstruction for Cone-Beam CT Via Backprojection-Filtration IEEE Trans. Med. Imaging 2005 24 1190 1198 16156356 10.1109/TMI.2005.853626
+32 Zhuang T Leng S Nett BE Chen G-H Fan-Beam and Cone-Beam Image Reconstruction Via Filtering the Backprojection Image of Differentiated Projection Data Phys. Med. Bio 2004 49 5489 5503 15724538 10.1088/0031-9155/49/24/007
+33 Zou Y Pan X Exact Image Reconstruction on PI-Lines from Minimum Data in Helical Cone-Beam CT Phys. Med. Bio 2004 49 941 959 15104318 10.1088/0031-9155/49/6/006
+34 Zou Y Pan X An Extended Data Function and its Generalized Backprojection for Image Reconstruction in Helical Cone-Beam CT Phys. Med. Bio 2004 49 N383 15609569 10.1088/0031-9155/49/22/n02
+35 Zou Y Pan X Sidky EY Image Reconstruction in Regions-of-Interest from Truncated Projections in a Reduced Fan-Beam Scan Phys. Med. Biol 2005 50 13 28 15715419 10.1088/0031-9155/50/1/002

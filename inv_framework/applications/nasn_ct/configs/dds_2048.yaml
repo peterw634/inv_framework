@@ -1,0 +1,4 @@
+checkpoint: nasn-pmf-2048-epoch449-ema.safetensors
+geometry: {image_size: 2048, angles: 900, measured_detectors: 410, center: 1006.283203125}
+sampler: {steps: 16, omega: 1.0, t_min: 0.0, t_max: 1.0, seed: 0}
+data_consistency: {back_operator: strict_adjoint, lambda: 0.05, cg_iterations: 10}

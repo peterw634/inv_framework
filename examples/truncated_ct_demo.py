@@ -114,7 +114,7 @@ def main():
     prior = TinyVelocityPrior(img_channels=1, img_size=N, base=32).to(device)
     gen = torch.Generator(device=device).manual_seed(args.seed)
     results['DDS+CG'] = DDSSolver(
-        prior, num_steps=args.dds_steps, dc_lam=args.dds_lam,
+        prior, num_inference_steps=args.dds_steps, dc_lam=args.dds_lam,
         dc_iter=args.dds_iter, log_every=max(args.dds_steps // 4, 1),
     ).solve(y, A, generator=gen).clamp(0, 1)
 

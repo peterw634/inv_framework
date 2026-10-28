@@ -59,6 +59,7 @@ class DPSSolver(InverseProblemSolver):
               operator: ForwardOperator,
               noiser: Optional[NoiseModel] = None,
               x_init: Optional[torch.Tensor] = None,
+              generator=None,
               **kwargs) -> torch.Tensor:
         device = measurement.device
         B = measurement.shape[0]
@@ -69,7 +70,7 @@ class DPSSolver(InverseProblemSolver):
         self.schedule.set_timesteps(self.num_inference_steps, device=device)
 
         if x_init is None:
-            x_t = torch.randn((B, *operator.domain_shape), device=device)
+            x_t = torch.randn((B, *operator.domain_shape), device=device, dtype=measurement.dtype, generator=generator)
         else:
             x_t = x_init.clone()
 
@@ -79,7 +80,13 @@ class DPSSolver(InverseProblemSolver):
             t_batch = t.expand(B) if torch.is_tensor(t) else torch.full(
                 (B,), int(t), device=device, dtype=torch.long)
             eps = self.model(x_t, t_batch)
-            x_t_next, x_0_hat = self.schedule.step(eps, t, x_t, eta=self.eta)
+            step_kwargs = {"eta": self.eta}
+            if generator is not None:
+                import inspect
+                if "generator" not in inspect.signature(self.schedule.step).parameters:
+                    raise TypeError("this schedule does not support an explicit generator")
+                step_kwargs["generator"] = generator
+            x_t_next, x_0_hat = self.schedule.step(eps, t, x_t, **step_kwargs)
             x_t_next, residual = cond.apply(
                 x_t_next, x_0_hat, measurement, x_prev=x_t,
                 step_index=i, num_steps=self.num_inference_steps,

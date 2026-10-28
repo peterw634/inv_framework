@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "release": "model-v0.1.0",
+  "status": "public prerelease",
+  "release_url": "https://github.com/peterw634/nasn-truncated-ct/releases/tag/model-v0.1.0",
+  "license": "MIT",
+  "checkpoint": "epoch 449 EMA",
+  "architecture": "pmfDiT_B_128",
+  "image_size": 2048,
+  "assets": {
+    "weights": {
+      "filename": "nasn-pmf-2048-epoch449-ema.safetensors",
+      "bytes": 525924536,
+      "sha256": "22a96d87cefcf34364768399fbf83ba6bbf7f180ef0de96d4e8dcf99ef87a70a",
+      "url": "https://github.com/peterw634/nasn-truncated-ct/releases/download/model-v0.1.0/nasn-pmf-2048-epoch449-ema.safetensors"
+    },
+    "config": {
+      "filename": "nasn-pmf-2048-epoch449-ema.json",
+      "bytes": 587,
+      "sha256": "071d71ca998cf5912d37cf8da6423a4f99a284fedf8dc587113a62b6a31da930",
+      "url": "https://github.com/peterw634/nasn-truncated-ct/releases/download/model-v0.1.0/nasn-pmf-2048-epoch449-ema.json"
+    }
+  }
+}

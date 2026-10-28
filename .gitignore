@@ -24,3 +24,10 @@ examples/*.png
 # Optional virtualenv
 .venv/
 venv/
+
+# Packaged builds and NaSn experiment outputs
+build/
+dist/
+.pytest_cache/
+*.safetensors
+outputs/

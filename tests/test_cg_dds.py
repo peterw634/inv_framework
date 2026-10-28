@@ -67,7 +67,7 @@ def test_dds_solver_runs_and_is_data_consistent():
     y = A.forward(x_true)
 
     g = torch.Generator().manual_seed(0)
-    solver = DDSSolver(prior, num_steps=8, dc_lam=0.02, dc_iter=5)
+    solver = DDSSolver(prior, num_inference_steps=8, dc_lam=0.02, dc_iter=5)
     x_rec = solver.solve(y, A, generator=g)
     assert x_rec.shape == (1, 1, N, N)
     assert torch.isfinite(x_rec).all()
@@ -94,7 +94,7 @@ def test_lora_adaptive_dds_trains_and_runs():
     g = torch.Generator().manual_seed(0)
     solver = LoRAAdaptiveDDSSolver(
         prior, adapt_params=adapt_params, adapt_optim_factory=make_optim,
-        adapt_at_steps=None, adapt_K=2, num_steps=6, dc_lam=0.02, dc_iter=4)
+        adapt_at_steps=None, adapt_K=2, num_inference_steps=6, dc_lam=0.02, dc_iter=4)
     x_rec = solver.solve(y, A, generator=g)
     after = sum(p.detach().pow(2).sum().item() for p in adapt_params)
     print(f"[lora-dds] adapt L2 {before:.2e} -> {after:.2e}; "
@@ -122,7 +122,7 @@ def test_lora_adaptive_dds_rejects_nonlinear_operator():
     solver = LoRAAdaptiveDDSSolver(
         prior, adapt_params=[torch.zeros(1, requires_grad=True)],
         adapt_optim_factory=lambda p: torch.optim.SGD(p, lr=0.0),
-        adapt_at_steps=[], num_steps=2)
+        adapt_at_steps=[], num_inference_steps=2)
     try:
         solver.solve(y, op)
     except TypeError as e:

@@ -16,9 +16,9 @@ Typical use (industrial CT, real prior)::
     from inv_framework.solvers.diffusion.dds import DDSSolver
     from inv_framework.operators.ct.truncated import TruncatedRadon2D
 
-    prior = PMFVelocityPrior(pmf, omega=1.0, t_min=0.0, t_max=1.0)
+    model = PMFVelocityPrior(pmf, omega=1.0, t_min=0.0, t_max=1.0)
     A = TruncatedRadon2D(1024, num_angles=900, inner=205, device=device)
-    x = DDSSolver(prior, num_steps=16, dc_lam=0.05, dc_iter=5).solve(y, A)
+    x = DDSSolver(model, num_inference_steps=16, dc_lam=0.05, dc_iter=5).solve(y, A)
 
 For OOD adaptation, LoRA-inject ``pmf.net`` with `lora.adapt_pmfdit` and use
 `dds_lora.LoRAAdaptiveDDSSolver`.
@@ -26,14 +26,15 @@ For OOD adaptation, LoRA-inject ``pmf.net`` with `lora.adapt_pmfdit` and use
 
 import torch
 
-from .velocity_prior import VelocityPrior
 
+class PMFVelocityPrior:
+    """Wrap a `pixelMeanFlow` instance as a mean-flow velocity model.
 
-class PMFVelocityPrior(VelocityPrior):
-    """Wrap a `pixelMeanFlow` instance as a `VelocityPrior`.
-
-    ``predict_x0(z, t) = z - t * pmf.u_fn(z, t, t, omega, t_min, t_max, y)[0]``,
-    matching the mean-flow anchor used by the indus_CT DDS sampler.
+    Exposes the ``model(x_t, t) -> u`` signature `DDSSolver` expects (the
+    mean-flow analog of `DiffusersUNetWrapper`), baking in the classifier-free
+    guidance scalars and labels. The clean-estimate / step arithmetic lives in
+    `MeanFlowSchedule`; this wrapper only returns the average velocity
+    ``u = pmf.u_fn(x_t, t, t, omega, t_min, t_max, y)[0]``.
 
     Parameters
     ----------
@@ -63,13 +64,13 @@ class PMFVelocityPrior(VelocityPrior):
         self.t_max = t_max
         self._labels = labels
 
-    def _dtype(self):
-        return getattr(self.pmf, "dtype", torch.float32)
-
-    def predict_x0(self, z: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
-        B = z.shape[0]
-        dtype, device = z.dtype, z.device
-        t_b = t.view(-1, 1, 1, 1).to(dtype)
+    def forward(self, x_t: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
+        B = x_t.shape[0]
+        dtype, device = x_t.dtype, x_t.device
+        if not torch.is_tensor(t):
+            t = torch.full((B,), float(t), device=device, dtype=dtype)
+        elif t.ndim == 0:
+            t = t.expand(B)
         labels = self._labels
         if labels is None:
             labels = torch.zeros(B, dtype=torch.int32, device=device)
@@ -79,8 +80,14 @@ class PMFVelocityPrior(VelocityPrior):
         t_min = torch.as_tensor(self.t_min, dtype=dtype, device=device).expand(B)
         t_max = torch.as_tensor(self.t_max, dtype=dtype, device=device).expand(B)
         # mean-flow average velocity: h = t (one-step anchor).
-        u = self.pmf.u_fn(z, t, t, omega, t_min, t_max, y=labels)[0]
-        return z - t_b * u
+        return self.pmf.u_fn(x_t, t, t, omega, t_min, t_max, y=labels)[0]
+
+    def __call__(self, x_t: torch.Tensor, t: torch.Tensor) -> torch.Tensor:
+        return self.forward(x_t, t)
+
+    def eval(self):
+        self.net.eval()
+        return self
 
     def parameters(self, recurse: bool = True):
         return self.net.parameters(recurse=recurse)

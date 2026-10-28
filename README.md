@@ -13,6 +13,9 @@
 - [快速开始](#快速开始)
 - [求解器一览](#求解器一览)
 - [与 diffusers 集成](#与-diffusers-集成)
+- [NaSn 真实工业 CT 项目接入](docs/nasn_ct.md)
+- [Diffusion 方法与统一对比](docs/diffusion_methods.md)
+- [工业数据资源与下载说明](inv_framework/docs/industrial_datasets.md)
 - [扩展:添加新的反问题](#扩展添加新的反问题)
 - [测试](#测试)
 
@@ -56,8 +59,11 @@ cd /path/to/inv_framework
 # 直接以源码方式运行 (项目内自动注入 sys.path)
 python examples/ct_demo.py
 
-# 或安装为包(可选)
-pip install -e .   # 当前仓库未提供 pyproject.toml,需自行添加
+# 或安装为包
+pip install -e .
+
+# NaSn 数据处理、CUDA 重建和测试的可选依赖
+pip install -e '.[nasn,test]'
 ```
 
 ---
@@ -266,7 +272,7 @@ x_dip  = DIPSolver(num_iterations=1000, lr=1e-3).solve(y, A)
 | `DIPSolver` | `solvers/dip.py` | `num_iterations`, `lr`, `input_channels`, `model_factory` | 默认用 `SkipUNet`,可注入自定义网络 |
 | `INRSolver` | `solvers/inr.py` | `num_iterations`, `lr`, `hidden_features`, `hidden_layers` | 默认用 `SIREN` |
 | `DPSSolver` | `solvers/diffusion/dps.py` | `model`, `schedule`, `num_inference_steps`, `scale`, `eta` | 需要训练好的 ε-预测器 |
-| `DDSSolver` | `solvers/diffusion/dds.py` | `prior`, `num_steps`, `dc_lam`, `dc_iter`, `dc_eta_stoch` | mean-flow 先验 + 每步 CG 数据一致性(工业 CT) |
+| `DDSSolver` | `solvers/diffusion/dds.py` | `model`, `schedule`, `num_inference_steps`, `eta`, `dc_lam`, `dc_iter` | mean-flow 先验 + 每步 CG 数据一致性(工业 CT);与 `DPSSolver` 同构 |
 | `LoRAAdaptiveDDSSolver` | `solvers/diffusion/dds_lora.py` | 上 + `adapt_params`, `adapt_optim_factory`, `adapt_K`, `reg_gamma` | DDS + 在环 LoRA 自适应(OOD,DDIP3D 风格)|
 
 ### DIP / INR 自定义网络
@@ -375,20 +381,29 @@ x_fbp = A.pseudo_inverse(y)         # 截断 FBP(有预期的 cupping,仅作 war
 
 ### 2. DDS:mean-flow 先验 + 每步 CG 数据一致性
 
-mean-flow(如 pMF)不是 ε-预测器,是 velocity 预测器(`x̂₀ = z − t·u`)。`DDSSolver`
-反向采样,每步对 anchor `x̂₀` 解一次 Tikhonov 正则法方程
-`(AᵀA + λI)u = Aᵀy + λx̂₀`(`solvers/cg.py:cg_data_consistency`,纯 torch CG),
-而非 DPS 的单步梯度。CG 校正**全帧无掩膜**,同时适配稀疏视角(全帧重建)与截断
-(band 内受数据约束,外围交给先验)。
+mean-flow(如 pMF)不是 ε-预测器,是 **velocity 预测器**(模型输出平均速度 `u`,
+`x̂₀ = x_t − t·u`)。`DDSSolver` 与 `DPSSolver` **完全同构** —— 同样是
+`model` + `NoiseSchedule` + `ConditioningMethod` 三件套、同样的反向循环骨架,只是:
+- `model` 预测 velocity `u`(而非 ε),签名仍是 `model(x_t, t)`;
+- schedule 用 `MeanFlowSchedule`(连续直线 `x_t=(1−t)x₀+t·noise`,`step` 返回
+  `(x_prev, x̂₀)`)而非 `VPSchedule`;
+- 默认 conditioning 是 `CGDataConsistency`(每步解 Tikhonov 法方程
+  `(AᵀA+λI)u = Aᵀy + λx̂₀`,`solvers/cg.py`,纯 torch CG)而非 `PosteriorSampling`。
+
+CG 校正**全帧无掩膜**,同时适配稀疏视角(全帧重建)与截断(band 内受数据约束,
+外围交给先验)。
 
 ```python
-from inv_framework.solvers.diffusion import DDSSolver, TinyVelocityPrior, CGDataConsistency
+from inv_framework.solvers.diffusion import DDSSolver, TinyVelocityPrior
 
-prior = TinyVelocityPrior(img_channels=1, img_size=1024)   # 或真实 pMF,见下
-x_rec = DDSSolver(prior, num_steps=16, dc_lam=0.05, dc_iter=5).solve(y, A)
+model = TinyVelocityPrior(img_channels=1, img_size=1024)   # (x_t,t)->u;或真实 pMF,见下
+x_rec = DDSSolver(model, num_inference_steps=16, dc_lam=0.05, dc_iter=5).solve(y, A)
 ```
 
-`CGDataConsistency` 与 DPS 的 `PosteriorSampling` 一样是可插拔 `ConditioningMethod`。
+对照 ε 版:`DPSSolver(model=eps_unet, schedule=VPSchedule(), ...)` ↔
+`DDSSolver(model=velocity, schedule=MeanFlowSchedule(), ...)`。`CGDataConsistency`
+与 DPS 的 `PosteriorSampling` 一样是可插拔 `ConditioningMethod`(在 `step→apply`
+顺序里把 `x̂₀` 做 CG 校正、再用 `schedule.last_x0_coeff` 重编码回 `x_t`)。
 `TinyVelocityPrior` 让整条链路**无需任何权重即可端到端跑通**(见 `examples/truncated_ct_demo.py`)。
 
 ### 3. 在环 LoRA 自适应(OOD)
@@ -408,16 +423,17 @@ x_rec = LoRAAdaptiveDDSSolver(
     prior, adapt_params=adapt_params,
     adapt_optim_factory=lambda p: torch.optim.AdamW(p, lr=1e-4, weight_decay=1e-2),
     adapt_at_steps=None,            # None = 每步都适配(DDIP3D 稠密)
-    adapt_K=4, num_steps=16, dc_lam=0.05, dc_iter=10,
+    adapt_K=4, num_inference_steps=16, dc_lam=0.05, dc_iter=10,
 ).solve(y, A)
 ```
 
 ### 4. 接入真实 pMF 先验(惰性适配)
 
-`PMFVelocityPrior` 把真实 `pixelMeanFlow` 包成 `VelocityPrior`,**镜像 diffusers_compat
-的惰性做法**:`import` 本身不触发 pMF DiT / `lpips` / `pytorch_msssim` 等重依赖,
-仅在实例化时需要模型。pmfDiT 专用的 LoRA 配方用 `adapt_pmfdit`(注入每个
-TransformerBlock 的 7 个 Linear + `x_embedder.proj2` + 解冻 gates)。
+`PMFVelocityPrior` 把真实 `pixelMeanFlow` 包成 `(x_t, t) → u` 的 velocity model
+(mean-flow 版的 `DiffusersUNetWrapper`),**镜像 diffusers_compat 的惰性做法**:
+`import` 本身不触发 pMF DiT / `lpips` / `pytorch_msssim` 等重依赖,仅在实例化时
+需要模型。pmfDiT 专用的 LoRA 配方用 `adapt_pmfdit`(注入每个 TransformerBlock 的
+7 个 Linear + `x_embedder.proj2` + 解冻 gates)。
 
 ```python
 import sys; sys.path.insert(0, '/path/to/indus_CT/NaSn')
@@ -543,3 +559,15 @@ python tests/test_lora.py
 ## License
 
 MIT
+
+## Diffusion 方法与统一对比
+
+已接入 DPS、MCG、PGDM、DDS、DMPlug、RED-Diff、HybridReg、PSLD、ReSample、DiffStateGrad，
+统一使用 `solve(measurement, operator)`。DDIM DDS 为 `DDIMDDSSolver`；mean-flow DDS
+提供 `MeanFlowDDSSolver` 名称，原 `DDSSolver` 入口保留。NaSn/pMF 与 LoRA 可通过同一
+示例入口进行比较。安装、真实权重配置、数值一致性与限制见 [方法文档](docs/diffusion_methods.md)。
+
+```bash
+pip install -e '.[diffusion,test]'
+python examples/diffusion_ct_compare.py --smoke --output outputs/diffusion-smoke
+```

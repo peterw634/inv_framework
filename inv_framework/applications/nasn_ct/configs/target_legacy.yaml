@@ -1,0 +1,19 @@
+name: TruncatedCT_NaSn_NPSF_08667um
+projection_dir: Projection
+prefixes: {tomo: "tomo_", flat: "flat_", dark: "dark_"}
+tomo_range_1based: [1, 900]
+detector_columns_1based: [1, 2560]
+slice_range_1based: [550, 1750]
+phase_retrieval:
+  energy_kev: 98.1703
+  pixel_size_m: 8.667e-7
+  distance_m: 2.55
+  epsilon: 0.01
+rivers_width: 5
+source_center: 1172.0
+dds_geometry:
+  source_detectors: 2560
+  measured_detectors: 410
+  image_size: 2048
+  pad_left: 819
+  center: 1006.283203125

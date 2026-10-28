@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "release": "data-v0.1.0-private",
+  "published": false,
+  "provider": "Private Hugging Face Dataset (pending)",
+  "browser_url": null,
+  "data_license": "CC-BY-4.0",
+  "profiles": {
+    "quickstart": [
+      "quickstart"
+    ],
+    "target": [
+      "target-scan1",
+      "target-scan2",
+      "target-scan3",
+      "target-scan4"
+    ],
+    "training": [
+      "training-scan1",
+      "training-scan2",
+      "training-scan3",
+      "training-scan4"
+    ],
+    "all": [
+      "quickstart",
+      "target-scan1",
+      "target-scan2",
+      "target-scan3",
+      "target-scan4",
+      "training-scan1",
+      "training-scan2",
+      "training-scan3",
+      "training-scan4"
+    ]
+  },
+  "archives": {
+    "quickstart": {
+      "filename": "nasn-ct-quickstart-v0.1.0.tar.zst",
+      "sha256": "218354465e368370962e8d3f4f055393676b94e55dfd0a295289ee62a71badbd",
+      "bytes": 605861265,
+      "direct_url": null,
+      "checksum_url": null,
+      "extract_to": "quickstart"
+    },
+    "target-scan1": {
+      "filename": "TruncatedCT_NaSn_NPSF_08667um_1.tar.zst",
+      "sha256": "36fb78a7fadd38fd89818aa43fca3c70cd2e653f488f867aa5efddb17931d235",
+      "bytes": 8052587883,
+      "source_bytes": 10003152264,
+      "direct_url": null,
+      "extract_to": "raw/target/scan1"
+    },
+    "target-scan2": {
+      "filename": "TruncatedCT_NaSn_NPSF_08667um_2.tar.zst",
+      "sha256": null,
+      "bytes": null,
+      "source_bytes": 10003152264,
+      "direct_url": null,
+      "extract_to": "raw/target/scan2"
+    },
+    "target-scan3": {
+      "filename": "TruncatedCT_NaSn_NPSF_08667um_3.tar.zst",
+      "sha256": null,
+      "bytes": null,
+      "source_bytes": 10003152264,
+      "direct_url": null,
+      "extract_to": "raw/target/scan3"
+    },
+    "target-scan4": {
+      "filename": "TruncatedCT_NaSn_NPSF_08667um_4.tar.zst",
+      "sha256": null,
+      "bytes": null,
+      "source_bytes": 10003152264,
+      "direct_url": null,
+      "extract_to": "raw/target/scan4"
+    },
+    "training-scan1": {
+      "filename": "FullCT_Na_NSS_11um_1.tar.zst",
+      "sha256": null,
+      "bytes": null,
+      "source_bytes": 8501657072,
+      "direct_url": null,
+      "extract_to": "raw/training/scan1"
+    },
+    "training-scan2": {
+      "filename": "FullCT_Na_NSS_11um_2.tar.zst",
+      "sha256": null,
+      "bytes": null,
+      "source_bytes": 7155462144,
+      "direct_url": null,
+      "extract_to": "raw/training/scan2"
+    },
+    "training-scan3": {
+      "filename": "FullCT_Na_NSS_11um_3.tar.zst",
+      "sha256": null,
+      "bytes": null,
+      "source_bytes": 7146145136,
+      "direct_url": null,
+      "extract_to": "raw/training/scan3"
+    },
+    "training-scan4": {
+      "filename": "FullCT_Na_NSS_11um_4.tar.zst",
+      "sha256": null,
+      "bytes": null,
+      "source_bytes": 7174096160,
+      "direct_url": null,
+      "extract_to": "raw/training/scan4"
+    }
+  }
+}

@@ -83,20 +83,26 @@ class DiffusersScheduleAdapter(NoiseSchedule):
             a = a.view(1)
         return a.view(-1, 1, 1, 1)
 
-    def step(self, eps, t, x_t, eta: float = 0.0):
-        # Some schedulers (DDIM) accept eta, others (DDPM) don't.
-        try:
-            out = self._sched.step(eps, t, x_t, eta=eta)
-        except TypeError:
-            out = self._sched.step(eps, t, x_t)
-        # Diffusers SchedulerOutput exposes prev_sample and, for VP schedulers,
-        # pred_original_sample.
-        x_prev = out.prev_sample
-        x0_pred = getattr(out, "pred_original_sample", None)
-        if x0_pred is None:
-            # Fallback: compute Tweedie manually using alphas_cumprod.
-            x0_pred = self.predict_x0_from_eps(x_t, eps, t)
-        return x_prev, x0_pred
+    def __getattr__(self, name):
+        # Expose VP coefficients and specialized scheduler methods to samplers.
+        if name == "_sched":
+            raise AttributeError(name)
+        return getattr(self._sched, name)
+
+    def step_output(self, eps, t, x_t, **kwargs):
+        """Full scheduler result for algorithms that need extra predictions."""
+        import inspect
+        accepted = inspect.signature(self._sched.step).parameters
+        extra = {k: v for k, v in kwargs.items() if k in accepted}
+        self.last_step_output = self._sched.step(eps, t, x_t, **extra)
+        return self.last_step_output
+
+    def step(self, eps, t, x_t, eta: float = 0.0, generator=None):
+        out = self.step_output(eps, t, x_t, eta=eta, generator=generator)
+        x0 = getattr(out, "pred_original_sample", None)
+        if x0 is None:
+            x0 = self.predict_x0_from_eps(x_t, eps, t)
+        return out.prev_sample, x0
 
 
 class DiffusersUNetWrapper(nn.Module):
@@ -118,5 +124,6 @@ class DiffusersUNetWrapper(nn.Module):
                              dtype=torch.long)
         elif t.ndim == 0:
             t = t.expand(x.shape[0])
+        t = t.to(x.device)
         out = self.unet(x, t)
         return out.sample if hasattr(out, "sample") else out

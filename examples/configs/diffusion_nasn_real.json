@@ -1,0 +1,8 @@
+{
+  "seed": 0,
+  "data": {"kind": "nasn-real", "sinogram_dir": "/path/to/sinograms_rivers", "scale_stats": "/path/to/scale_stats_center1172.json", "slice": 1150},
+  "methods": {
+    "meanflow": {"weights": "/path/to/nasn-pmf-2048-epoch449-ema.safetensors", "parameters": {"num_inference_steps": 16, "dc_iter": 10, "dc_lam": 0.05}},
+    "dds": {"weights": "/path/to/pixel_diffusion", "model_grid": 2048, "parameters": {"num_inference_steps": 100, "eta": 0.85, "cg_inner": 5, "gamma": 0}}
+  }
+}
