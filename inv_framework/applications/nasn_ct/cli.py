@@ -142,7 +142,10 @@ def main(argv=None):
             device=args.device,
         )
         print(json.dumps(report["aggregate"], indent=2))
-        return 0 if all(report["acceptance"].values()) else 1
+        gated = [ok for ok in report["acceptance"].values() if ok is not None]
+        if not gated:
+            print("no acceptance gate for the requested --steps (gates exist for 16 and 32)")
+        return 0 if gated and all(gated) else 1
     return 1
 
 

@@ -151,7 +151,9 @@ class DDSSolver(InverseProblemSolver):
             t_batch = (t.expand(B) if torch.is_tensor(t)
                        else torch.full((B,), float(t), device=device))
             u = self.model(x_t, t_batch)
-            x_t_next, x_0_hat = self.schedule.step(u, t_batch, x_t, eta=self.eta)
+            step_kwargs = {} if generator is None else {"generator": generator}
+            x_t_next, x_0_hat = self.schedule.step(u, t_batch, x_t, eta=self.eta,
+                                                   **step_kwargs)
 
             residual = None
             if self.dc_mode == "dds":

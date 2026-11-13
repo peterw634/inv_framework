@@ -101,7 +101,14 @@ def _paths(raw_root: Path, config: dict):
     flats = discover(projection_dir, prefixes["flat"])
     darks = discover(projection_dir, prefixes.get("dark", "dark_"))
     selected = config.get("tomo_range_1based", [1, len(tomos)])
+    expected = selected[1] - selected[0] + 1
     tomos = tomos[selected[0] - 1:selected[1]]
+    if tomos and len(tomos) != expected:
+        # A partial extraction would otherwise be spread over [0, pi) with
+        # wrong angles.
+        raise FileNotFoundError(
+            f"expected {expected} projections for tomo_range_1based={selected}, "
+            f"found {len(tomos)} in {projection_dir}")
     if not tomos or not flats:
         raise FileNotFoundError("both tomography projections and flats are required")
     return tomos, flats, darks

@@ -23,6 +23,19 @@ class DMPlugSolver(SamplingSolver):
         start_image = start_image.requires_grad_()
         self.schedule.set_timesteps(num_inference_steps)
         optimizer = torch.optim.Adam([start_image], lr=lr)
+        # Only the initial noise is optimised; freezing the network avoids
+        # accumulating weight gradients through every trajectory.
+        frozen = [p for p in self.model.parameters() if p.requires_grad]
+        for p in frozen:
+            p.requires_grad_(False)
+        try:
+            image = self._optimise_start(start_image, optimizer, generator, measurement, epochs, criterion)
+        finally:
+            for p in frozen:
+                p.requires_grad_(True)
+        return image.detach()
+
+    def _optimise_start(self, start_image, optimizer, generator, measurement, epochs, criterion):
         for i in range(epochs):
             self.model.eval()
             optimizer.zero_grad()
@@ -37,5 +50,4 @@ class DMPlugSolver(SamplingSolver):
             loss = criterion(self.measurement_condition.operator.forward(image), measurement)
             loss.backward()
             optimizer.step()
-        image = image.detach_()
-        return image.detach()
+        return image.detach_()

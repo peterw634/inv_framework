@@ -45,7 +45,7 @@ def benchmark_synthetic(weights, val_root, output, model_config=None,
     model = load_pmf(weights, model_config, device)
     forward = TomoPyCUDARadon2D(2048, 2048, 512, 1024.0, device=device)
     report = {
-        "status": "inv_framework migration; synthetic CUDA benchmark", "checkpoint": "epoch 449 EMA",
+        "status": "inv_framework migration; synthetic CUDA benchmark", "checkpoint": Path(weights).name,
         "configuration": {"image_size": 2048, "angles": 2048, "detectors": 2048,
                           "measured_detectors": 512, "roi_radius": 256,
                           "dc_lambda": dc_lam, "cg_iterations": dc_iter,
@@ -98,10 +98,12 @@ def benchmark_synthetic(weights, val_root, output, model_config=None,
             ])),
         }
     gates = {16: (35, 0.80), 32: (37, 0.84)}
+    # Step counts without a published gate are reported as None (not passed).
     report["acceptance"] = {
-        str(count): (report["aggregate"][str(count)]["roi_psnr_mean"] >= gates[count][0]
+        str(count): (None if count not in gates else
+                     report["aggregate"][str(count)]["roi_psnr_mean"] >= gates[count][0]
                      and report["aggregate"][str(count)]["roi_ssim_mean"] >= gates[count][1])
-        for count in steps if count in gates
+        for count in steps
     }
     (output / "summary.json").write_text(json.dumps(report, indent=2))
     return report

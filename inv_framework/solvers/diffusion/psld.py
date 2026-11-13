@@ -1,6 +1,5 @@
 """PSLD inverse-problem solver. Reference behavior is documented in docs/diffusion_methods.md."""
 from typing import Optional, Union, List
-import inspect
 import torch
 from .sampling import SamplingSolver, randn_tensor
 
@@ -17,10 +16,8 @@ class PSLDSolver(SamplingSolver):
         latents = latents.to(self.device)
         latents = latents * self.schedule.init_noise_sigma
         self.schedule.set_timesteps(num_inference_steps)
-        accepts_eta = 'eta' in set(inspect.signature(self.schedule.step_output).parameters.keys())
-        extra_kwargs = {}
-        if accepts_eta:
-            extra_kwargs['eta'] = eta
+        # step_output forwards eta only when the wrapped scheduler's step takes it.
+        extra_kwargs = {'eta': eta}
         for t in self._steps(self.schedule.timesteps):
             latents = latents.requires_grad_()
             latent_model_input = self.schedule.scale_model_input(latents, t)

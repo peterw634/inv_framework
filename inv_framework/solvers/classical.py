@@ -15,7 +15,7 @@ import math
 import torch
 from torch.fft import rfft, irfft
 
-from ..operators.base import ForwardOperator, LinearOperator
+from ..operators.base import ForwardOperator, LinearOperator, operator_norm_sq
 from .base import InverseProblemSolver
 
 
@@ -75,12 +75,13 @@ def sirt(operator: LinearOperator,
     domain = (B, *operator.domain_shape)
     range_ = (B, *operator.range_shape)
 
-    R = operator.forward(torch.ones(domain, device=device))
+    dtype = y.dtype
+    R = operator.forward(torch.ones(domain, device=device, dtype=dtype))
     R = torch.where(R < 1e-8, torch.full_like(R, float('inf')), R).reciprocal()
-    C = operator.adjoint(torch.ones(range_, device=device))
+    C = operator.adjoint(torch.ones(range_, device=device, dtype=dtype))
     C = torch.where(C < 1e-8, torch.full_like(C, float('inf')), C).reciprocal()
 
-    x = (torch.zeros(domain, device=device)
+    x = (torch.zeros(domain, device=device, dtype=dtype)
          if x_init is None else x_init.clone())
     for _ in range(num_iterations):
         residual = operator.forward(x) - y
@@ -97,16 +98,21 @@ def landweber(operator: LinearOperator,
               x_init: torch.Tensor = None,
               min_value: float = None,
               max_value: float = None) -> torch.Tensor:
-    """Landweber: x <- x - alpha A^T (A x - y)."""
+    """Landweber: x <- x - alpha A^T (A x - y).
+
+    ``step_size=None`` uses ``1/||A||^2`` from a cached power iteration;
+    the iteration converges for any step in ``(0, 2/||A||^2)``.
+    """
     _require_linear(operator, "landweber")
     device = y.device
     B = y.shape[0]
     domain = (B, *operator.domain_shape)
 
     if step_size is None:
-        step_size = 1e-3
+        step_size = 1.0 / operator_norm_sq(operator, device=device,
+                                           dtype=y.dtype)
 
-    x = (torch.zeros(domain, device=device)
+    x = (torch.zeros(domain, device=device, dtype=y.dtype)
          if x_init is None else x_init.clone())
     for _ in range(num_iterations):
         residual = operator.forward(x) - y

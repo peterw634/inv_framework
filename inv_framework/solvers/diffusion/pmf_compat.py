@@ -3,22 +3,19 @@ solvers. Optional: this module only touches the pMF codebase when you actually
 construct a `PMFVelocityPrior`, mirroring `diffusers_compat.py` — so importing
 it never drags in the pMF DiT architecture, `pytorch_msssim`, or `lpips`.
 
-Typical use (industrial CT, real prior)::
+Typical use (industrial CT, released NaSn prior)::
 
-    import sys; sys.path.insert(0, '/home/xujb/diffusion/indus_CT/NaSn')
-    from pmf import pixelMeanFlow
-
-    pmf = pixelMeanFlow('pmfDiT_B_64', img_size=1024, img_channels=1,
-                        num_classes=1, eval=True).to(device)
-    pmf.net.load_state_dict(torch.load('ckpt_epoch_999.pt'))
-
+    from inv_framework.applications.nasn_ct.weights import load_pmf
     from inv_framework.solvers.diffusion.pmf_compat import PMFVelocityPrior
     from inv_framework.solvers.diffusion.dds import DDSSolver
-    from inv_framework.operators.ct.truncated import TruncatedRadon2D
+    from inv_framework.operators.ct import TomoPyCUDARadon2D
 
+    pmf = load_pmf('weights/nasn-pmf-2048-epoch449-ema.safetensors', device=device)
     model = PMFVelocityPrior(pmf, omega=1.0, t_min=0.0, t_max=1.0)
-    A = TruncatedRadon2D(1024, num_angles=900, inner=205, device=device)
-    x = DDSSolver(model, num_inference_steps=16, dc_lam=0.05, dc_iter=5).solve(y, A)
+    # Use the TomoPy-geometry operator the prior was trained with; the pure-torch
+    # ParallelBeamRadon2D/TruncatedRadon2D image is vertically mirrored relative to it.
+    A = TomoPyCUDARadon2D(2048, num_angles=2048, inner=512, center=1024., device=device)
+    x = DDSSolver(model, num_inference_steps=16, dc_lam=0.05, dc_iter=10).solve(y, A)
 
 For OOD adaptation, LoRA-inject ``pmf.net`` with `lora.adapt_pmfdit` and use
 `dds_lora.LoRAAdaptiveDDSSolver`.

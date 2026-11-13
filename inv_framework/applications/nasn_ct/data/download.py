@@ -3,11 +3,16 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import tarfile
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
+
+# Hosts that receive the HF_TOKEN bearer token for private releases.
+_TOKEN_HOSTS = ("huggingface.co", "hf-mirror.com")
 
 
 class UnpublishedRelease(RuntimeError):
@@ -49,6 +54,12 @@ def _download(url: str, destination: Path):
     partial = destination.with_suffix(destination.suffix + ".part")
     offset = partial.stat().st_size if partial.exists() else 0
     request = urllib.request.Request(url)
+    token = os.environ.get("HF_TOKEN")
+    host = urllib.parse.urlparse(url).hostname or ""
+    if token and any(host == h or host.endswith("." + h) for h in _TOKEN_HOSTS):
+        # Unredirected: the signed CDN URL a private release redirects to
+        # must not receive the token.
+        request.add_unredirected_header("Authorization", f"Bearer {token}")
     if offset:
         request.add_header("Range", f"bytes={offset}-")
     try:
@@ -112,7 +123,8 @@ def fetch(manifest_path, destination, profile="quickstart", scan=None, extract=F
                 f"{name} has not been published yet and has no direct URL. "
                 f"Current release status: {manifest.get('browser_url') or 'not assigned'}"
             )
-        output = destination / item["filename"]
+        # Manifest paths are untrusted input: keep every write under destination.
+        output = _safe_destination(destination, item["filename"])
         if not output.exists() or sha256(output) != item["sha256"]:
             _download(url, output)
         actual = sha256(output)
@@ -120,7 +132,7 @@ def fetch(manifest_path, destination, profile="quickstart", scan=None, extract=F
             raise ValueError(f"SHA-256 mismatch for {output}: {actual}")
         results.append(output)
         if extract:
-            _extract(output, destination / item.get("extract_to", name))
+            _extract(output, _safe_destination(destination, item.get("extract_to", name)))
     return results
 
 
@@ -129,7 +141,7 @@ def verify(manifest_path, directory, profile="quickstart", scan=None):
     directory = Path(directory)
     results = []
     for name, item in selected_archives(manifest, profile, scan):
-        path = directory / item["filename"]
+        path = _safe_destination(directory, item["filename"])
         if not path.exists():
             results.append((name, False, "missing"))
             continue

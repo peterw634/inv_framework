@@ -82,8 +82,11 @@ class VPSchedule(NoiseSchedule):
                                num_inference_steps + 1,
                                device=device).long()
         self.timesteps = all_t[:-1]
+        # The last step lands on the clean sample (alpha_bar = 1), not on
+        # t = 0 where alpha_bar_0 < 1 would leave residual noise.
         self._prev_t = {
-            int(all_t[i].item()): int(all_t[i + 1].item())
+            int(all_t[i].item()): (int(all_t[i + 1].item())
+                                   if i + 1 < num_inference_steps else -1)
             for i in range(num_inference_steps)
         }
 
@@ -195,14 +198,15 @@ class MeanFlowSchedule(NoiseSchedule):
         t_b = self._view(t, x_t)
         return x_t - t_b * u
 
-    def step(self, model_output, t, x_t, eta: float = 0.0):
+    def step(self, model_output, t, x_t, eta: float = 0.0, generator=None):
         u = model_output
         t_b = self._view(t, x_t)
         r_b = self._view(self.next_t(t), x_t)
         x0 = x_t - t_b * u
         eta_impl = (x_t - (1.0 - t_b) * x0) / t_b.clamp(min=1e-12)
         if eta > 0.0:
-            noise = torch.randn_like(x_t) * self.noise_scale
+            noise = torch.randn(x_t.shape, device=x_t.device, dtype=x_t.dtype,
+                                generator=generator) * self.noise_scale
             c1 = (1.0 - eta ** 2) ** 0.5
             eta_eff = c1 * eta_impl + eta * noise
         else:

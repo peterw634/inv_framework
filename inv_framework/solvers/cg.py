@@ -72,6 +72,11 @@ def cg_data_consistency_grad(
         back_op=back_op, weight=weight, return_history=return_history)
 
 
+def _per_sample(value: torch.Tensor, like: torch.Tensor) -> torch.Tensor:
+    """Reshape a per-sample scalar to broadcast over ``like`` (any rank)."""
+    return value.view(-1, *([1] * (like.ndim - 1)))
+
+
 def _cg_data_consistency_impl(
     x_prior: torch.Tensor,
     y_target: torch.Tensor,
@@ -87,9 +92,9 @@ def _cg_data_consistency_impl(
 
     Parameters
     ----------
-    x_prior : (B, C, H, W)
+    x_prior : (B, *operator.domain_shape), e.g. (B, C, H, W)
         Anchor image (prior estimate of x_0).
-    y_target : (B, C, n_angles, W)
+    y_target : (B, *operator.range_shape), e.g. (B, C, n_angles, W)
         Measurement in the operator's range, at the same scale as ``A(x)``.
     operator : LinearOperator
         Forward model A; ``operator.forward`` and ``operator.adjoint`` are used.
@@ -135,7 +140,7 @@ def _cg_data_consistency_impl(
     for _ in range(max_iter):
         Ap = H(p)
         denom = (p * Ap).flatten(1).sum(dim=1).clamp(min=1e-30)
-        alpha = (rs_old / denom).view(-1, 1, 1, 1)
+        alpha = _per_sample(rs_old / denom, p)
         u = u + alpha * p
         r = r - alpha * Ap
         rs_new = (r * r).flatten(1).sum(dim=1)
@@ -144,7 +149,7 @@ def _cg_data_consistency_impl(
             history.append(rel)
         if rel < tol:
             break
-        beta = (rs_new / rs_old.clamp(min=1e-30)).view(-1, 1, 1, 1)
+        beta = _per_sample(rs_new / rs_old.clamp(min=1e-30), p)
         p = r + beta * p
         rs_old = rs_new
 

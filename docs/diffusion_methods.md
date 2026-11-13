@@ -124,6 +124,12 @@ DIFFUSION_REFERENCE=/path/to/reference-checkout python -m pytest tests/diffusion
 `--repeat-reference` 用于测量参考实现自身的重复波动。
 真实权重 DMPlug 检查限制为 1 个扩散步、2 次优化，以降低显存；并非完整实验。
 
+与参考实现的已知差异（2026-11-13）：归一化测量损失把**恰好为 0** 的测量（视场外射线、
+截断探测器列）视为未测量，不再用最小非零值代替其分母。参考做法会按这类射线的数量放大步长
+（扇束探测器超出体积时约 19 倍），使 DPS/MCG 在扇束与内部断层数据上发散；测量中没有零值时
+（DM4CT 原设置）结果完全相同。另修正了 ReSample/DiffStateGrad/PSLD 的 `eta` 未传入调度器、
+DiffStateGrad 忽略 `latent_lr`、DMPlug 对 UNet 权重反传的问题。
+
 以下行为为保持参考结果而保留：测量归一化损失的规约顺序；全零测量报错；
 PGDM 的初始化噪声系数和末步负索引；DDS 的 gamma 方程及全 batch 点积；
 PSLD 的投影目标与潜变量缩放；ReSample 的 `t//2` 索引及 pseudo-clean 公式；

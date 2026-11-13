@@ -67,8 +67,44 @@ class LinearOperator(ForwardOperator):
 
     def project(self, x: torch.Tensor, y: torch.Tensor,
                 step_size: Optional[float] = None) -> torch.Tensor:
-        """One Landweber-style data-consistency step toward Ax = y."""
+        """One Landweber-style data-consistency step toward Ax = y.
+
+        The default step ``1/||A||^2`` is the largest step that never
+        increases the residual; a fixed step of 1 diverges for CT operators,
+        whose ``||A^T A||`` grows with the image size.
+        """
         residual = self.forward(x) - y
         if step_size is None:
-            step_size = 1.0
+            step_size = 1.0 / operator_norm_sq(self, device=x.device,
+                                               dtype=x.dtype)
         return x - step_size * self.adjoint(residual)
+
+
+@torch.no_grad()
+def operator_norm_sq(operator: LinearOperator, num_iterations: int = 30,
+                     device=None, dtype=torch.float32) -> float:
+    """Estimate ``||A^T A||_2`` by power iteration; cached on the operator.
+
+    The estimate is scaled up by 1% so that step sizes derived from it stay
+    on the stable side of the power-iteration error.
+    """
+    cached = getattr(operator, "_norm_sq_estimate", None)
+    if cached is not None:
+        return cached
+    generator = torch.Generator(device="cpu").manual_seed(0)
+    v = torch.randn((1, *operator.domain_shape), generator=generator,
+                    dtype=dtype).to(device)
+    v = v / torch.linalg.vector_norm(v)
+    norm_sq = 1.0
+    for _ in range(num_iterations):
+        w = operator.adjoint(operator.forward(v))
+        norm_sq = float(torch.linalg.vector_norm(w))
+        if norm_sq == 0.0:
+            raise ValueError("operator maps the probe vector to zero")
+        v = w / norm_sq
+    norm_sq *= 1.01
+    try:
+        operator._norm_sq_estimate = norm_sq
+    except AttributeError:
+        pass
+    return norm_sq

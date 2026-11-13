@@ -5,12 +5,20 @@ from ...operators.base import LinearOperator
 
 
 def normalized_measurement_loss(prediction, measurement):
-    # Deliberately preserve the reference reduction order and all-zero failure.
+    """``||y - A x|| * mean(1 / |y|)`` over the measured entries (DM4CT loss).
+
+    Exactly-zero entries carry no measurement (rays outside the field of view,
+    truncated detector columns) and are left out of the mean. The reference
+    replaced them by the smallest nonzero |y|, which inflates the step by the
+    count of such rays (19x for a fan beam whose detector overhangs the
+    volume); without exact zeros the value is unchanged. An all-zero
+    measurement still fails, as in the reference.
+    """
     difference = measurement - prediction
-    min_nonzero = measurement.abs()[measurement.abs() != 0].min()
-    denominator = measurement.abs().clone()
-    denominator[denominator == 0] = min_nonzero
-    return (torch.linalg.norm(difference) / denominator).mean()
+    magnitude = measurement.abs()
+    measured = magnitude != 0
+    magnitude[measured].min()          # raises on an all-zero measurement
+    return torch.linalg.norm(difference) * (1.0 / magnitude[measured]).mean()
 
 
 class NormalizedPosteriorSampling(ConditioningMethod):

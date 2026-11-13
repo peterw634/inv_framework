@@ -119,7 +119,10 @@ class LoRAAdaptiveDDSSolver(DDSSolver):
               operator: ForwardOperator,
               x_init: Optional[torch.Tensor] = None,
               generator: Optional[torch.Generator] = None,
+              initial_noise: Optional[torch.Tensor] = None,
               **kwargs) -> torch.Tensor:
+        """Reconstruct; ``initial_noise`` follows the same convention as
+        ``DDSSolver.solve`` (standard normal, scaled by ``noise_scale``)."""
         if not isinstance(operator, LinearOperator):
             raise TypeError(
                 "LoRAAdaptiveDDSSolver requires a LinearOperator (CG data "
@@ -151,7 +154,13 @@ class LoRAAdaptiveDDSSolver(DDSSolver):
                                generator=generator) * self.noise_scale
 
         with torch.no_grad():
-            eta0 = randn((B, *operator.domain_shape))
+            shape = (B, *operator.domain_shape)
+            if initial_noise is None:
+                eta0 = randn(shape)
+            else:
+                if tuple(initial_noise.shape) != shape:
+                    raise ValueError(f"initial_noise must have shape {shape}")
+                eta0 = initial_noise.to(device=device, dtype=measurement.dtype) * self.noise_scale
             if x_init is None:
                 x_t = self.t_start * eta0
             else:

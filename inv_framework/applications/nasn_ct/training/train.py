@@ -133,7 +133,8 @@ def entrypoint(argv=None):
             _update_ema(ema, model, args.ema_decay); step += 1
             if step % 10 == 0:
                 _print(f"epoch={epoch} step={step} loss={loss.item():.6f} lr={scheduler.get_last_lr()[0]:.3g}")
-        if _rank() == 0 and (epoch + 1) % args.checkpoint_every == 0:
+        last_epoch = epoch + 1 == args.epochs
+        if _rank() == 0 and ((epoch + 1) % args.checkpoint_every == 0 or last_epoch):
             torch.save({
                 "epoch": epoch, "step": step, "model": model.state_dict(),
                 "ema": ema.state_dict(), "optimizer": optimizer.state_dict(),

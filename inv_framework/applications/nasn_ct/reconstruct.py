@@ -23,6 +23,8 @@ def reconstruct_slices(weights, sinogram_dir, scale, output, slices,
         raise RuntimeError("the released 2048 DDS path requires a CUDA GPU")
     if warm_start and not 0 < t_start < 1:
         raise ValueError("warm_start requires 0 < t_start < 1")
+    if not warm_start and t_start != 1.0:
+        raise ValueError("t_start < 1 requires --warm-start (a cold start must begin from pure noise)")
     model = load_pmf(weights, model_config, device=device)
     if model.img_size != IMAGE_SIZE or model.img_channels != 1:
         raise ValueError("the NaSn release requires a single-channel 2048 model")

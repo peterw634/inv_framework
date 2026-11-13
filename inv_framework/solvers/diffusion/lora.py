@@ -149,8 +149,8 @@ def inject_lora_linear(module: nn.Module,
         if isinstance(child, (LoraInjectedLinear, LoraInjectedConv2d)):
             continue
         new = _replace_linear(parent, name, child, r, dropout_p, scale)
-        groups.append(new.lora_up.parameters())
-        groups.append(new.lora_down.parameters())
+        groups.append(list(new.lora_up.parameters()))
+        groups.append(list(new.lora_down.parameters()))
         n += 1
     if verbose:
         total = sum(p.numel() for p in module.parameters())
@@ -208,10 +208,12 @@ def adapt_pmfdit(net: nn.Module,
     net.requires_grad_(False)
 
     n_gate = 0
+    gates: List[nn.Parameter] = []
     if unfreeze_gates:
         for name, p in net.named_parameters():
             if name.endswith('attn_scale') or name.endswith('mlp_scale'):
                 p.requires_grad_(True)
+                gates.append(p)
                 n_gate += p.numel()
 
     selected = nn.ModuleList(
@@ -223,8 +225,8 @@ def adapt_pmfdit(net: nn.Module,
             selected, ancestor_class={'TransformerBlock'},
             search_class=[nn.Linear]):
         new = _replace_linear(parent, name, child, r, dropout_p, scale)
-        groups.append(new.lora_up.parameters())
-        groups.append(new.lora_down.parameters())
+        groups.append(list(new.lora_up.parameters()))
+        groups.append(list(new.lora_down.parameters()))
         n_lin += 1
 
     n_conv = 0
@@ -241,8 +243,8 @@ def adapt_pmfdit(net: nn.Module,
             new.conv.bias = old.bias
         new.to(device=old.weight.device, dtype=old.weight.dtype)
         net.x_embedder.proj2 = new
-        groups.append(new.lora_up.parameters())
-        groups.append(new.lora_down.parameters())
+        groups.append(list(new.lora_up.parameters()))
+        groups.append(list(new.lora_down.parameters()))
         n_conv += 1
 
     if verbose:
@@ -252,6 +254,10 @@ def adapt_pmfdit(net: nn.Module,
         print(f"  injected {n_lin} Linear + {n_conv} Conv2d; gates {n_gate/1e3:.1f}K")
         print(f"  trainable {train/1e6:.3f}M / {total/1e6:.2f}M = {train/total*100:.3f}%")
 
+    # Unfrozen gates are returned too, so an optimiser built from the groups
+    # trains every parameter this function made trainable.
+    if gates:
+        groups.append(gates)
     return groups
 
 

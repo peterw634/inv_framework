@@ -11,7 +11,7 @@ def _optional_msssim():
         from pytorch_msssim import ms_ssim
     except ImportError as error:
         raise ImportError(
-            "MS-SSIM training loss requires the optional 'train' dependencies"
+            "MS-SSIM training loss requires the optional 'nasn-train' dependencies"
         ) from error
     return ms_ssim
 
@@ -21,7 +21,7 @@ def _optional_lpips():
         import lpips
     except ImportError as error:
         raise ImportError(
-            "LPIPS training loss requires the optional 'train' dependencies"
+            "LPIPS training loss requires the optional 'nasn-train' dependencies"
         ) from error
     return lpips
 

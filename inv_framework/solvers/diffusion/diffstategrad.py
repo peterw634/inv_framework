@@ -1,6 +1,5 @@
 """DiffStateGrad inverse-problem solver. Reference behavior is documented in docs/diffusion_methods.md."""
 from typing import Optional, Union, List
-import inspect
 import torch
 from .sampling import randn_tensor
 from .resample import ReSampleSolver
@@ -45,10 +44,8 @@ class DiffStateGradSolver(ReSampleSolver):
         latents = latents.to(self.device)
         latents = latents * self.schedule.init_noise_sigma
         self.schedule.set_timesteps(num_inference_steps)
-        accepts_eta = 'eta' in set(inspect.signature(self.schedule.step_output).parameters.keys())
-        extra_kwargs = {}
-        if accepts_eta:
-            extra_kwargs['eta'] = eta
+        # step_output forwards eta only when the wrapped scheduler's step takes it.
+        extra_kwargs = {'eta': eta}
         for t in self._steps(self.schedule.timesteps):
             latents = latents.requires_grad_()
             index = t // 2
@@ -100,7 +97,7 @@ class DiffStateGradSolver(ReSampleSolver):
                         latents = self.stochastic_resample(pseudo_x0=opt_latents, x_t=latents_cp, a_t=a_prev, sigma=sigma)
                         latents = latents.requires_grad_()
                     elif index < index_split:
-                        (pseudo_original_latents, _) = self.latent_optimization(measurement=measurement, z_init=pseudo_original_latents.detach(), operator_fn=self.measurement_condition.operator.forward, var_cutoff=var_cutoff, z_prev=latents.detach(), period=period)
+                        (pseudo_original_latents, _) = self.latent_optimization(measurement=measurement, z_init=pseudo_original_latents.detach(), operator_fn=self.measurement_condition.operator.forward, lr=latent_lr, var_cutoff=var_cutoff, z_prev=latents.detach(), period=period)
                         sigma = 40 * (1 - a_prev) / (1 - a_t) * (1 - a_t / a_prev)
                         latents = self.stochastic_resample(pseudo_x0=pseudo_original_latents, x_t=latents_cp, a_t=a_prev, sigma=sigma)
         pseudo_original_latents = pseudo_original_latents / self.codec.scaling_factor

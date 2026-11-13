@@ -137,10 +137,20 @@ class TruncatedRadon2D(LinearOperator):
 
     def pseudo_inverse(self, y: torch.Tensor, method: str = 'fbp',
                        **kwargs) -> torch.Tensor:
-        """Warm-start / display reconstruction via the underlying Radon.
+        """Warm-start / display reconstruction.
 
-        Truncated FBP exhibits the expected interior-tomography cupping; it is
-        meant only for initialisation or visualisation, with the outer field
-        recovered by a prior + data consistency.
+        ``'fbp'`` filters and back-projects through the underlying Radon and
+        exhibits the expected interior-tomography cupping; it is meant only for
+        initialisation or visualisation, with the outer field recovered by a
+        prior + data consistency. ``'sirt'`` and ``'landweber'`` iterate on the
+        truncated operator itself, so unmeasured detector columns are not
+        fitted as measured zeros.
         """
-        return self.radon.pseudo_inverse(y, method=method, **kwargs)
+        if method == 'fbp':
+            return self.radon.pseudo_inverse(y, method=method, **kwargs)
+        from inv_framework.solvers.classical import sirt, landweber
+        if method == 'sirt':
+            return sirt(self, y, **kwargs)
+        if method == 'landweber':
+            return landweber(self, y, **kwargs)
+        raise ValueError(f"Unknown pseudo_inverse method: {method!r}")

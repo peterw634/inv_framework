@@ -1,8 +1,10 @@
 """Pure-torch 2D parallel-beam Radon transform.
 
-Uses `grid_sample` to rotate the image, then sums along one axis. Wrapped in
-a custom autograd Function so that the backward pass equals the explicit
-back-projection (exact adjoint), regardless of grid_sample's internal grad.
+Uses `grid_sample` to rotate the image, then sums along one axis. The
+back-projection is the vector-Jacobian product of that bilinear forward map,
+so it is the exact matrix transpose (<Ax, y> == <x, A^T y> to rounding).
+Both directions are wrapped in custom autograd Functions whose backward is
+the other direction.
 """
 
 import math
@@ -12,7 +14,7 @@ import torch.nn.functional as F
 from ..base import LinearOperator
 
 
-def _rotation_grid(theta: torch.Tensor, shape):
+def _rotation_grid(theta: torch.Tensor, shape, dtype=torch.float32):
     """Build a grid_sample grid that rotates an image of `shape` by theta rad.
 
     `shape` is (B, C, H, W). theta is a scalar tensor on the same device.
@@ -25,7 +27,7 @@ def _rotation_grid(theta: torch.Tensor, shape):
         torch.stack([cos_t, -sin_t, zero]),
         torch.stack([sin_t,  cos_t, zero]),
     ])
-    rot = rot.to(dtype=torch.float32).unsqueeze(0).expand(B, -1, -1)
+    rot = rot.to(dtype=dtype).unsqueeze(0).expand(B, -1, -1)
     return F.affine_grid(rot, list(shape), align_corners=False)
 
 
@@ -41,7 +43,7 @@ def _radon_forward_impl(image: torch.Tensor,
     assert H == W, "ParallelBeamRadon2D currently requires square images."
     sinos = []
     for theta in angles:
-        grid = _rotation_grid(theta, image.shape)
+        grid = _rotation_grid(theta, image.shape, image.dtype)
         rotated = F.grid_sample(image, grid, align_corners=False,
                                 padding_mode='zeros')
         sinos.append(rotated.sum(dim=-2))  # sum along H
@@ -51,22 +53,30 @@ def _radon_forward_impl(image: torch.Tensor,
 def _radon_adjoint_impl(sinogram: torch.Tensor,
                         angles: torch.Tensor,
                         image_size: int) -> torch.Tensor:
-    """Unfiltered back-projection (adjoint of Radon).
+    """Unfiltered back-projection, the exact transpose of the forward map.
+
+    Rotating the smeared projection back by -theta is only an approximate
+    transpose of bilinear sampling (a few percent in the dot test), so the
+    adjoint is taken as grid_sample's own input gradient, angle by angle.
 
     sinogram: (B, C, n_angles, W)
     returns: (B, C, image_size, image_size)
     """
     B, C, n_angles, W = sinogram.shape
     H = image_size
+    keep_graph = torch.is_grad_enabled()
     out = torch.zeros(B, C, H, W, device=sinogram.device, dtype=sinogram.dtype)
-    target_shape = (B, C, H, W)
-    for i in range(n_angles):
-        theta = angles[i]
-        proj = sinogram[:, :, i:i + 1, :].expand(B, C, H, W)
-        grid = _rotation_grid(-theta, target_shape)
-        smeared = F.grid_sample(proj, grid, align_corners=False,
-                                padding_mode='zeros')
-        out = out + smeared
+    probe = torch.zeros(B, C, H, W, device=sinogram.device,
+                        dtype=sinogram.dtype, requires_grad=True)
+    with torch.enable_grad():
+        for i in range(n_angles):
+            grid = _rotation_grid(angles[i], probe.shape, probe.dtype)
+            rotated = F.grid_sample(probe, grid, align_corners=False,
+                                    padding_mode='zeros')
+            proj = sinogram[:, :, i:i + 1, :].expand(B, C, H, W)
+            (grad,) = torch.autograd.grad(rotated, probe, proj,
+                                          create_graph=keep_graph)
+            out = out + grad
     return out
 
 
