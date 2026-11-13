@@ -1,0 +1,865 @@
+{
+  "environment": {
+    "python": "3.10.18",
+    "gpu": "NVIDIA A100-SXM4-80GB"
+  },
+  "runs": {
+    "cg_tikhonov:toy_cone_ct_3d.npz": {
+      "algorithm": "cg_tikhonov",
+      "pack": "toy_cone_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 7.9,
+      "command": "examples/run.py --algo cg_tikhonov --input examples/data/toy_cone_ct_3d.npz --output outputs/toy_benchmarks/cg_tikhonov/toy_cone_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 1.366,
+      "metrics": {
+        "relative_measurement_l2": 0.014561135321855545,
+        "psnr_db": 22.61557765678877,
+        "ssim": 0.7255275924304149,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "lam_rel": 0.001,
+        "max_iter": 20,
+        "tol": 1e-06
+      }
+    },
+    "cg_tikhonov:toy_parallel_ct_128.npz": {
+      "algorithm": "cg_tikhonov",
+      "pack": "toy_parallel_ct_128.npz",
+      "device": "cpu",
+      "wall_seconds": 4.2,
+      "command": "examples/run.py --algo cg_tikhonov --input examples/data/toy_parallel_ct_128.npz --output outputs/toy_benchmarks/cg_tikhonov/toy_parallel_ct_128 --device cpu",
+      "status": "passed",
+      "seconds": 1.738,
+      "metrics": {
+        "relative_measurement_l2": 0.009614462032914162,
+        "psnr_db": 20.246244456169645,
+        "ssim": 0.37491220235824585,
+        "data_range": 1.0
+      },
+      "parameters": {
+        "lam_rel": 0.001,
+        "max_iter": 20,
+        "tol": 1e-06
+      }
+    },
+    "cg_tikhonov:toy_parallel_ct_3d.npz": {
+      "algorithm": "cg_tikhonov",
+      "pack": "toy_parallel_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 8.1,
+      "command": "examples/run.py --algo cg_tikhonov --input examples/data/toy_parallel_ct_3d.npz --output outputs/toy_benchmarks/cg_tikhonov/toy_parallel_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 0.979,
+      "metrics": {
+        "relative_measurement_l2": 0.00989140197634697,
+        "psnr_db": 27.545304630840963,
+        "ssim": 0.7514481347160297,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "lam_rel": 0.001,
+        "max_iter": 20,
+        "tol": 1e-06
+      }
+    },
+    "ddim_dds:toy_lodoind_512.npz": {
+      "algorithm": "ddim_dds",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 52.3,
+      "command": "examples/run.py --algo ddim_dds --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/ddim_dds/toy_lodoind_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 34.715,
+      "metrics": {
+        "relative_measurement_l2": 0.0002287415263708681,
+        "psnr_db": 23.04580769142451,
+        "ssim": 0.5683740973472595,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 100,
+        "eta": 0.85,
+        "cg_inner": 5,
+        "gamma": 0.0
+      }
+    },
+    "ddim_dds:toy_lodoind_fan_512.npz": {
+      "algorithm": "ddim_dds",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 60.1,
+      "command": "examples/run.py --algo ddim_dds --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/ddim_dds/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 36.636,
+      "metrics": {
+        "relative_measurement_l2": 0.0007231166237033904,
+        "psnr_db": 25.092077499809267,
+        "ssim": 0.6441222429275513,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 100,
+        "eta": 0.85,
+        "cg_inner": 5,
+        "gamma": 0.0
+      }
+    },
+    "diffstategrad:toy_lodoind_512.npz": {
+      "algorithm": "diffstategrad",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 1271.1,
+      "command": "examples/run.py --algo diffstategrad --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/diffstategrad/toy_lodoind_512 --device cuda --weights weights/lodoind_latent_diffusion",
+      "status": "passed",
+      "seconds": 1234.968,
+      "metrics": {
+        "relative_measurement_l2": 0.041034504771232605,
+        "psnr_db": 20.435647531377743,
+        "ssim": 0.5103141069412231,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "pixel_lr": 0.0001,
+        "latent_lr": 0.1,
+        "var_cutoff": 0.99,
+        "inter_timesteps": 5,
+        "period": 1
+      }
+    },
+    "diffstategrad:toy_lodoind_fan_512.npz": {
+      "algorithm": "diffstategrad",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 1200.7,
+      "command": "examples/run.py --algo diffstategrad --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/diffstategrad/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_latent_diffusion",
+      "status": "passed",
+      "seconds": 1175.478,
+      "metrics": {
+        "relative_measurement_l2": 0.06751418858766556,
+        "psnr_db": 15.117087824715728,
+        "ssim": 0.3126924932003021,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "pixel_lr": 0.0001,
+        "latent_lr": 0.1,
+        "var_cutoff": 0.99,
+        "inter_timesteps": 5,
+        "period": 1
+      }
+    },
+    "dip:toy_lodoind_fan_512.npz": {
+      "algorithm": "dip",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 305.2,
+      "command": "examples/run.py --algo dip --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/dip/toy_lodoind_fan_512 --device cuda",
+      "status": "passed",
+      "seconds": 298.006,
+      "metrics": {
+        "relative_measurement_l2": 0.004152001813054085,
+        "psnr_db": 23.782507663799844,
+        "ssim": 0.5852717161178589,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_iterations": 3000,
+        "lr": 0.001,
+        "input_channels": 32,
+        "ema_decay": 0.99
+      }
+    },
+    "dip:toy_parallel_ct_128.npz": {
+      "algorithm": "dip",
+      "pack": "toy_parallel_ct_128.npz",
+      "device": "cuda",
+      "wall_seconds": 111.9,
+      "command": "examples/run.py --algo dip --input examples/data/toy_parallel_ct_128.npz --output outputs/toy_benchmarks/dip/toy_parallel_ct_128 --device cuda",
+      "status": "passed",
+      "seconds": 102.588,
+      "metrics": {
+        "relative_measurement_l2": 0.022125711664557457,
+        "psnr_db": 25.810628823137556,
+        "ssim": 0.6556174755096436,
+        "data_range": 1.0
+      },
+      "parameters": {
+        "num_iterations": 3000,
+        "lr": 0.001,
+        "input_channels": 32,
+        "ema_decay": 0.99
+      }
+    },
+    "dmplug:toy_lodoind_512.npz": {
+      "algorithm": "dmplug",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 937.2,
+      "command": "examples/run.py --algo dmplug --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/dmplug/toy_lodoind_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 918.236,
+      "metrics": {
+        "relative_measurement_l2": 0.02464783936738968,
+        "psnr_db": 19.83306599280351,
+        "ssim": 0.3665623962879181,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 3,
+        "epochs": 1000,
+        "lr": 0.005
+      }
+    },
+    "dmplug:toy_lodoind_fan_512.npz": {
+      "algorithm": "dmplug",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 914.8,
+      "command": "examples/run.py --algo dmplug --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/dmplug/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 877.046,
+      "metrics": {
+        "relative_measurement_l2": 0.024962175637483597,
+        "psnr_db": 19.780111455937273,
+        "ssim": 0.3543394207954407,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 3,
+        "epochs": 1000,
+        "lr": 0.005
+      }
+    },
+    "dps:toy_lodoind_512.npz": {
+      "algorithm": "dps",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": null,
+      "command": "examples/run.py --algo dps --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/dps/toy_lodoind_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 485.029,
+      "metrics": {
+        "relative_measurement_l2": 0.011775359511375427,
+        "psnr_db": 22.24920994369741,
+        "ssim": 0.5790579915046692,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 1000,
+        "scale": 1
+      },
+      "note": "default-parameter run from the scale sweep (/tmp/invfw_sweep)"
+    },
+    "dps:toy_lodoind_fan_512.npz": {
+      "algorithm": "dps",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": null,
+      "command": "examples/run.py --algo dps --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/dps/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 483.581,
+      "metrics": {
+        "relative_measurement_l2": 0.0190112367272377,
+        "psnr_db": 23.13559762749495,
+        "ssim": 0.5565618276596069,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 1000,
+        "scale": 1
+      },
+      "note": "default-parameter run from the scale sweep (/tmp/invfw_sweep)"
+    },
+    "fbp:toy_cone_ct_3d.npz": {
+      "algorithm": "fbp",
+      "pack": "toy_cone_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 8.5,
+      "command": "examples/run.py --algo fbp --input examples/data/toy_cone_ct_3d.npz --output outputs/toy_benchmarks/fbp/toy_cone_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 1.346,
+      "metrics": {
+        "relative_measurement_l2": 0.10658527165651321,
+        "psnr_db": 20.41829716456551,
+        "ssim": 0.6137183685958765,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "filter_type": "ram-lak",
+        "scale": null
+      }
+    },
+    "fbp:toy_parallel_ct_128.npz": {
+      "algorithm": "fbp",
+      "pack": "toy_parallel_ct_128.npz",
+      "device": "cpu",
+      "wall_seconds": 5.6,
+      "command": "examples/run.py --algo fbp --input examples/data/toy_parallel_ct_128.npz --output outputs/toy_benchmarks/fbp/toy_parallel_ct_128 --device cpu",
+      "status": "passed",
+      "seconds": 3.049,
+      "metrics": {
+        "relative_measurement_l2": 0.08584950864315033,
+        "psnr_db": 17.920892283232753,
+        "ssim": 0.2686024010181427,
+        "data_range": 1.0
+      },
+      "parameters": {
+        "filter_type": "ram-lak",
+        "scale": null
+      }
+    },
+    "fbp:toy_parallel_ct_3d.npz": {
+      "algorithm": "fbp",
+      "pack": "toy_parallel_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 7.0,
+      "command": "examples/run.py --algo fbp --input examples/data/toy_parallel_ct_3d.npz --output outputs/toy_benchmarks/fbp/toy_parallel_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 0.078,
+      "metrics": {
+        "relative_measurement_l2": 0.049827829003334045,
+        "psnr_db": 25.76556666880458,
+        "ssim": 0.6522684625596088,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "filter_type": "ram-lak",
+        "scale": null
+      }
+    },
+    "hybridreg:toy_lodoind_512.npz": {
+      "algorithm": "hybridreg",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 55.6,
+      "command": "examples/run.py --algo hybridreg --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/hybridreg/toy_lodoind_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 40.582,
+      "metrics": {
+        "relative_measurement_l2": 0.013064540922641754,
+        "psnr_db": 21.602282632940728,
+        "ssim": 0.6130390763282776,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "sigma": 0.0001,
+        "loss_measurement_weight": 0.5,
+        "loss_noise_weight": 10000.0,
+        "lr": 0.099,
+        "beta": 0.9999,
+        "sirt_iterations": 100
+      }
+    },
+    "hybridreg:toy_lodoind_fan_512.npz": {
+      "algorithm": "hybridreg",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 54.8,
+      "command": "examples/run.py --algo hybridreg --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/hybridreg/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 42.938,
+      "metrics": {
+        "relative_measurement_l2": 0.014925705268979073,
+        "psnr_db": 21.744985739853824,
+        "ssim": 0.6236740350723267,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "sigma": 0.0001,
+        "loss_measurement_weight": 0.5,
+        "loss_noise_weight": 10000.0,
+        "lr": 0.099,
+        "beta": 0.9999,
+        "sirt_iterations": 100
+      }
+    },
+    "inr:toy_lodoind_fan_512.npz": {
+      "algorithm": "inr",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 168.2,
+      "command": "examples/run.py --algo inr --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/inr/toy_lodoind_fan_512 --device cuda",
+      "status": "passed",
+      "seconds": 161.32,
+      "metrics": {
+        "relative_measurement_l2": 0.00752313481643796,
+        "psnr_db": 24.39926582789112,
+        "ssim": 0.698546290397644,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_iterations": 2000,
+        "lr": 0.0001,
+        "hidden_features": 256,
+        "hidden_layers": 4
+      }
+    },
+    "inr:toy_parallel_ct_128.npz": {
+      "algorithm": "inr",
+      "pack": "toy_parallel_ct_128.npz",
+      "device": "cuda",
+      "wall_seconds": 51.4,
+      "command": "examples/run.py --algo inr --input examples/data/toy_parallel_ct_128.npz --output outputs/toy_benchmarks/inr/toy_parallel_ct_128 --device cuda",
+      "status": "passed",
+      "seconds": 44.927,
+      "metrics": {
+        "relative_measurement_l2": 0.05250232294201851,
+        "psnr_db": 27.086639275494548,
+        "ssim": 0.4948577880859375,
+        "data_range": 1.0
+      },
+      "parameters": {
+        "num_iterations": 2000,
+        "lr": 0.0001,
+        "hidden_features": 256,
+        "hidden_layers": 4
+      }
+    },
+    "landweber:toy_cone_ct_3d.npz": {
+      "algorithm": "landweber",
+      "pack": "toy_cone_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 17.1,
+      "command": "examples/run.py --algo landweber --input examples/data/toy_cone_ct_3d.npz --output outputs/toy_benchmarks/landweber/toy_cone_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 10.361,
+      "metrics": {
+        "relative_measurement_l2": 0.012105002999305725,
+        "psnr_db": 27.11438732138593,
+        "ssim": 0.9318813566532714,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "num_iterations": 400,
+        "step_size": null,
+        "min_value": 0.0,
+        "max_value": null
+      }
+    },
+    "landweber:toy_parallel_ct_128.npz": {
+      "algorithm": "landweber",
+      "pack": "toy_parallel_ct_128.npz",
+      "device": "cpu",
+      "wall_seconds": 14.5,
+      "command": "examples/run.py --algo landweber --input examples/data/toy_parallel_ct_128.npz --output outputs/toy_benchmarks/landweber/toy_parallel_ct_128 --device cpu",
+      "status": "passed",
+      "seconds": 12.089,
+      "metrics": {
+        "relative_measurement_l2": 0.01608850061893463,
+        "psnr_db": 24.798849332381874,
+        "ssim": 0.697935938835144,
+        "data_range": 1.0
+      },
+      "parameters": {
+        "num_iterations": 400,
+        "step_size": null,
+        "min_value": 0.0,
+        "max_value": null
+      }
+    },
+    "landweber:toy_parallel_ct_3d.npz": {
+      "algorithm": "landweber",
+      "pack": "toy_parallel_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 14.2,
+      "command": "examples/run.py --algo landweber --input examples/data/toy_parallel_ct_3d.npz --output outputs/toy_benchmarks/landweber/toy_parallel_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 7.271,
+      "metrics": {
+        "relative_measurement_l2": 0.012110370211303234,
+        "psnr_db": 29.515336576840316,
+        "ssim": 0.9207733671089912,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "num_iterations": 400,
+        "step_size": null,
+        "min_value": 0.0,
+        "max_value": null
+      }
+    },
+    "mcg:toy_lodoind_512.npz": {
+      "algorithm": "mcg",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 620.4,
+      "command": "examples/run.py --algo mcg --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/mcg/toy_lodoind_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 378.757,
+      "metrics": {
+        "relative_measurement_l2": 0.00695733493193984,
+        "psnr_db": 20.345820259611735,
+        "ssim": 0.5018094778060913,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 1000,
+        "scale": 2.0,
+        "sirt_iterations": 100
+      }
+    },
+    "mcg:toy_lodoind_fan_512.npz": {
+      "algorithm": "mcg",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": null,
+      "command": "examples/run.py --algo mcg --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/mcg/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 337.17,
+      "metrics": {
+        "relative_measurement_l2": 0.011108123697340488,
+        "psnr_db": 23.60976907787446,
+        "ssim": 0.6220628023147583,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 1000,
+        "scale": 2,
+        "sirt_iterations": 100
+      },
+      "note": "default-parameter run from the scale sweep (/tmp/invfw_sweep)"
+    },
+    "pgdm:toy_lodoind_512.npz": {
+      "algorithm": "pgdm",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 625.5,
+      "command": "examples/run.py --algo pgdm --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/pgdm/toy_lodoind_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 603.197,
+      "metrics": {
+        "relative_measurement_l2": 0.005521213170140982,
+        "psnr_db": 22.71702643754437,
+        "ssim": 0.6005394458770752,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 100,
+        "scale": 0.3,
+        "sirt_iterations": 100
+      }
+    },
+    "pgdm:toy_lodoind_fan_512.npz": {
+      "algorithm": "pgdm",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 894.9,
+      "command": "examples/run.py --algo pgdm --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/pgdm/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 871.851,
+      "metrics": {
+        "relative_measurement_l2": 0.00621415302157402,
+        "psnr_db": 24.058216255224664,
+        "ssim": 0.6794514656066895,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 100,
+        "scale": 0.3,
+        "sirt_iterations": 100
+      }
+    },
+    "pmf_dds:toy_nasn_pmf_2048.npz": {
+      "algorithm": "pmf_dds",
+      "pack": "toy_nasn_pmf_2048.npz",
+      "device": "cuda",
+      "wall_seconds": 82.5,
+      "command": "examples/run.py --algo pmf_dds --input examples/data/toy_nasn_pmf_2048.npz --output outputs/toy_benchmarks/pmf_dds/toy_nasn_pmf_2048 --device cuda --weights weights/nasn-pmf-2048-epoch449-ema.safetensors",
+      "status": "passed",
+      "seconds": 65.19,
+      "metrics": {
+        "relative_measurement_l2": 0.0002118835545843467,
+        "psnr_db": 44.53533410894538,
+        "ssim": 0.9961941242218018,
+        "data_range": 2.072265625,
+        "roi_radius": 256.0,
+        "roi_psnr_db": 64.05127481868466,
+        "roi_ssim": 0.9998044967651367
+      },
+      "parameters": {
+        "num_inference_steps": 16,
+        "dc_lam": 5.0,
+        "dc_iter": 10,
+        "eta": 0.0,
+        "omega": 1.0
+      }
+    },
+    "pmf_dds:toy_nasn_pmf_fan_2048.npz": {
+      "algorithm": "pmf_dds",
+      "pack": "toy_nasn_pmf_fan_2048.npz",
+      "device": "cuda",
+      "wall_seconds": 24.0,
+      "command": "examples/run.py --algo pmf_dds --input examples/data/toy_nasn_pmf_fan_2048.npz --output outputs/toy_benchmarks/pmf_dds/toy_nasn_pmf_fan_2048 --device cuda --weights weights/nasn-pmf-2048-epoch449-ema.safetensors",
+      "status": "passed",
+      "seconds": 15.256,
+      "metrics": {
+        "relative_measurement_l2": 4.4504682591650635e-05,
+        "psnr_db": 66.24165364760105,
+        "ssim": 0.9999210238456726,
+        "data_range": 2.072265625
+      },
+      "parameters": {
+        "num_inference_steps": 16,
+        "dc_lam": 5.0,
+        "dc_iter": 10,
+        "eta": 0.0,
+        "omega": 1.0
+      }
+    },
+    "pmf_lora_dds:toy_nasn_pmf_2048.npz": {
+      "algorithm": "pmf_lora_dds",
+      "pack": "toy_nasn_pmf_2048.npz",
+      "device": "cuda",
+      "wall_seconds": 953.9,
+      "command": "examples/run.py --algo pmf_lora_dds --input examples/data/toy_nasn_pmf_2048.npz --output outputs/toy_benchmarks/pmf_lora_dds/toy_nasn_pmf_2048 --device cuda --weights weights/nasn-pmf-2048-epoch449-ema.safetensors",
+      "status": "passed",
+      "seconds": 924.108,
+      "metrics": {
+        "relative_measurement_l2": 5.7514913351042196e-05,
+        "psnr_db": 59.16606654750687,
+        "ssim": 0.999772846698761,
+        "data_range": 2.072265625,
+        "roi_radius": 256.0,
+        "roi_psnr_db": 67.64893672809977,
+        "roi_ssim": 0.9999291300773621
+      },
+      "parameters": {
+        "num_inference_steps": 16,
+        "dc_lam": 5.0,
+        "dc_iter": 10,
+        "eta": 0.0,
+        "omega": 1.0,
+        "lora_rank": 8,
+        "adapt_lr": 0.0001,
+        "adapt_K": 4
+      }
+    },
+    "pmf_lora_dds:toy_nasn_pmf_fan_2048.npz": {
+      "algorithm": "pmf_lora_dds",
+      "pack": "toy_nasn_pmf_fan_2048.npz",
+      "device": "cuda",
+      "wall_seconds": 151.1,
+      "command": "examples/run.py --algo pmf_lora_dds --input examples/data/toy_nasn_pmf_fan_2048.npz --output outputs/toy_benchmarks/pmf_lora_dds/toy_nasn_pmf_fan_2048 --device cuda --weights weights/nasn-pmf-2048-epoch449-ema.safetensors",
+      "status": "passed",
+      "seconds": 131.204,
+      "metrics": {
+        "relative_measurement_l2": 8.296700252685696e-05,
+        "psnr_db": 62.0129913000735,
+        "ssim": 0.9997907876968384,
+        "data_range": 2.072265625
+      },
+      "parameters": {
+        "num_inference_steps": 16,
+        "dc_lam": 5.0,
+        "dc_iter": 10,
+        "eta": 0.0,
+        "omega": 1.0,
+        "lora_rank": 8,
+        "adapt_lr": 0.0001,
+        "adapt_K": 4
+      }
+    },
+    "psld:toy_lodoind_512.npz": {
+      "algorithm": "psld",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 1182.0,
+      "command": "examples/run.py --algo psld --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/psld/toy_lodoind_512 --device cuda --weights weights/lodoind_latent_diffusion",
+      "status": "passed",
+      "seconds": 1138.686,
+      "metrics": {
+        "relative_measurement_l2": 0.0417175330221653,
+        "psnr_db": 19.441272830668012,
+        "ssim": 0.49059417843818665,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 1000,
+        "gamma": 0.8,
+        "omega": 0.2,
+        "eta": 0.0,
+        "sirt_iterations": 100
+      }
+    },
+    "psld:toy_lodoind_fan_512.npz": {
+      "algorithm": "psld",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 1247.0,
+      "command": "examples/run.py --algo psld --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/psld/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_latent_diffusion",
+      "status": "passed",
+      "seconds": 1204.735,
+      "metrics": {
+        "relative_measurement_l2": 0.05825364962220192,
+        "psnr_db": 16.973048309929286,
+        "ssim": 0.36771172285079956,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 1000,
+        "gamma": 0.8,
+        "omega": 0.2,
+        "eta": 0.0,
+        "sirt_iterations": 100
+      }
+    },
+    "reddiff:toy_lodoind_512.npz": {
+      "algorithm": "reddiff",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 109.3,
+      "command": "examples/run.py --algo reddiff --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/reddiff/toy_lodoind_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 53.07,
+      "metrics": {
+        "relative_measurement_l2": 0.01140858419239521,
+        "psnr_db": 21.74483872170444,
+        "ssim": 0.6178244948387146,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "sigma": 0.0001,
+        "loss_measurement_weight": 0.5,
+        "loss_noise_weight": 10000.0,
+        "lr": 0.099,
+        "sirt_iterations": 100
+      }
+    },
+    "reddiff:toy_lodoind_fan_512.npz": {
+      "algorithm": "reddiff",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 75.7,
+      "command": "examples/run.py --algo reddiff --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/reddiff/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_pixel_diffusion",
+      "status": "passed",
+      "seconds": 59.583,
+      "metrics": {
+        "relative_measurement_l2": 0.01336030475795269,
+        "psnr_db": 21.972862086683847,
+        "ssim": 0.630136251449585,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "sigma": 0.0001,
+        "loss_measurement_weight": 0.5,
+        "loss_noise_weight": 10000.0,
+        "lr": 0.099,
+        "sirt_iterations": 100
+      }
+    },
+    "resample:toy_lodoind_512.npz": {
+      "algorithm": "resample",
+      "pack": "toy_lodoind_512.npz",
+      "device": "cuda",
+      "wall_seconds": 1926.8,
+      "command": "examples/run.py --algo resample --input examples/data/toy_lodoind_512.npz --output outputs/toy_benchmarks/resample/toy_lodoind_512 --device cuda --weights weights/lodoind_latent_diffusion",
+      "status": "passed",
+      "seconds": 1889.683,
+      "metrics": {
+        "relative_measurement_l2": 0.05937977880239487,
+        "psnr_db": 19.894227288760696,
+        "ssim": 0.4665365219116211,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "pixel_lr": 0.0001,
+        "latent_lr": 0.1,
+        "inter_timesteps": 5,
+        "pixel_maxiters": 2000,
+        "latent_maxiters": 500
+      }
+    },
+    "resample:toy_lodoind_fan_512.npz": {
+      "algorithm": "resample",
+      "pack": "toy_lodoind_fan_512.npz",
+      "device": "cuda",
+      "wall_seconds": 2638.8,
+      "command": "examples/run.py --algo resample --input examples/data/toy_lodoind_fan_512.npz --output outputs/toy_benchmarks/resample/toy_lodoind_fan_512 --device cuda --weights weights/lodoind_latent_diffusion",
+      "status": "passed",
+      "seconds": 2619.876,
+      "metrics": {
+        "relative_measurement_l2": 0.25458863377571106,
+        "psnr_db": 8.49776727915652,
+        "ssim": 0.2095804363489151,
+        "data_range": 1.1612862348556519
+      },
+      "parameters": {
+        "num_inference_steps": 200,
+        "pixel_lr": 0.0001,
+        "latent_lr": 0.1,
+        "inter_timesteps": 5,
+        "pixel_maxiters": 2000,
+        "latent_maxiters": 500
+      }
+    },
+    "sirt:toy_cone_ct_3d.npz": {
+      "algorithm": "sirt",
+      "pack": "toy_cone_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 8.1,
+      "command": "examples/run.py --algo sirt --input examples/data/toy_cone_ct_3d.npz --output outputs/toy_benchmarks/sirt/toy_cone_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 1.785,
+      "metrics": {
+        "relative_measurement_l2": 0.015062264166772366,
+        "psnr_db": 25.73404024334601,
+        "ssim": 0.9144534446105802,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "num_iterations": 200,
+        "min_value": 0.0,
+        "max_value": null
+      }
+    },
+    "sirt:toy_parallel_ct_128.npz": {
+      "algorithm": "sirt",
+      "pack": "toy_parallel_ct_128.npz",
+      "device": "cpu",
+      "wall_seconds": 8.3,
+      "command": "examples/run.py --algo sirt --input examples/data/toy_parallel_ct_128.npz --output outputs/toy_benchmarks/sirt/toy_parallel_ct_128 --device cpu",
+      "status": "passed",
+      "seconds": 5.85,
+      "metrics": {
+        "relative_measurement_l2": 0.020521175116300583,
+        "psnr_db": 24.162684770642567,
+        "ssim": 0.6737257838249207,
+        "data_range": 1.0
+      },
+      "parameters": {
+        "num_iterations": 200,
+        "min_value": 0.0,
+        "max_value": null
+      }
+    },
+    "sirt:toy_parallel_ct_3d.npz": {
+      "algorithm": "sirt",
+      "pack": "toy_parallel_ct_3d.npz",
+      "device": "cuda",
+      "wall_seconds": 9.9,
+      "command": "examples/run.py --algo sirt --input examples/data/toy_parallel_ct_3d.npz --output outputs/toy_benchmarks/sirt/toy_parallel_ct_3d --device cuda",
+      "status": "passed",
+      "seconds": 3.221,
+      "metrics": {
+        "relative_measurement_l2": 0.014219612814486027,
+        "psnr_db": 28.999847850743826,
+        "ssim": 0.9192652147677335,
+        "data_range": 1.2000000476837158
+      },
+      "parameters": {
+        "num_iterations": 200,
+        "min_value": 0.0,
+        "max_value": null
+      }
+    }
+  }
+}

@@ -4,8 +4,42 @@
 
 ---
 
+## 算法卡片、统一入口与示例数据
+
+面向 agent 接入与 smoke 测试，按《算法提交规范》为每个算法提供一张卡片：
+
+| 内容 | 位置 |
+| --- | --- |
+| 18 个算法的卡片（身份、输入输出、运行方式、默认推荐参数及来源） | [algorithms/README.md](algorithms/README.md) |
+| 统一运行入口（读取 `.npz`，输出 `reconstruction.npy`、`preview.png`、`summary.json`） | [examples/run.py](examples/run.py) |
+| 程序化接口（算法列表、默认参数、构建求解器） | `inv_framework.registry` |
+| 8 份 toy data（同步辐射二维/三维平行束、内部断层、实验室扇束/锥束）及字段说明 | [examples/data/README.md](examples/data/README.md) |
+| 预训练权重下载（固定版本，pMF 校验 SHA-256） | [scripts/download_weights.py](scripts/download_weights.py) |
+| 完整数据集（BIL、RWTH 35E、Walnuts、LoDoInd、DM4CT 岩石、NaSn）与几何对应 | [docs/industrial_datasets.md](docs/industrial_datasets.md) |
+
+```bash
+pip install -r requirements.txt && pip install -e .
+conda install -c astra-toolbox astra-toolbox=2.4          # 三维平行束、扇束、锥束需要
+python examples/run.py --list                              # 全部算法与默认参数（JSON）
+python examples/run.py --algo sirt --input examples/data/toy_parallel_ct_128.npz --output outputs/sirt --device cpu
+python examples/run.py --algo sirt --input examples/data/toy_cone_ct_3d.npz --output outputs/sirt_cone --device cuda
+```
+
+支持的 CT 几何：
+
+| 几何 | 算子 | 后端 |
+| --- | --- | --- |
+| 二维平行束（同步辐射） | `ParallelBeamRadon2D` | 纯 torch，CPU/GPU，伴随为精确转置 |
+| 二维平行束内部断层（截断探测器） | `TruncatedRadon2D`；NaSn 几何 `TomoPyCUDARadon2D` | 纯 torch；NaSn CUDA 投影器 |
+| 三维平行束（同步辐射体数据） | `ParallelBeamASTRA3D` + `parallel_beam_3d_geometry` | ASTRA CUDA |
+| 二维扇束（实验室锥束中心层） | `FanBeamASTRA2D` + `fan_beam_geometry` | ASTRA CUDA，BP 加 1/cos 权重后与 FP 匹配 |
+| 三维圆轨道锥束（实验室） | `ConeBeamASTRA` + `circular_cone_geometry` | ASTRA CUDA `cone_vec`，BP 加倾斜权重；FDK |
+
+---
+
 ## 目录
 
+- [算法卡片、统一入口与示例数据](#算法卡片统一入口与示例数据)
 - [设计理念](#设计理念)
 - [安装](#安装)
 - [文件结构](#文件结构)
@@ -15,7 +49,7 @@
 - [与 diffusers 集成](#与-diffusers-集成)
 - [NaSn 真实工业 CT 项目接入](docs/nasn_ct.md)
 - [Diffusion 方法与统一对比](docs/diffusion_methods.md)
-- [工业数据资源与下载说明](inv_framework/docs/industrial_datasets.md)
+- [工业数据资源与下载说明](docs/industrial_datasets.md)
 - [扩展:添加新的反问题](#扩展添加新的反问题)
 - [测试](#测试)
 
@@ -52,7 +86,7 @@ ForwardOperator (ABC)          ← 通用基类(线性 + 非线性)
 
 依赖:
 - 必需: `torch >= 2.0`
-- 可选: `matplotlib`(画图)、`diffusers >= 0.30`(扩散类求解器换更强 UNet / scheduler 时需要)、`astra-toolbox`(3D CT 后端)
+- 可选: `matplotlib`(画图)、`diffusers == 0.32.2`(扩散类求解器换更强 UNet / scheduler 时需要,与 `pyproject.toml` 一致)、`astra-toolbox`(3D CT 后端)
 
 ```bash
 cd /path/to/inv_framework
@@ -80,6 +114,9 @@ inv_framework/
 │   │   ├── noise.py                             # NoiseModel + GaussianNoise / PoissonLogDomainNoise / NoNoise
 │   │   └── ct/                                  # CT 域算子
 │   │       ├── radon_torch.py                   # ParallelBeamRadon2D (纯 torch,默认)
+│   │       ├── truncated.py                     # TruncatedRadon2D (内部断层)
+│   │       ├── nasn_cuda.py                     # TomoPyCUDARadon2D (NaSn CUDA 投影器)
+│   │       ├── astra_cuda.py                    # ConeBeamASTRA / ParallelBeamASTRA3D / FanBeamASTRA2D
 │   │       └── astra_adapter.py                 # ASTRAOperator3D (可选,需 astra-toolbox)
 │   ├── solvers/                                 # 求解器层
 │   │   ├── base.py                              # InverseProblemSolver (ABC)
@@ -95,9 +132,14 @@ inv_framework/
 │   │   ├── siren.py                             # SIREN (INR)
 │   │   ├── skip_unet.py                         # SkipUNet (DIP)
 │   │   └── tiny_unet.py                         # TinyUNet (扩散先验)
+│   ├── applications/nasn_ct/                    # NaSn 工业 CT:预处理、训练、重建 CLI
+│   ├── registry.py                              # 算法注册表:身份、默认参数、统一构建
 │   └── utils/
 │       └── metrics.py                           # psnr / ssim
+├── algorithms/                                  # 每个算法的卡片 (scripts/gen_algorithm_cards.py 生成)
 ├── examples/
+│   ├── run.py                                   # 统一运行入口
+│   ├── data/                                    # toy data (.npz) 与说明
 │   ├── ct_demo.py                               # 线性 CT:FBP / SIRT / DIP / INR / DPS (支持 --dps-use-diffusers)
 │   ├── train_diffusion_for_dps.py               # 训练 DPS 用的 ε-预测器 (支持 --use-diffusers)
 │   └── nonlinear_demo.py                        # 非线性 CT 演示(饱和探测器,tanh)
@@ -436,13 +478,11 @@ x_rec = LoRAAdaptiveDDSSolver(
 7 个 Linear + `x_embedder.proj2` + 解冻 gates)。
 
 ```python
-import sys; sys.path.insert(0, '/path/to/indus_CT/NaSn')
-from pmf import pixelMeanFlow
+from inv_framework.applications.nasn_ct.weights import load_pmf
 from inv_framework.solvers.diffusion import PMFVelocityPrior, adapt_pmfdit
 
-pmf = pixelMeanFlow('pmfDiT_B_64', img_size=1024, img_channels=1,
-                    num_classes=1, eval=True).to('cuda')
-pmf.net.load_state_dict(torch.load('ckpt_epoch_999.pt'))
+# 权重下载见 algorithms/pmf_dds/README.md;同名 .json 配置放在权重旁
+pmf = load_pmf('weights/nasn-pmf-2048-epoch449-ema.safetensors', device='cuda')
 
 groups = adapt_pmfdit(pmf.net, r=8)                  # OOD 才需要
 prior  = PMFVelocityPrior(pmf, omega=1.0)

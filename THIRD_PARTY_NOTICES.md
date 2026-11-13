@@ -30,6 +30,19 @@ Algorithm attribution remains with the respective method authors. No standalone
 license file was present in that reference snapshot; this notice does not assign
 a new license to the upstream material.
 
+Pretrained weights are not bundled. `scripts/download_weights.py` fetches the
+DM4CT LoDoInd priors `jiayangshi/lodoind_pixel_diffusion` and
+`jiayangshi/lodoind_latent_diffusion` from Hugging Face (MIT, revisions pinned)
+and the NaSn pMF release weights (MIT). The LoDoInd toy slice in
+`examples/data/` derives from LoDoInd (CC BY-NC 4.0, doi:10.5281/zenodo.10391412);
+the other toy packs are generated data.
+
+## ASTRA operators
+
+`operators/ct/astra_cuda.py` calls ASTRA Toolbox (GPLv3, not bundled; install it
+separately). Its cone-beam operator and obliquity weighting follow the author's
+battery multi-cell benchmark code (`bmc/operators.py`), not ASTRA source.
+
 `resample_schedule.py` preserves the reference extension of the Hugging Face
 Diffusers DDIM scheduler. Diffusers is Copyright the HuggingFace Team, licensed
 under Apache-2.0: https://github.com/huggingface/diffusers/blob/v0.32.2/LICENSE .

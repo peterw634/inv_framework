@@ -1,0 +1,20 @@
+# inv_framework runtime dependencies. Tested versions (Python 3.10, Linux, CUDA 11.8) in comments.
+#   pip install -r requirements.txt && pip install -e .
+torch>=2.1                      # 2.7.0+cu118
+numpy>=1.24                     # 2.1.0
+diffusers==0.32.2               # pinned: the diffusion solvers wrap this scheduler/UNet API
+huggingface_hub>=0.20           # 0.36.1, scripts/download_weights.py
+safetensors>=0.4                # 0.6.2
+tifffile>=2023.7                # 2025.5.10
+scikit-image>=0.21              # 0.25.2, SSIM
+pillow>=9                       # 11.0.0, preview.png
+opencv-python-headless>=4.8     # 4.12, NaSn preprocessing
+PyYAML>=6                       # 6.0.3
+zstandard>=0.21                 # NaSn release archives
+ninja>=1.11                     # 1.13.0, JIT build of the NaSn CUDA projector (needs CUDA_HOME and nvcc)
+pytest>=7                       # 9.0.3
+
+# Laboratory cone-/fan-beam operators (ConeBeamASTRA, FanBeamASTRA2D) need astra-toolbox with CUDA:
+#   conda install -c astra-toolbox astra-toolbox=2.4      (tested: 2.4.0, libastra cuda_11.8)
+#   or: pip install astra-toolbox
+# Optional: tomopy (only for the test comparing CUDA gridrec with TomoPy).

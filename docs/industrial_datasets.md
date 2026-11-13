@@ -8,10 +8,50 @@
 
 ## 目录
 
+- [按几何分类的重建数据（算法接入用）](#按几何分类的重建数据算法接入用)
 - [有公开下载入口的数据](#有公开下载入口的数据)
 - [工业教程样例](#工业教程样例)
 - [需向作者索取的数据](#需向作者索取的数据)
 - [存放、校验与引用](#存放校验与引用)
+
+## 按几何分类的重建数据（算法接入用）
+
+核对日期：**2026-11-13**。下表列出带投影（或可直接模拟投影）的 CT 数据，以及它们在本框架中
+对应的算子。BIL 条目来自 [Battery Imaging Library 官方目录](https://github.com/antonyvam/BatteryImagingLibrary)
+（commit `6455d03`，2026-10-10 核对）；目录尺寸取自目录本身，未逐个校验图像头。
+
+| 数据 | 几何 | 规模 | 本框架算子 | 许可 | 获取 |
+| --- | --- | --- | --- | --- | --- |
+| BIL 同步辐射 micro-CT（22 个扫描，#45–#55、#103–#114） | 平行束，180°，1800 或 3600 个投影；体素 3.24 / 7.91 / 18.53 µm | 每个扫描为 Zenodo 上的原始投影；#45/#46 为 operando 4D（每个记录不是单一静态体） | 二维逐层：`ParallelBeamRadon2D`；整体：`ParallelBeamASTRA3D` | CC BY 4.0 | 各扫描的 Zenodo DOI 见官方目录，例如 #103 [10.5281/zenodo.17930623](https://doi.org/10.5281/zenodo.17930623) |
+| BIL 同步辐射 nano-CT（#64） | 平行束，360°，6200 个投影，0.55 µm | 6914²×2048 | `ParallelBeamASTRA3D` | CC BY 4.0 | 原始 [10.5281/zenodo.17102561](https://doi.org/10.5281/zenodo.17102561)，重建 [10.5281/zenodo.17106400](https://doi.org/10.5281/zenodo.17106400) |
+| BIL 实验室 micro-CT（20 个扫描，#65–#84，Diondo D5） | 圆轨道锥束，360°，1000–2200 个投影；体素 9–40 µm；XML 给出 SOD/SDD 与探测器中心偏移 | 针式、AAA/AAAA、18650、21700、4680 电芯 | `ConeBeamASTRA`（`det_offset_u` 对应 XML `ProjectionCenterOffsetX`，符号为 −1） | CC BY 4.0 | 例如 #77 原始投影 [10.5281/zenodo.17011146](https://doi.org/10.5281/zenodo.17011146)；20 个扫描的 DOI 见官方目录 |
+| RWTH Samsung 35E（4 颗 18650，初始/老化） | 仅重建体（实验室锥束 VG `.REK`），无投影 | 每个归档约 6.6 GB（压缩） | 用 `ConeBeamASTRA` / `ParallelBeamASTRA3D` 模拟投影 | CC BY 4.0 | Hugging Face [`bsebench-org/rwth-jellyroll-deformation-2021-raw`](https://huggingface.co/datasets/bsebench-org/rwth-jellyroll-deformation-2021-raw) |
+| CWI Walnuts（42 个核桃） | 实验室锥束，3 个光源高度，每个 1201 个投影 | 每个样本约 6 GB | `ConeBeamASTRA`（作者提供 ASTRA 几何向量） | CC BY 4.0 | 样本 1–8：Zenodo [2686726](https://zenodo.org/records/2686726)；其余样本见同一记录页与论文 [Der Sarkissian et al., Sci. Data 2019](https://doi.org/10.1038/s41597-019-0235-y) |
+| DM4CT 同步辐射岩石（F3_1、F3_2） | 平行束 | 投影 1.9 GB×2，重建 6.9 GB×2 | `ParallelBeamRadon2D` / `ParallelBeamASTRA3D` | CC BY 4.0 | Zenodo [15420527](https://zenodo.org/records/15420527) |
+| LoDoInd | 重建切片（平行束模拟） | Noise1–5 与 Ref 各约 22.5 GB | 模拟：`ParallelBeamRadon2D`、`FanBeamASTRA2D` | CC BY-NC 4.0 | Zenodo [10356955](https://zenodo.org/records/10356955)、[10391277](https://zenodo.org/records/10391277)、[10391412](https://zenodo.org/records/10391412) |
+| NaSn 截断视场 CT | 同步辐射平行束，内部断层 | 目标 4 个扫描约 37 GiB，FullCT 4 个约 28 GiB | `TomoPyCUDARadon2D` | CC BY 4.0（发布时） | 私有 Hugging Face Dataset，需向仓库所有者申请；见 [NaSn 说明](nasn_ct.md) |
+
+下载示例：
+
+```sh
+# BIL：单个扫描（以 #77 为例），先在记录页查看文件列表
+curl -s https://zenodo.org/api/records/17011146 | python -c "import sys,json; [print(f['key'], f['size']) for f in json.load(sys.stdin)['files']]"
+
+# RWTH 35E：从中国大陆访问时，直连镜像通常比代理快
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY \
+  HF_ENDPOINT=https://hf-mirror.com \
+  huggingface-cli download bsebench-org/rwth-jellyroll-deformation-2021-raw --repo-type dataset \
+  --local-dir "$INDUSTRIAL_DATA_DIR/rwth35e"
+
+# CWI Walnut 1
+curl --fail --location --retry 3 --continue-at - -o Walnut1.zip \
+  'https://zenodo.org/records/2686726/files/Walnut1.zip?download=1'
+```
+
+使用 BIL 原始投影时，需要按扫描 XML 构建几何。几何与预处理（I0、坏点、按能谱组归一化）
+的已验证做法记录在电池多电芯 benchmark 项目（`indus_CT/battery_multicell_20261113`，
+`bmc/geometry.py`、`preprocess_protocol.json`）中，本框架的 `circular_cone_geometry` 与其
+`cone_vec` 约定相同。Mayo 等医学数据不属于工业 CT，未列入本页。
 
 ## 有公开下载入口的数据
 
