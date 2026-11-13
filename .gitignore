@@ -31,3 +31,11 @@ dist/
 .pytest_cache/
 *.safetensors
 outputs/
+
+# Downloaded pretrained weights (scripts/download_weights.py)
+weights/
+
+# Third-party paper full texts (kept locally; docs/interior_CT_30papers/README.md indexes them by DOI)
+docs/interior_CT_30papers.zip
+docs/interior_CT_30papers/classical/
+docs/interior_CT_30papers/deep_learning/
